@@ -10,30 +10,29 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Connect from './component/Connect.tsx'
+import Connect from './Pages/Connect.tsx'
 import Root from "./routes/root";
-import Home from './component/Home.tsx'
-import About from './component/About.tsx'
-import NewIntregation1 from './component/Newintregation1.tsx'
-import NewIntregation2 from './component/Newintregation2.jsx';
-import NewIntregation3 from './component/Newintregation3.jsx';
-import NewIntregation4 from './component/Newintregation4.jsx';
-import NewIntregation5 from './component/Newintregation5.jsx';
-import NewIntregation6 from './component/Newintregation6.jsx';
-import NewIntregation7 from './component/Newintregation7.jsx';
-import Test from './component/Test.tsx'
-import Page1 from './component/Page1.tsx'
-import Test2 from './component/Test2.tsx'
-import Test3 from './component/Test3.tsx'
+import Home from './Pages/Home.tsx'
+
+import NewIntregation1 from './Pages/Newintregation1.tsx'
+import NewIntregation2 from './Pages/Newintregation2.jsx';
+import NewIntregation3 from './Pages/Newintregation3.jsx';
+import NewIntregation4 from './Pages/Newintregation4.jsx';
+import NewIntregation5 from './Pages/Newintregation5.jsx';
+import NewIntregation6 from './Pages/Newintregation6.jsx';
+import NewIntregation7 from './Pages/Newintregation7.jsx';
+import Test from './component/TEST/Test.tsx'
+import Page1 from './component/TEST/Page1.tsx'
+import Test2 from './component/TEST/Test2.tsx'
+import Test3 from './component/TEST/Test3.tsx'
+import Newintregation8 from './Pages/Newintregation8.tsx'
+import Newintregation9 from './Pages/Newintregation9.tsx'
+import Newintregation10 from './Pages/Newintregation10.tsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home></Home>,
-  },
-  {
-    path: "/about",
-    element: <About></About>,
   },
   {
     path: "/connect",
@@ -78,6 +77,18 @@ const router = createBrowserRouter([
   {
     path: "/test3",
     element: <Test3></Test3>
+  },
+  {
+    path: "/newintregation/8",
+    element: <Newintregation8></Newintregation8>
+  },
+  {
+    path: "/newintregation/9",
+    element: <Newintregation9></Newintregation9>
+  },
+  {
+    path: "/newintregation/10",
+    element: <Newintregation10></Newintregation10>
   },
 ]);
 

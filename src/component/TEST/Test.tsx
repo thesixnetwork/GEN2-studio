@@ -4,10 +4,10 @@ import {
     counter1Selector,
     increase,
     setValueAsync,
-} from "../store/slices/counter1Slice";
+} from "../../store/slices/counter1Slice";
 
-import { useAppDispatch } from "../store/store";
-import { counter2Selector } from "../store/slices/counter2Slice";
+import { useAppDispatch } from "../../store/store";
+import { counter2Selector } from "../../store/slices/counter2Slice";
 
 type Props = {};
 

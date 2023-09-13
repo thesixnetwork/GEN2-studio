@@ -1,13 +1,19 @@
 import React from 'react'
-import Conectwalet from './Connectwallet'
+import Conectwalet from '../component/Connectwallet'
 import logo1 from "../pic/Vector.png"
+import Goblackbutton from '../pic/Back.png'
 import { Button } from '@mui/material'
 import { Link } from 'react-router-dom'
+import GobackButton from '../component/GobackButton'
+
 const NewIntregation2 = () => {
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
+                    <div className=''>
+                        <GobackButton BackPage='/newintregation/1'></GobackButton>
+                    </div>
                     <div className='flex flex-col w-full justify-center items-center'>
                         <div className='flex justify-center items-center'>
                             <div className='w-[144px] h-[144px] border-[1px] border-white rounded-full flex justify-center items-center text-white text-[64px]'>NFT</div>
@@ -32,7 +38,7 @@ const NewIntregation2 = () => {
                             <p className='text-[20px] w-[231px] font-bold text-white'>About  Data Layer - NFT Gen 2</p>
                             <p className='text-[16px] w-[216px]  text-white pt-[20px]'>Briefly explain about NFT Gen 2, first data layer in SIX Protocol</p>
                         </div>
-                        <Link  to={`/newintregation/3`}>
+                        <Link to={`/newintregation/3`}>
                             <Button variant="outlined"
                                 style={{
                                     borderRadius: 80,

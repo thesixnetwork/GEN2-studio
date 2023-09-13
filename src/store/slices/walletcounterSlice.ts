@@ -40,8 +40,8 @@ const walletcounterSlice = createSlice({
   name: "walletcounter",
   initialState: initialValues,
   reducers: {
-    setisloggin: (state: WalletcounterState) => {
-      state.isloggin = true;
+    setisloggin: (state: WalletcounterState,action) => {
+      state.isloggin = action.payload;
     },
     setBalance :(state: WalletcounterState,action)=>{
       state.cosmosbalance=action.payload

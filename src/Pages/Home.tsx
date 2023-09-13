@@ -9,7 +9,7 @@ import logo7 from '../pic/Buakaw_Collection 1.png'
 import logo8 from '../pic/Ethereum-icon-purple 1.png'
 import logo9 from '../pic/SCR-25660710-nkmd 1.png'
 import logo10 from '../pic/klaytn-klay-logo 1.png'
-import Conectwalet from './Connectwallet'
+import Conectwalet from '../component/Connectwallet'
 import { Link } from 'react-router-dom'
 
 const Home = () => {
@@ -18,7 +18,7 @@ const Home = () => {
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex p-4  shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='h-full w-4/6 flex flex-col pl-[50px] pt-[50px]'>
-                        <p className='text-[#FFFFFF] text-3xl mb-1'>Darf</p>
+                        <p className='text-[#FFFFFF] text-3xl mb-1'>Draft</p>
                         <div className='w-[891px] h-[1px] bg-[#D9D9D9]'></div>
                         <div className='flex mt-2'>
                             <Link to={`/newintregation/1`} className='w-[197px] h-[232px] mt-[30px] ml-3 border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer'>

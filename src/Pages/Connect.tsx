@@ -1,16 +1,10 @@
 import React from 'react'
-import Connectwallet from './Connectwallet'
-import { useState } from 'react'
+import Connectwallet from '../component/Connectwallet'
 import logo1 from "../pic/Vector 4.png"
-import { Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 //redux
 import { useSelector } from "react-redux";
-import {
-    walletcounterSelector,
-    setValueAsync,
-    setisloggin
-} from "../store/slices/walletcounterSlice";
+import {walletcounterSelector} from "../store/slices/walletcounterSlice";
 
 const Connect = () => {
     //redux
@@ -20,13 +14,19 @@ const Connect = () => {
     const navigate = useNavigate();
 
     const [isShow, setIsShow] = React.useState(false);
+    React.useEffect(() => {
+        if(walletcounterReducer.isloggin){
+            navigate('/')
+        }
+      
+    }, [walletcounterReducer.cosmosbalance]);
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24 from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-center items-center p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <Connectwallet></Connectwallet>
                 </div>
-                <div onClick={() => { setIsShow(!isShow) ; navigate('/') }} className='absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500'>?</div>
+                <div onClick={() => { setIsShow(!isShow)}} className='absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500'>?</div>
                 {isShow &&
                     <div className='absolute mt-[-450px] ml-[-700px] duration-500'>
                         <img src={logo1} className='mt-[50px] ml-[400px] -rotate-[220deg] absolute '></img>

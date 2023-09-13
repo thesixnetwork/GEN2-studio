@@ -1,7 +1,9 @@
 import React from 'react'
-import Conectwalet from './Connectwallet'
+import Conectwalet from '../component/Connectwallet'
 import logo1 from "../pic/Vector 4.png"
 import { Link } from 'react-router-dom'
+import GobackButton from '../component/GobackButton'
+import NextPageButton from '../component/NextPageButton'
 
 const NewIntregation3 = () => {
     const [isShow, setIsShow] = React.useState(true);
@@ -33,7 +35,9 @@ const NewIntregation3 = () => {
 
                             {isShow ?
                                 <div className='absolute mt-[300px]'>
-                                    <Link to={`/newintregation/4`}><button className='text-[40px] absolute mt-[250px] ml-[-150px]  bg-[#757e9f] hover:bg-[#7A8ED7] text-white font-bold py-2 px-4 rounded-full duration-500'>GO FOR IT</button></Link>
+                                    <div className='mt-[210px] ml-[-200px] absolute'>
+                                        <NextPageButton TextTitle='GO FOR IT' NextPage='/newintregation/4' FontSize={50} BorderRadius={0}  ></NextPageButton>
+                                    </div>
                                     <img src={logo1} className='mt-[280px] mr-[150px] -rotate-[75deg] '></img>
                                     <p className='ml-[160px] mt-[-95px] absolute '>This is button</p>
                                 </div>
@@ -63,7 +67,12 @@ const NewIntregation3 = () => {
                             }
                         </div>
                     </div>
-                    <div onClick={() => { setIsShow(!isShow) }} className='absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500'>?</div>
+                    <div className='flex justify-between items-center w-full'>
+                        <div className=' scale-50'>
+                            <GobackButton BackPage='/newintregation/2' ></GobackButton>
+                        </div>
+                        <div onClick={() => { setIsShow(!isShow) }} className=' text-[50px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500'>?</div>
+                    </div>
                 </div>
             </div>
         </div>

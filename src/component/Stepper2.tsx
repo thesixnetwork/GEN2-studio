@@ -26,10 +26,11 @@ const Stepper2 = (props) => {
                 ))}
                 <div className='flex cursor-pointer hover:scale-105 duration-500 ml-3'>
                     <div className='border text-[60px] w-[40px] text-center'>{activeStep}</div>
-                    <div className='text-center  flex items-center justify-center w-[90px] text-[20px] font-bold'>{steps[activeStep-1]}</div>
+                    <div className='text-center ml-2  flex items-center justify-center w-[90px] text-[20px] font-bold'>{steps[activeStep-1]}</div>
                 </div>
             </div>
             <div className='flex justify-center items-center h-full w-[120px] text-[20px]'>{totalSteps() - activeStep} step left</div>
+            
         </Box>
     )
 }

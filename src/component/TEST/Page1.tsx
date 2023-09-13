@@ -4,8 +4,8 @@ import {
   counter1Selector,
   increase,
   setValueAsync,
-} from "../store/slices/counter1Slice";
-import { useAppDispatch } from "../store/store";
+} from "../../store/slices/counter1Slice";
+import { useAppDispatch } from "../../store/store";
 
 type Props = {};
 

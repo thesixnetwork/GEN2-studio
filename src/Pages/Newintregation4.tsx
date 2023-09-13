@@ -1,8 +1,10 @@
 import React from 'react'
-import Conectwalet from './Connectwallet'
+import Conectwalet from '../component/Connectwallet'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import GobackButton from '../component/GobackButton';
+import NextPageButton from '../component/NextPageButton';
 
 const NewIntregation4 = () => {
 
@@ -10,6 +12,9 @@ const NewIntregation4 = () => {
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex p-4  shadow-lg shadow-black/20 dark:shadow-black/40 justify-between'>
+                    <div className=''>
+                        <GobackButton BackPage='/newintregation/3'></GobackButton>
+                    </div>
                     <div className='w-full flex flex-col justify-between items-center py-[130px]'>
                         <h1 className='text-[78px]'>creating a schema</h1>
                         <div className='w-[814px] h-[201px] border-[1px] border-white rounded-xl  flex flex-col justify-between items-center px-[25px] py-[10px]'>
@@ -46,16 +51,7 @@ const NewIntregation4 = () => {
 
                             </div>
                         </div>
-                        <Link to={`/newintregation/5`} >
-                            <Button variant="outlined"
-                                style={{
-                                    borderRadius: 80,
-                                    color: 'white',
-                                    borderColor: 'white',
-                                    padding: "18px 36px",
-                                    fontSize: "68px",
-                                }}>START</Button>
-                        </Link>
+                        <NextPageButton TextTitle='START' BorderRadius={0} NextPage='/newintregation/5'  FontSize={60} ></NextPageButton>
                     </div>
                     <div className='w-2/6 h-full flex flex-col items-end  '>
                         <Conectwalet></Conectwalet>

@@ -1,17 +1,17 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import Conectwalet from './Connectwallet'
+import Conectwalet from '../component/Connectwallet'
 import logo1 from '../pic/Chain/SIX Protocol Icon.png'
 import logo2 from '../pic/Chain/Ethereum Icon.png'
 import logo3 from '../pic/Chain/Klaytn Icon.png'
 import logo4 from '../pic/Chain/bnb-bnb-logo 1.png'
-import Stepper2 from './Stepper2'
+import Stepper2 from '../component/Stepper2'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
-import Darkbg from './Alert/Darkbg'
-import AlertCard from './Alert/AlertCard'
-import RedAleart from './Alert/RedAleart'
+import Darkbg from '../component/Alert/Darkbg'
+import AlertCard from '../component/Alert/AlertCard'
+import RedAleart from '../component/Alert/RedAleart'
 
 const NewIntregation6 = () => {
 
@@ -22,14 +22,13 @@ const NewIntregation6 = () => {
     const handleml = (event: any) => {
         const id = event.target.id;
         console.log(id);
-        setml(110 * id)
+        setml(100 * id)
         setisSelection(true)
         setisError(false)
-        document.getElementById
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (isSelection){
+        if (isSelection) {
             navigate('/newintregation/7');
             console.log('navigate')
         }
@@ -51,13 +50,25 @@ const NewIntregation6 = () => {
                         </div>
                         <form onSubmit={handleSubmit} className=' flex flex-col justify-between items-center mt-[20px] h-5/6 py-[30px] '>
                             <div className='w-[758px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-center px-[20px] z-10 '>
-                                <p className='font-bold text-[20px] '>Origin Chain</p> 
+                                <p className='font-bold text-[20px] '>Origin Chain</p>
                                 <div className='flex justify-between w-[400px] ml-[60px]'>
-                                    {isSelection && <div className='absolute border w-[90px] h-[90px] mt-[-9px] duration-300' style={{ marginLeft: `${-7 + ml}px` }}></div>}
-                                    <img id='0' onClick={handleml} className='cursor-pointer z-10 w-[77px] h-[66px] hover:scale-125 duration-500' alt="Logo" src={logo1}></img>
-                                    <img id='1' onClick={handleml} className='cursor-pointer z-10 w-[38px] h-[68px] hover:scale-125 duration-500' alt="Logffffo" src={logo2}></img>
+                                    {isSelection && <div className='absolute border w-[100px] h-[100px] duration-300' style={{ marginLeft: `${ml}px` }}></div>}
+                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                        <img id='0' onClick={handleml} className='cursor-pointer z-10 w-[77px] h-[66px] hover:scale-125 duration-500'src={logo1}></img>
+                                    </div>
+                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                        <img id='1' onClick={handleml} className='cursor-pointer z-10 w-[38px] h-[68px] hover:scale-125 duration-500'src={logo2}></img>
+                                    </div>
+                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                        <img id='2' onClick={handleml} className='cursor-pointer z-10 w-[54px] h-[61px] hover:scale-125 duration-500'src={logo3}></img>
+                                    </div>
+                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                        <img id='3' onClick={handleml} className='cursor-pointer z-10 w-[60px] h-[62px] hover:scale-125 duration-500'src={logo4}></img>
+                                    </div>
+
+                                    {/* <img id='1' onClick={handleml} className='cursor-pointer z-10 w-[38px] h-[68px] hover:scale-125 duration-500'  src={logo2}></img>
                                     <img id='2' onClick={handleml} className='cursor-pointer z-10 w-[54px] h-[61px] hover:scale-125 duration-500' src={logo3}></img>
-                                    <img id='3' onClick={handleml} className='cursor-pointer z-10 w-[60px] h-[62px] hover:scale-125 duration-500' src={logo4}></img>
+                                    <img id='3' onClick={handleml} className='cursor-pointer z-10 w-[60px] h-[62px] hover:scale-125 duration-500' src={logo4}></img> */}
                                 </div>
                                 <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[710px] mb-[90px]'></div>
                             </div>

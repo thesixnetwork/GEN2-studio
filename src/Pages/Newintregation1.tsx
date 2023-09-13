@@ -1,12 +1,16 @@
 import React from 'react'
-import Conectwalet from './Connectwallet'
+import Conectwalet from '../component/Connectwallet'
+
+
 import { Link } from 'react-router-dom'
+import GobackButton from '../component/GobackButton'
 
 const NewIntregation1 = () => {
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
+                    <GobackButton BackPage='/'></GobackButton>
                     <div className='flex flex-col justify-center items-center  w-full'>
                         <Link to={`/newintregation/2`}  className='w-[751px] h-[187px] border rounded-full flex flex-col justify-center items-center mb-5 cursor-pointer hover:scale-105 duration-500'>
                             <h1 className='font-bold text-2xl text-white '>Beginer</h1>

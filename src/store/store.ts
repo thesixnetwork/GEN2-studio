@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
+import { composeWithDevTools } from 'redux-devtools-extension'; // Import the composeWithDevTools function
+
 
 import counter1Reducer from "./slices/counter1Slice";
 import counter2Reducer from "./slices/counter2Slice";
