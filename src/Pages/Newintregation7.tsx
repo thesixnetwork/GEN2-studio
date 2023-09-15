@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ClearIcon from "@mui/icons-material/Clear";
 import logo1 from "../pic/trash-bin_5028066 1.png";
 import logo2 from "../pic/Vector 4.png";
 import logo3 from "../pic/Vector 7.png";
@@ -12,32 +13,91 @@ import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
 import AlertCard from "./Alert/AlertCard";
 import NextPageButton from "../component/NextPageButton";
+import Swal from "sweetalert2";
+import RedAleart from "../component/Alert/RedAleart";
 
-import { useState } from 'react'
+import { useState } from "react";
+
+import {
+  Select,
+  styled,
+  InputBase,
+  MenuItem,
+  NativeSelect,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 
 const NewIntregation7 = () => {
   const [isShow, setIsShow] = useState(false);
 
-  const [editing, setEditing] = useState({
-    cardIndex: null,
-    field: null,
-  });
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Not Availible");
+
   const [text, setText] = useState([
     {
-      name: "firtname",
-      dataType: "data1",
-      traitType: "trait1",
+      name: "background",
+      dataType: "string",
+      traitType: "Background",
     },
     {
-      name: "secondname",
-      dataType: "data2",
-      traitType: "trait2",
+      name: "clothing",
+      dataType: "string",
+      traitType: "Clothing",
+    },
+    {
+      name: "eyes",
+      dataType: "string",
+      traitType: "Eyes",
     },
   ]);
 
-  const handleClick = (cardIndex, field) => {
-    setEditing({ cardIndex, field });
+  const checkError = (text) => {
+    const nameSet = new Set();
+
+    for (const item of text) {
+      if (nameSet.has(item.name)) {
+        setError(true);
+        setErrorMessage("Name Duplicate");
+      }
+      if (item.name.includes(" ")) {
+        setError(true);
+        setErrorMessage("Have Space");
+      }
+      if (
+        item.name.includes(null) ||
+        item.dataType.includes(null) ||
+        item.traitType.includes(null)
+      ) {
+        setError(true);
+        setErrorMessage("Can't be empty");
+      }
+      nameSet.add(item.name);
+    }
   };
+
+  // useEffect(() => {
+  //   checkError(text);
+  // }, [text]);
+
+  const WhiteNativeSelect = styled(InputBase)(({ theme }) => ({
+    color: "white",
+    textDecoration: "underline",
+    fontSize: 14,
+    "& svg": {
+      fill: "white",
+    },
+  }));
+
+  const Delete = styled(ClearIcon)({
+    borderRadius: "16px",
+    transition: "color 0.3s, border 0.3s",
+    border: "2px solid white",
+    cursor: "pointer",
+    "&:hover": {
+      opacity: "0.6",
+    },
+  });
 
   const handleChange = (e, field, index) => {
     const updatedText = [...text];
@@ -45,19 +105,41 @@ const NewIntregation7 = () => {
     setText(updatedText);
   };
 
-  const handleBlur = () => {
-    setEditing({ cardIndex: null, field: null });
-  };
-
   const handleCreateAttribute = () => {
     const newAttribute = {
-      name: null,
-      dataType: null,
-      traitType: null,
+      name: "",
+      dataType: "",
+      traitType: "",
     };
 
     setText([...text, newAttribute]);
+    console.log(text);
   };
+
+  const handleDeleteAttribute = (index) => {
+    const updatedText = [...text.slice(0, index), ...text.slice(index + 1)];
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          icon: "success",
+          title: "Your token attribute has been deleted.",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          setText(updatedText);
+        });
+      }
+    });
+  };
+
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
@@ -67,89 +149,108 @@ const NewIntregation7 = () => {
               <Stepper2 ActiveStep={3}></Stepper2>
               <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
             </div>
-            <div className="mt-7 ml-10 w-full h-5/6 grid-cols-3 grid gap-y-1 overflow-scroll">
-              {text.map((item, index) => (
-                <div
-                  key={index}
-                  className="w-[227px] h-[157px] bg-transparent border-solid border border-white-600 rounded-xl p-3 "
-                >
-                  <div className="w-[24px] h-[24px] bg-red-500 flex justify-center items-center rounded-full ml-[185px] mt-[-7px]">
-                    <DeleteIcon className="scale-75"></DeleteIcon>
-                  </div>
-                  <>
-                    <div
-                      onClick={() => handleClick(index, "name")}
-                      className="flex text-[14px] mt-2"
-                    >
-                      Name :&ensp;{" "}
-                      {editing.cardIndex === index &&
-                      editing.field === "name" ? (
+            <div className="w-full h-4/6 overflow-scroll flex justify-center relative">
+              <div className="grid-cols-3 grid gap-y-6 gap-x-12 p-14 absolute">
+                {text.map((item, index) => (
+                  <div
+                    key={index}
+                    className="w-[227px] h-[157px] bg-transparent border-solid border border-white-600 rounded-xl p-3 "
+                  >
+                    <div className="w-[24px] h-[24px] rounded-full ml-[185px] mt-[-7px] absolute">
+                      <Delete onClick={() => handleDeleteAttribute(index)} />
+                    </div>
+                    <div className="h-full flex flex-col justify-center">
+                      <div className="flex text-[14px]">
+                        Name :&ensp;{" "}
                         <input
                           type="text"
                           value={item.name}
                           onChange={(e) => handleChange(e, "name", index)}
-                          onBlur={handleBlur}
-                          className="flex text-[14px] bg-transparent h-[21px] w-20 outline-none border-solid"
+                          className="flex text-[14px] bg-transparent w-[140px] outline-none border-b border-transparent focus:border-sky-400	duration-300 underline focus:no-underline"
+                          placeholder="add name here"
                         />
-                      ) : (
-                        <p className="underline">{item.name}</p>
-                      )}
-                    </div>
-                    <div
-                      onClick={() => handleClick(index, "dataType")}
-                      className="flex text-[14px]"
-                    >
-                      Data type :&ensp;{" "}
-                      {editing.cardIndex === index &&
-                      editing.field === "dataType" ? (
-                        <input
+                      </div>
+                      <div className="flex text-[14px] items-center">
+                        Data type :&ensp;{" "}
+                        {/* <NativeSelect
+                          defaultValue={30}
+                          value={item.dataType}
+                          onChange={(e) => handleChange(e, "dataType", index)}
+                          input={<WhiteNativeSelect />}
+                          id={item.name}
+                        >
+                          <option value={"boolean"}>Boolean</option>
+                          <option value={"number"}>Number</option>
+                          <option value={"string"}>String</option>
+                        </NativeSelect> */}
+                        <Select
+                          displayEmpty
+                          value={item.dataType}
+                          onChange={(e) => handleChange(e, "dataType", index)}
+                          input={<WhiteNativeSelect />}
+                          id={item.name}
+                          renderValue={(selected) => {
+                            if (
+                              selected !== "boolean" &&
+                              selected !== "number" &&
+                              selected !== "string"
+                            ) {
+                              return "Select Type";
+                            } else {
+                              return selected;
+                            }
+                          }}
+                        >
+                          <MenuItem value={"boolean"}>boolean</MenuItem>
+                          <MenuItem value={"number"}>number</MenuItem>
+                          <MenuItem value={"string"}>string</MenuItem>
+                        </Select>
+                        {/* <Select
                           type="text"
                           value={item.dataType}
                           onChange={(e) => handleChange(e, "dataType", index)}
-                          onBlur={handleBlur}
-                          className="flex text-[14px] bg-transparent h-[21px] w-20 outline-none border-b border-cyan-400 duration-300"
-                        />
-                      ) : (
-                        <p className="underline border-b border-transparent h-[21px]">
-                          {item.dataType}
-                        </p>
-                      )}
-                    </div>
-                    <div
-                      onClick={() => handleClick(index, "traitType")}
-                      className="flex text-[14px]"
-                    >
-                      Data type :&ensp;{" "}
-                      {editing.cardIndex === index &&
-                      editing.field === "traitType" ? (
+                          className="flex text-[14px] bg-transparent h-[21px] w-20 outline-none border-b border-transparent focus:border-sky-400 duration-300 underline focus:no-underline"
+                          placeholder="add data type here"
+                        /> */}
+                      </div>
+                      <div className="flex text-[14px]">
+                        Trait type :&ensp;{" "}
                         <input
                           type="text"
                           value={item.traitType}
                           onChange={(e) => handleChange(e, "traitType", index)}
-                          onBlur={handleBlur}
-                          className="flex text-[14px] bg-transparent h-[21px] w-20 outline-none border-b border-cyan-400 duration-300"
+                          className="flex text-[14px] bg-transparent h-[21px] w-20 outline-none border-b border-transparent focus:border-sky-400 duration-300 underline focus:no-underline"
+                          placeholder="add trait type here"
                         />
-                      ) : (
-                        <p className="underline border-b border-transparent h-[21px]">
-                          {item.traitType}
-                        </p>
-                      )}
+                      </div>
                     </div>
-                  </>
+                    {error ? (
+                      <RedAleart
+                        Height={20}
+                        Width={150}
+                        Rotate={90}
+                        ML={151}
+                        MT={-76}
+                        detailsText={errorMessage}
+                      />
+                    ) : null}
+                  </div>
+                ))}
+                <div
+                  onClick={handleCreateAttribute}
+                  className="w-[227px] h-[157px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300 "
+                >
+                  <img src={Add}></img>
                 </div>
-              ))}
-              <div
-                onClick={handleCreateAttribute}
-                className="w-[227px] h-[157px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300 "
-              >
-                <img src={Add}></img>
               </div>
+            </div>
+            <div className="h-1/6 flex items-center	justify-center ">
               <NextPageButton
-              TextTitle="Next"
-              BorderRadius={0}
-              NextPage="/newintregation/8"
-              FontSize={40}
-            ></NextPageButton>
+                TextTitle="Next"
+                BorderRadius={0}
+                NextPage="/newintregation/8"
+                FontSize={40}
+              ></NextPageButton>
             </div>
           </div>
           <div className="w-2/6 h-5/6 flex flex-col items-end  ">
@@ -209,6 +310,8 @@ const NewIntregation7 = () => {
         ) : (
           <div></div>
         )}
+
+        {error ? <Darkbg></Darkbg> : null}
       </div>
     </div>
   );
