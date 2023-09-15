@@ -14,7 +14,6 @@ import RedAleart from '../component/Alert/RedAleart'
 
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import NextPageButton from '../component/NextPageButton'
 
 const NewIntregation6 = () => {
 
@@ -92,7 +91,15 @@ const NewIntregation6 = () => {
                                 <input type="text" placeholder="https://ipfs.whalegate.sixprotocol.com/ipfs/Qmd9FJGWveLd1g6yZTDDNjxruVppyDtaUzrA2pkb2XAf8R/" className='placeholder-gray-300 placeholder:text-[12px] bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-[102%] duration-1000 w-full h-[62px]  '></input>
                                 <div className='w-[15px] h-[15px]  bg-transparent border rounded-full absolute ml-[710px] mb-[90px]'></div>
                             </div>
-                            <NextPageButton TextTitle='NEXT' BorderRadius={0} FontSize={45}  NextPage='/newintregation/7'></NextPageButton>
+                            <Button onClick={handleSubmit} variant="outlined" className='hover:scale-105 duration-500'
+                                style={{
+                                    borderRadius: 0,
+                                    color: 'white',
+                                    borderColor: 'white',
+                                    padding: "2px 36px",
+                                    fontSize: "48px",
+                                }}>NEXT
+                            </Button>
                         </form>
                     </div>
                     <div className='w-2/6 h-5/6 flex flex-col items-end  '>

@@ -119,7 +119,19 @@ const NewIntregation5 = () => {
                                 <input onChange={handleInputcollectionName} onFocus={handleReset} type="text" placeholder="WHALEGATE" className={`placeholder-${placeHolderColor2}-600 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-105 duration-1000`}></input>
                                 <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[630px] mb-[90px]'></div>
                             </div>
-                            <NextPageButton TextTitle='NEXT' BorderRadius={0} FontSize={45}  NextPage='/newintregation/6'></NextPageButton>
+                            {/* <Link to={`/newintregation/6`} > */}
+                            <Button type='submit' variant="outlined"
+                                style={{
+                                    borderRadius: 0,
+                                    color: 'white',
+                                    borderColor: 'white',
+                                    padding: "10px 36px",
+                                    fontSize: "68px",
+                                }}
+                            >NEXT</Button>
+                            {/* </Link> */}
+                            
+                            
 
                         </form>
                         <div className=' w-full flex justify-start  '>
