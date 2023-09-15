@@ -27,13 +27,10 @@ export default function Newintregation9() {
                         <div onClick={() => { setIsShow(!isShow) }} className='absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500'>?</div>
                     </div>
                 </div>
-                {isShow ?
+                {isShow &&
                     <div className='absolute duration-500' onClick={() => { setIsShow(!isShow) }}>
                         <Darkbg ></Darkbg>
                     </div>
-                    :
-                    <div></div>
-
                 }
             </div>
         </div>

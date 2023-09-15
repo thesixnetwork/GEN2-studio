@@ -31,6 +31,8 @@
     "react-router-dom": "^6.15.0",
     "redux-promises": "^1.0.0",
     "styled-components": "^6.0.7",
+    "sweetalert2": "^11.7.28",
+    "sweetalert2-react-content": "^5.0.7",
     "tailwindcss": "^3.3.3",
     "web3": "^4.1.1"
   },

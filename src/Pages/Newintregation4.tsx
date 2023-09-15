@@ -12,7 +12,7 @@ const NewIntregation4 = () => {
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex p-4  shadow-lg shadow-black/20 dark:shadow-black/40 justify-between'>
-                    <div className=''>
+                <div className=' absolute scale-50'>
                         <GobackButton BackPage='/newintregation/3'></GobackButton>
                     </div>
                     <div className='w-full flex flex-col justify-between items-center py-[130px]'>

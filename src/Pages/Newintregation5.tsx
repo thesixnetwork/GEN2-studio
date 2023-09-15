@@ -8,6 +8,7 @@ import AlertCard from '../component/Alert/AlertCard'
 import RedAleart from '../component/Alert/RedAleart'
 import { useNavigate } from 'react-router-dom';
 import GobackButton from '../component/GobackButton'
+import NextPageButton from '../component/NextPageButton'
 
 
 const NewIntregation5 = () => {
@@ -15,7 +16,7 @@ const NewIntregation5 = () => {
     const myElementRef = useRef(null);
 
     const navigate = useNavigate();
-    const [isNextpage, setisNextpage] = useState(false)
+    
     const [isError, setisError] = useState(false)
     const [isError1, setisError1] = useState(false)
     const [isError2, setisError2] = useState(false)
@@ -23,6 +24,9 @@ const NewIntregation5 = () => {
     const [collectionName, setcollectionName] = useState('')
     const [isSpace1, setisSpace1] = useState(false)
     const [isSpace2, setisSpace2] = useState(false)
+
+    const [placeHolderColor1,setplaceHolderColor1] = useState("white")
+    const [placeHolderColor2,setplaceHolderColor2] = useState("gray")
 
     const handleInputschemaCode = (e) => {
         setschemaCode(e.target.value);
@@ -41,6 +45,8 @@ const NewIntregation5 = () => {
         setisError1(false);
         setisSpace1(false);
         setisSpace2(false);
+        setplaceHolderColor1("white")
+        setplaceHolderColor2("white")
         document.getElementById("img1").style.zIndex = "10";
         document.getElementById("img2").style.zIndex = "10";
     }
@@ -64,12 +70,14 @@ const NewIntregation5 = () => {
         else if (((schemaCode.length == 0 || schemaCode.includes(' ')) && (collectionName.length > 0 && !collectionName.includes(' ')))) {
             setisError1(true)
             setisError(true)
+            setplaceHolderColor1("red")
             console.log('2')
             document.getElementById("img2").style.zIndex = "0";
         }
         else if (((collectionName.length == 0 || collectionName.includes(' ')) && (schemaCode.length > 0 && !schemaCode.includes(' ')))) {
             setisError2(true)
             setisError(true)
+            setplaceHolderColor2("red")
             console.log('3')
             document.getElementById("img1").style.zIndex = "0";
         }
@@ -77,6 +85,8 @@ const NewIntregation5 = () => {
             setisError1(true)
             setisError2(true)
             setisError(true)
+            setplaceHolderColor1("red")
+            setplaceHolderColor2("red")
             console.log('4')
         }
         console.log('submit success')
@@ -84,7 +94,7 @@ const NewIntregation5 = () => {
             setisSpace1(true)
         }
         if(collectionName.includes(' ')){
-            setisSpace2(true)
+            setisSpace2(true)  
         }
     };
     return (
@@ -101,29 +111,19 @@ const NewIntregation5 = () => {
                         <form onSubmit={handleSubmit} className=' flex flex-col justify-between items-center mt-[100px] h-4/6 '>
                             <div id="img1" className=' w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-center z-10'>
                                 <p className='font-bold text-[24px] mr-10'>Schema code</p>
-                                <input onChange={handleInputschemaCode} onFocus={handleReset} type="text" placeholder="sixnetwork.whalegate" className='bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 z-50 focus:outline-none focus:scale-105 duration-1000  '></input>
+                                <input onChange={handleInputschemaCode} onFocus={handleReset} type="text" placeholder="sixnetwork.whalegate" className={`placeholder-${placeHolderColor1}-600 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 z-50 focus:outline-none focus:scale-105 duration-1000`}></input>
                                 <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[630px] mb-[90px]'></div>
                             </div>
                             <div id="img2" className='w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-center z-10 '>
                                 <p className='font-bold text-[24px] mr-10'>Collection name</p>
-                                <input onChange={handleInputcollectionName} onFocus={handleReset} type="text" placeholder="WHALEGATE" className='placeholder-gray-300 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-105 duration-1000  '></input>
+                                <input onChange={handleInputcollectionName} onFocus={handleReset} type="text" placeholder="WHALEGATE" className={`placeholder-${placeHolderColor2}-600 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-105 duration-1000`}></input>
                                 <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[630px] mb-[90px]'></div>
                             </div>
-                            {/* <Link to={`/newintregation/6`} > */}
-                            <Button type='submit' variant="outlined"
-                                style={{
-                                    borderRadius: 0,
-                                    color: 'white',
-                                    borderColor: 'white',
-                                    padding: "10px 36px",
-                                    fontSize: "68px",
-                                }}
-                            >NEXT</Button>
-                            {/* </Link> */}
+                            <NextPageButton TextTitle='NEXT' BorderRadius={0} FontSize={45}  NextPage='/newintregation/6'></NextPageButton>
 
                         </form>
                         <div className=' w-full flex justify-start  '>
-                            <div className=' scale-50'>
+                            <div className={`scale-50`}>
                                 <GobackButton BackPage='/newintregation/4'></GobackButton>
                             </div>
                         </div>
@@ -143,9 +143,9 @@ const NewIntregation5 = () => {
                 {isError &&
                     <div className='absolute duration-500' onClick={handleReset}>
                         <Darkbg ></Darkbg>
-                        <AlertCard ML={250} MT={-150} Width={300} Height={150} heaDer="Not Available" detailsText="This code has already been taken and unable to include space."  ></AlertCard>
-                        {isError1 ? <RedAleart Height={20} Width={120} Rotate={90} ML={145} MT={-147} detailsText={!isSpace1 ? "Not available" : "Inclued Space"} ></RedAleart> : <div></div>}
-                        {isError2 ? <RedAleart Height={20} Width={120} Rotate={90} ML={145} MT={36} detailsText={!isSpace2 ? "Not available" : "Inclued Space"}></RedAleart> : <div></div>}
+                        <AlertCard BG={1} ML={250} MT={-150} Width={300} Height={150} heaDer="Error" detailsText="This code has already been taken or include space , empthy text."  ></AlertCard>
+                        {isError1 && <RedAleart Height={20} Width={120} Rotate={90} ML={145} MT={-147} detailsText={!isSpace1 ? "Require" : "Inclued Space"} ></RedAleart>}
+                        {isError2 && <RedAleart Height={20} Width={120} Rotate={90} ML={145} MT={36} detailsText={!isSpace2 ? "Require" : "Inclued Space"}></RedAleart> }
                     </div>
                 }
             </div>

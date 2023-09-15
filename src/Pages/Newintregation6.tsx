@@ -7,11 +7,14 @@ import logo3 from '../pic/Chain/Klaytn Icon.png'
 import logo4 from '../pic/Chain/bnb-bnb-logo 1.png'
 import Stepper2 from '../component/Stepper2'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import Darkbg from '../component/Alert/Darkbg'
 import AlertCard from '../component/Alert/AlertCard'
 import RedAleart from '../component/Alert/RedAleart'
+
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import NextPageButton from '../component/NextPageButton'
 
 const NewIntregation6 = () => {
 
@@ -53,19 +56,26 @@ const NewIntregation6 = () => {
                                 <p className='font-bold text-[20px] '>Origin Chain</p>
                                 <div className='flex justify-between w-[400px] ml-[60px]'>
                                     {isSelection && <div className='absolute border w-[100px] h-[100px] duration-300' style={{ marginLeft: `${ml}px` }}></div>}
-                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
-                                        <img id='0' onClick={handleml} className='cursor-pointer z-10 w-[77px] h-[66px] hover:scale-125 duration-500'src={logo1}></img>
-                                    </div>
-                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
-                                        <img id='1' onClick={handleml} className='cursor-pointer z-10 w-[38px] h-[68px] hover:scale-125 duration-500'src={logo2}></img>
-                                    </div>
-                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
-                                        <img id='2' onClick={handleml} className='cursor-pointer z-10 w-[54px] h-[61px] hover:scale-125 duration-500'src={logo3}></img>
-                                    </div>
-                                    <div className='w-[100px] h-[100px] flex justify-center items-center'>
-                                        <img id='3' onClick={handleml} className='cursor-pointer z-10 w-[60px] h-[62px] hover:scale-125 duration-500'src={logo4}></img>
-                                    </div>
-
+                                    <Tooltip title="SIX Protocol">
+                                        <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                            <img id='0' onClick={handleml} className='cursor-pointer z-10 w-[77px] h-[66px] hover:scale-125 duration-500' src={logo1}></img>
+                                        </div>
+                                    </Tooltip>
+                                    <Tooltip title="Ethereum">
+                                        <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                            <img id='1' onClick={handleml} className='cursor-pointer z-10 w-[38px] h-[68px] hover:scale-125 duration-500' src={logo2}></img>
+                                        </div>
+                                    </Tooltip>
+                                    <Tooltip title="Klaytn">
+                                        <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                            <img id='2' onClick={handleml} className='cursor-pointer z-10 w-[54px] h-[61px] hover:scale-125 duration-500' src={logo3}></img>
+                                        </div>
+                                    </Tooltip>
+                                    <Tooltip title="BNB Smart Chain">
+                                        <div className='w-[100px] h-[100px] flex justify-center items-center'>
+                                            <img id='3' onClick={handleml} className='cursor-pointer z-10 w-[60px] h-[62px] hover:scale-125 duration-500' src={logo4}></img>
+                                        </div>
+                                    </Tooltip>
                                     {/* <img id='1' onClick={handleml} className='cursor-pointer z-10 w-[38px] h-[68px] hover:scale-125 duration-500'  src={logo2}></img>
                                     <img id='2' onClick={handleml} className='cursor-pointer z-10 w-[54px] h-[61px] hover:scale-125 duration-500' src={logo3}></img>
                                     <img id='3' onClick={handleml} className='cursor-pointer z-10 w-[60px] h-[62px] hover:scale-125 duration-500' src={logo4}></img> */}
@@ -82,15 +92,7 @@ const NewIntregation6 = () => {
                                 <input type="text" placeholder="https://ipfs.whalegate.sixprotocol.com/ipfs/Qmd9FJGWveLd1g6yZTDDNjxruVppyDtaUzrA2pkb2XAf8R/" className='placeholder-gray-300 placeholder:text-[12px] bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-[102%] duration-1000 w-full h-[62px]  '></input>
                                 <div className='w-[15px] h-[15px]  bg-transparent border rounded-full absolute ml-[710px] mb-[90px]'></div>
                             </div>
-                            <Button onClick={handleSubmit} variant="outlined" className='hover:scale-105 duration-500'
-                                style={{
-                                    borderRadius: 0,
-                                    color: 'white',
-                                    borderColor: 'white',
-                                    padding: "2px 36px",
-                                    fontSize: "48px",
-                                }}>NEXT
-                            </Button>
+                            <NextPageButton TextTitle='NEXT' BorderRadius={0} FontSize={45}  NextPage='/newintregation/7'></NextPageButton>
                         </form>
                     </div>
                     <div className='w-2/6 h-5/6 flex flex-col items-end  '>
@@ -112,8 +114,8 @@ const NewIntregation6 = () => {
                 {isError &&
                     <div className='absolute duration-500' onClick={() => { setisError(false); }}>
                         <Darkbg ></Darkbg>
-                        <AlertCard ML={320} MT={-250} Width={266} Height={140} heaDer="Required" detailsText="Origin Chain is required. Please choose one of the supported Chain"  ></AlertCard>
-                        <RedAleart Height={20} Width={120} Rotate={90} ML={195} MT={-187} detailsText="not available" ></RedAleart> : <div></div>
+                        <AlertCard BG={1} ML={320} MT={-250} Width={266} Height={140} heaDer="Required" detailsText="Origin Chain is required. Please choose one of the supported Chain"  ></AlertCard>
+                        <RedAleart Height={20} Width={120} Rotate={90} ML={195} MT={-197} detailsText="Require" ></RedAleart>
                     </div>
                 }
             </div>

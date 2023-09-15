@@ -5,6 +5,9 @@ import logo3 from "../pic/Share.png";
 import logo4 from "../pic/SIX_Token_Icon 1.png";
 import logo5 from "../pic/X.png";
 import { StargateClient } from "@cosmjs/stargate";
+import { Navigate, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 //Redux
 import { useSelector } from "react-redux";
 import {
@@ -40,10 +43,33 @@ const Conectwalet = () => {
 
   const [copied, setCopied] = useState(false);
 
+  const navigate = useNavigate();
+
   const buttonLogout = async () => {
-    dispatch(setisloggin(false));
-    dispatch(setAddress(""));
-    dispatch(setBalance(0));
+
+    Swal.fire({
+      title: 'Are you sure to logout?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Logout '
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          'Logout Complete!',
+          'Your file has been deleted.',
+          'success'
+        )
+        dispatch(setisloggin(false));
+        dispatch(setAddress(""));
+        dispatch(setBalance(0));
+        navigate("/connect")
+        
+      }
+    })
+
   };
 
   // Connect Keplr
@@ -168,23 +194,29 @@ const Conectwalet = () => {
                   <p className="text-[#D9D9D9] text-[24px] border-[0.5px] border-white rounded-[100%] px-3 mr-2 ">
                     5
                   </p>
-                  <img
-                    src={logo5}
-                    onClick={buttonLogout}
-                    className="border-[0.5px] rounded-xl p-2 hover:scale-105 duration-500 cursor-pointer"
-                  ></img>
+                  <Tooltip title="Logout">
+                    <img
+                      src={logo5}
+                      onClick={buttonLogout}
+                      className="border-[0.5px] rounded-xl p-2 hover:scale-105 duration-500 cursor-pointer"
+                    ></img>
+                  </Tooltip>
+
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex justify-center items-center h-[80px]">
-              <p
-                className="text-3xl text-white cursor-pointer hover:scale-105 duration-500"
-                onClick={buttonHandlerKeplrConnect}
-              >
-                Connect Wallet
-              </p>
-            </div>
+            <Tooltip title="Connect to keplr wallet">
+              <div className="flex justify-center items-center h-[80px]">
+                <p
+                  className="text-3xl text-white cursor-pointer hover:scale-105 duration-500"
+                  onClick={buttonHandlerKeplrConnect}
+                >
+                  Connect Wallet
+                </p>
+              </div>
+            </Tooltip>
+
           )}
         </div>
       )}

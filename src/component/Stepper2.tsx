@@ -3,17 +3,25 @@ import Box from '@mui/material/Box';
 import { Link } from 'react-router-dom';
 const steps = ['basic data', 'origin collection data', 'origin token attributes', 'onchain collection attributes', 'on-chain token attributes', 'actions'];
 
-const Stepper2 = (props) => {
-    const { ActiveStep } = props;
-    const [activeStep, setActiveStep] = React.useState(ActiveStep);
 
+interface MyComponentProps {
+
+    ActiveStep : number;
+
+}
+const Stepper2 = (props: MyComponentProps) => {
+
+    const [activeStep, setActiveStep] = React.useState(props.ActiveStep);
+    const [isFinal,setisFinal] =React.useState(true)
     const totalSteps = () => {
         return steps.length;
     };
-
-    const handleStep = (step :number) => () => {
-        setActiveStep(step);
-    };
+    React.useEffect(()=>{
+        if (activeStep == 6){
+            setisFinal(false)
+        }
+        
+    },[])
 
     return (
         <Box sx={{ width: '100%' }} className='flex w-full  justify-between items-end mb-2'>
@@ -29,7 +37,7 @@ const Stepper2 = (props) => {
                     <div className='text-center ml-2  flex items-center justify-center w-[90px] text-[20px] font-bold'>{steps[activeStep-1]}</div>
                 </div>
             </div>
-            <div className='flex justify-center items-center h-full w-[120px] text-[20px]'>{totalSteps() - activeStep} step left</div>
+            {isFinal && <div className='flex justify-center items-center h-full w-[120px] text-[20px]'>{totalSteps() - activeStep} step left</div>}
             
         </Box>
     )
