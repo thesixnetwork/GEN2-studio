@@ -16,7 +16,6 @@ export default function Newintregation9() {
                             <Stepper2 ActiveStep={6}></Stepper2>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
-
                     </div>
                     <div className='w-2/6 h-5/6 flex flex-col items-end  '>
                         <Conectwalet></Conectwalet>

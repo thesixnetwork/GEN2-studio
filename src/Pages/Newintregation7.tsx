@@ -36,19 +36,19 @@ const NewIntregation7 = () => {
 
   const [text, setText] = useState([
     {
-      name: "background",
-      dataType: "string",
-      traitType: "Background",
+      name: "",
+      dataType: "",
+      traitType: "",
     },
     {
-      name: "clothing",
-      dataType: "string",
-      traitType: "Clothing",
+      name: "",
+      dataType: "",
+      traitType: "",
     },
     {
-      name: "eyes",
-      dataType: "string",
-      traitType: "Eyes",
+      name: "",
+      dataType: "",
+      traitType: "",
     },
   ]);
 
@@ -94,9 +94,7 @@ const NewIntregation7 = () => {
     transition: "color 0.3s, border 0.3s",
     border: "2px solid white",
     cursor: "pointer",
-    "&:hover": {
-      opacity: "0.6",
-    },
+
   });
 
   const handleChange = (e, field, index) => {
@@ -140,6 +138,12 @@ const NewIntregation7 = () => {
     });
   };
 
+  const handleHelp = () => {
+    document.getElementById("0").style.zIndex = "50";
+    document.getElementById("delete2").style.zIndex = "50";
+    document.getElementById("plus").style.zIndex = "50";
+  }
+
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
@@ -149,25 +153,26 @@ const NewIntregation7 = () => {
               <Stepper2 ActiveStep={3}></Stepper2>
               <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
             </div>
-            <div className="w-full h-4/6 overflow-scroll flex justify-center relative">
-              <div className="grid-cols-3 grid gap-y-6 gap-x-12 p-14 absolute">
+            <div className="w-full h-[700px] overflow-scroll flex justify-center relative">
+              <div className="grid-cols-3 grid gap-y-6 gap-x-6 py-5  absolute">
                 {text.map((item, index) => (
                   <div
+                    id={index}
                     key={index}
-                    className="w-[227px] h-[157px] bg-transparent border-solid border border-white-600 rounded-xl p-3 "
+                    className="w-[267px] h-[187px] bg-transparent border-solid border  border-white-600 rounded-xl px-3 pt-5 pb-5 "
                   >
-                    <div className="w-[24px] h-[24px] rounded-full ml-[185px] mt-[-7px] absolute">
-                      <Delete onClick={() => handleDeleteAttribute(index)} />
+                    <div id={`delete${index}`} className="w-[0px] h-[0px] rounded-full ml-[226px] mt-[-18px] absolute hover:scale-105 duration-500 ">
+                      <Delete className=" hover:border-red-600 hover:text-red-600" onClick={() => handleDeleteAttribute(index)} />
                     </div>
-                    <div className="h-full flex flex-col justify-center">
-                      <div className="flex text-[14px]">
+                    <div className="h-full flex flex-col  justify-between">
+                      <div className="flex text-[14px] items-center">
                         Name :&ensp;{" "}
                         <input
                           type="text"
                           value={item.name}
                           onChange={(e) => handleChange(e, "name", index)}
-                          className="flex text-[14px] bg-transparent w-[140px] outline-none border-b border-transparent focus:border-sky-400	duration-300 underline focus:no-underline"
-                          placeholder="add name here"
+                          className='bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1  focus:outline-none focus:scale-105 duration-1000 w-[160px]'
+                          placeholder="Add attribute name"
                         />
                       </div>
                       <div className="flex text-[14px] items-center">
@@ -184,10 +189,12 @@ const NewIntregation7 = () => {
                           <option value={"string"}>String</option>
                         </NativeSelect> */}
                         <Select
+                          sx={{ color: "rgb(209 213 219)" }}
+                          className='bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-105 duration-1000 w-auto h-[40px] text-red-400'
                           displayEmpty
                           value={item.dataType}
                           onChange={(e) => handleChange(e, "dataType", index)}
-                          input={<WhiteNativeSelect />}
+                          input={<WhiteNativeSelect></WhiteNativeSelect>}
                           id={item.name}
                           renderValue={(selected) => {
                             if (
@@ -213,14 +220,14 @@ const NewIntregation7 = () => {
                           placeholder="add data type here"
                         /> */}
                       </div>
-                      <div className="flex text-[14px]">
+                      <div className="flex text-[14px] items-center">
                         Trait type :&ensp;{" "}
                         <input
                           type="text"
                           value={item.traitType}
                           onChange={(e) => handleChange(e, "traitType", index)}
-                          className="flex text-[14px] bg-transparent h-[21px] w-20 outline-none border-b border-transparent focus:border-sky-400 duration-300 underline focus:no-underline"
-                          placeholder="add trait type here"
+                          className='bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1  focus:outline-none focus:scale-105 duration-1000 w-[140px]'
+                          placeholder="Add trait type here"
                         />
                       </div>
                     </div>
@@ -237,23 +244,17 @@ const NewIntregation7 = () => {
                   </div>
                 ))}
                 <div
+                  id="plus"
                   onClick={handleCreateAttribute}
-                  className="w-[227px] h-[157px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300 "
+                  className="w-[257px] h-[187px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300 "
                 >
                   <img src={Add}></img>
                 </div>
               </div>
             </div>
-            <div className="h-1/6 flex items-center	justify-center ">
-              <NextPageButton
-                TextTitle="Next"
-                BorderRadius={0}
-                NextPage="/newintregation/8"
-                FontSize={40}
-              ></NextPageButton>
-            </div>
+
           </div>
-          <div className="w-2/6 h-5/6 flex flex-col items-end  ">
+          <div className="w-2/6 h-5/6 flex flex-col items-end justify-between  ">
             <Conectwalet></Conectwalet>
             <div className="w-[266px] h-[414px] border-[1px] border-white rounded-xl mt-[30px] flex flex-col items-center py-[10px] z-10">
               <p className="text-[24px] w-[231px] font-bold text-white text-center">
@@ -270,17 +271,26 @@ const NewIntregation7 = () => {
                 value and change to your proper design.
               </p>
             </div>
+            <div id="img1" className=" w-full mt-[80px] flex items-center	justify-center ">
+              <NextPageButton
+                TextTitle="Next"
+                BorderRadius={0}
+                NextPage="/newintregation/8"
+                FontSize={40}
+              ></NextPageButton>
+            </div>
             <div
               onClick={() => {
                 setIsShow(!isShow);
+                handleHelp();
               }}
-              className="absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
+              className="absolute text-[50px] mt-[730px] mr-[20px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
             >
               ?
             </div>
           </div>
         </div>
-        {isShow ? (
+        {isShow && (
           <div
             className="absolute duration-500"
             onClick={() => {
@@ -302,16 +312,12 @@ const NewIntregation7 = () => {
                 src={logo2}
                 className="mt-[50px] mr-[200px] rotate-[160deg] "
               ></img>
-              <p className="ml-[-190px] mt-[-185px] absolute w-full font-bold">
+              <p className="ml-[0px] mt-[0px] absolute w-full font-bold">
                 Click to delete component
               </p>
             </div>
           </div>
-        ) : (
-          <div></div>
         )}
-
-        {error ? <Darkbg></Darkbg> : null}
       </div>
     </div>
   );

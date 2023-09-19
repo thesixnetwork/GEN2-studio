@@ -5,6 +5,8 @@ import './index.css'
 import { ChakraProvider } from '@chakra-ui/react'
 import {store} from './store/store.ts'
 import { Provider } from 'react-redux'
+import ReactFlow from 'reactflow';
+import 'reactflow/dist/style.css';
 
 import {
   createBrowserRouter,
@@ -28,6 +30,7 @@ import Test3 from './component/TEST/Test3.tsx'
 import Newintregation8 from './Pages/Newintregation8.tsx'
 import Newintregation9 from './Pages/Newintregation9.tsx'
 import Newintregation10 from './Pages/Newintregation10.tsx'
+import Newintregation11 from './Pages/Newintregation11.tsx'
 
 const router = createBrowserRouter([
   {
@@ -89,6 +92,14 @@ const router = createBrowserRouter([
   {
     path: "/newintregation/10",
     element: <Newintregation10></Newintregation10>
+  },
+  {
+    path: "/newintregation/10",
+    element: <Newintregation10></Newintregation10>
+  },
+  {
+    path: "/newintregation/11",
+    element: <Newintregation11></Newintregation11>
   },
 ]);
 
