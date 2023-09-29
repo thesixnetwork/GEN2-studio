@@ -22,7 +22,7 @@ import ReactFlow, {
     useStoreApi
 } from 'reactflow';
 import 'reactflow/dist/base.css';
-import Flowbar from '../component/Flowbar';
+import Flowbar from '../component/ReactFlow/Flowbar';
 import Customnode from '../component/node/Customnode';
 const nodeTypes = {
     custom: Customnode,
