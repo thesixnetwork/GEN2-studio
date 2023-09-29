@@ -16,7 +16,7 @@ const NewIntregation5 = () => {
     const myElementRef = useRef(null);
 
     const navigate = useNavigate();
-    
+
     const [isError, setisError] = useState(false)
     const [isError1, setisError1] = useState(false)
     const [isError2, setisError2] = useState(false)
@@ -25,8 +25,8 @@ const NewIntregation5 = () => {
     const [isSpace1, setisSpace1] = useState(false)
     const [isSpace2, setisSpace2] = useState(false)
 
-    const [placeHolderColor1,setplaceHolderColor1] = useState("white")
-    const [placeHolderColor2,setplaceHolderColor2] = useState("gray")
+    const [placeHolderColor1, setplaceHolderColor1] = useState("white")
+    const [placeHolderColor2, setplaceHolderColor2] = useState("gray")
 
     const handleInputschemaCode = (e) => {
         setschemaCode(e.target.value);
@@ -41,8 +41,7 @@ const NewIntregation5 = () => {
 
     const handleReset = () => {
         setisError(false);
-        setisError2(false);
-        setisError1(false);
+
         setisSpace1(false);
         setisSpace2(false);
         setplaceHolderColor1("white")
@@ -60,9 +59,9 @@ const NewIntregation5 = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if ((schemaCode.length > 0 && !schemaCode.includes(' ')) && (collectionName.length > 0 && !collectionName.includes(' '))) {             
-                navigate('/newintregation/6');
-                console.log('1')
+        if ((schemaCode.length > 0 && !schemaCode.includes(' ')) && (collectionName.length > 0 && !collectionName.includes(' '))) {
+            navigate('/newintregation/6');
+            console.log('1')
         }
         // if(schemaCode.includes(' ') || collectionName.includes(' ')  ){
         //     console.log('SPACEBARrrrrrrrrrrrrrrrrrr')
@@ -90,11 +89,11 @@ const NewIntregation5 = () => {
             console.log('4')
         }
         console.log('submit success')
-        if(schemaCode.includes(' ')){
+        if (schemaCode.includes(' ')) {
             setisSpace1(true)
         }
-        if(collectionName.includes(' ')){
-            setisSpace2(true)  
+        if (collectionName.includes(' ')) {
+            setisSpace2(true)
         }
     };
     return (
@@ -130,8 +129,8 @@ const NewIntregation5 = () => {
                                 }}
                             >NEXT</Button>
                             {/* </Link> */}
-                            
-                            
+
+
 
                         </form>
                         <div className=' w-full flex justify-start  '>
@@ -156,10 +155,11 @@ const NewIntregation5 = () => {
                     <div className='absolute duration-500' onClick={handleReset}>
                         <Darkbg ></Darkbg>
                         <AlertCard BG={1} ML={250} MT={-150} Width={300} Height={150} heaDer="Error" detailsText="This code has already been taken or include space , empthy text."  ></AlertCard>
-                        {isError1 && <RedAleart Height={20} Width={120} Rotate={90} ML={145} MT={-147} detailsText={!isSpace1 ? "Require" : "Inclued Space"} ></RedAleart>}
-                        {isError2 && <RedAleart Height={20} Width={120} Rotate={90} ML={145} MT={36} detailsText={!isSpace2 ? "Require" : "Inclued Space"}></RedAleart> }
+
                     </div>
                 }
+                {isError1 && <RedAleart Height={20} Width={120} Rotate={90} ML={420} MT={-277} detailsText={!isSpace1 ? "Required" : "Inclued Space"} ></RedAleart>}
+                {isError2 && <RedAleart Height={20} Width={120} Rotate={90} ML={420} MT={90} detailsText={!isSpace2 ? "Required" : "Inclued Space"}></RedAleart>}
             </div>
         </div>
     )

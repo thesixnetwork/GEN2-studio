@@ -4,12 +4,14 @@ import App from './App.tsx'
 import './index.css'
 import { ChakraProvider } from '@chakra-ui/react'
 import {store} from './store/store.ts'
-import { Provider } from 'react-redux'
+import { Provider, useSelector } from 'react-redux'
 import ReactFlow from 'reactflow';
 import 'reactflow/dist/style.css';
+import { walletcounterSelector } from './store/slices/walletcounterSlice.ts'
 
 import {
   createBrowserRouter,
+  Route,
   RouterProvider,
 } from "react-router-dom";
 import Connect from './Pages/Connect.tsx'
@@ -29,8 +31,18 @@ import Test2 from './component/TEST/Test2.tsx'
 import Test3 from './component/TEST/Test3.tsx'
 import Newintregation8 from './Pages/Newintregation8.tsx'
 import Newintregation9 from './Pages/Newintregation9.tsx'
-import Newintregation10 from './Pages/Newintregation10.tsx'
-import Newintregation11 from './Pages/Newintregation11.tsx'
+import Newintregationb from './Pages/Newintregationb.tsx'
+import Newintregationb1 from './Pages/Newintregationb1.tsx'
+import Newintregationb2 from './Pages/Newintregationb2.tsx'
+import Newintregationb3 from './Pages/Newintregationb3.tsx'
+
+import CollisionDetectionFlow from './component/TEST/CollisionDetectionFlow.tsx'
+import Newintregationb4 from './Pages/Newintregationb4.tsx'
+import Newintregationb2copy from './Pages/Newintregationb2copy.tsx'
+
+const user = false ;
+
+
 
 const router = createBrowserRouter([
   {
@@ -90,17 +102,30 @@ const router = createBrowserRouter([
     element: <Newintregation9></Newintregation9>
   },
   {
-    path: "/newintregation/10",
-    element: <Newintregation10></Newintregation10>
+    path: "/newintregation/beginer",
+    element: <Newintregationb></Newintregationb>
   },
   {
-    path: "/newintregation/10",
-    element: <Newintregation10></Newintregation10>
+    path: "/newintregation/beginer/1",
+    element: <Newintregationb1></Newintregationb1>
   },
   {
-    path: "/newintregation/11",
-    element: <Newintregation11></Newintregation11>
+    path: "/newintregation/beginer/2",
+    element: <Newintregationb2></Newintregationb2>
   },
+  {
+    path: "/newintregation/beginer/3",
+    element: <Newintregationb3></Newintregationb3>
+  },
+  {
+    path: "/newintregation/beginer/4",
+    element: <Newintregationb4></Newintregationb4>
+  },
+  {
+    path: "testflow",
+    element: <Newintregationb2copy></Newintregationb2copy>
+  },
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

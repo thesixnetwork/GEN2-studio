@@ -1,23 +1,16 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import Page1 from "./Page1";
-import Page2 from "./Page2";
-import AttributeBox from "../AttributeBox"
+import React from 'react'
+import WhiteBox from '../WhiteBox'
 
-type Props = {};
+type Props = {}
 
-export default function test3({}: Props) {
-
-  const Jojo = () => {
-    alert("1")
-  }
-
-
-
+export default function Test3({}: Props) {
   return (
-    <div className=" w-full h-full bg-gradient-to-r from-red-500 to-orange-500 absolute flex justify-center items-center">
-    
+    <div className='w-full h-full absolute bg-gray-800'>
+      <WhiteBox 
+      Title='What is your level of programming experience?'
+      DeTail='The user interface of the page will be tailored to your programming experience. Based on your selection, whether you are a beginner, intermediate, or a developer, we will customize the interface to provide you with the most suitable tools and features that align with your level of experience.'
+      Height={500}
+      ></WhiteBox>
     </div>
-    
-  );
+  )
 }

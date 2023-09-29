@@ -4,9 +4,16 @@ import Stepper2 from '../component/Stepper2';
 import Darkbg from '../component/Alert/Darkbg';
 import Box from '../component/Box';
 
+import Add from "../pic/Group 40.png";
+import { useNavigate } from 'react-router-dom';
+import NormalButton from '../component/NormalButton';
+import Help from '../component/Alert/Help';
+import EnterBox from '../component/EnterBox copy';
+
 
 export default function Newintregation9() {
     const [isShow, setIsShow] = React.useState(false);
+    const navigate = useNavigate();
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
@@ -16,14 +23,36 @@ export default function Newintregation9() {
                             <Stepper2 ActiveStep={6}></Stepper2>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
+                        <div className='w-full h-[500px] flex flex-col justify-between items-center mt-[30px]'>
+                            <div className=''>
+                                <EnterBox Height={280} Width={931} detailsText={'Enter your “Action” name'} ML={0} MT={0}></EnterBox>
+                            </div>
+                            <div className='mt-[0]'>
+                                <NormalButton TextTitle="SAVE" BorderRadius={0} FontSize={24}></NormalButton>
+                            </div>
+                        </div>
                     </div>
-                    <div className='w-2/6 h-5/6 flex flex-col items-end  '>
+                    <div className='w-2/6 h-[full] flex flex-col items-center justify-between  '>
                         <Conectwalet></Conectwalet>
                         <Box Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it'></Box>
                         <Box Title='Description' DeTail='To clarify what is the action mean'></Box>
                         <Box Title='Parameters' DeTail='Some action might require parameter to perform it'></Box>
                         <Box Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></Box>
-                        <div onClick={() => { setIsShow(!isShow) }} className='absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500'>?</div>
+
+                        <div className='flex w-full  justify-between items-end px-2  '>
+                            <div  >
+                                <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={24}></NormalButton>
+                            </div>
+                            <div  >
+                                <NormalButton TextTitle="NEXT" BorderRadius={0} FontSize={24}></NormalButton>
+                            </div>
+                            <div onClick={() => { setIsShow(!isShow) }}>
+                                <Help></Help>
+                            </div>
+                        </div>
+
+
+
                     </div>
                 </div>
                 {isShow &&

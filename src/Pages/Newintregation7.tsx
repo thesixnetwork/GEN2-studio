@@ -1,148 +1,169 @@
-import React, { useEffect } from "react";
-import { Button } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ClearIcon from "@mui/icons-material/Clear";
-import logo1 from "../pic/trash-bin_5028066 1.png";
-import logo2 from "../pic/Vector 4.png";
-import logo3 from "../pic/Vector 7.png";
-import Delete from "../pic/Group 27.png";
+import React, { useEffect, useState } from "react";
+import { Tooltip } from "@mui/material";
+
 import Add from "../pic/Group 40.png";
 
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import AlertCard from "./Alert/AlertCard";
-import NextPageButton from "../component/NextPageButton";
+import AlertCard from "../component/Alert/AlertCard";
+
 import Swal from "sweetalert2";
-import RedAleart from "../component/Alert/RedAleart";
-
-import { useState } from "react";
-
-import {
-  Select,
-  styled,
-  InputBase,
-  MenuItem,
-  NativeSelect,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
+import AttributeBox from "../component/AttributeBox";
+import NormalButton from "../component/NormalButton";
+import { useNavigate } from "react-router-dom";
 
 const NewIntregation7 = () => {
+
   const [isShow, setIsShow] = useState(false);
-
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("Not Availible");
-
+  const [save, setSave] = useState(false);
+  const navigate = useNavigate();
   const [text, setText] = useState([
     {
       name: "",
       dataType: "",
       traitType: "",
+      Error: "",
+
     },
     {
       name: "",
       dataType: "",
       traitType: "",
+      Error: "",
     },
     {
       name: "",
       dataType: "",
       traitType: "",
+      Error: "",
     },
+
   ]);
 
-  const checkError = (text) => {
-    const nameSet = new Set();
 
-    for (const item of text) {
-      if (nameSet.has(item.name)) {
-        setError(true);
-        setErrorMessage("Name Duplicate");
+
+
+
+  const searchError = () => {
+    for (var i = 0; i < text.length; i++) {
+      if (text[i].Error === "F") {
+        document.getElementById(i).scrollIntoView({ behavior: 'smooth' });
+        break
       }
-      if (item.name.includes(" ")) {
-        setError(true);
-        setErrorMessage("Have Space");
-      }
-      if (
-        item.name.includes(null) ||
-        item.dataType.includes(null) ||
-        item.traitType.includes(null)
-      ) {
-        setError(true);
-        setErrorMessage("Can't be empty");
-      }
-      nameSet.add(item.name);
     }
+  }
+
+  const checkALLError = () => {
+    console.log("before", text)
+    text.filter((item) => console.log("=item=", item.Error))
+    const allErrorsAreT = text.every((item) => item.Error === 'T');
+    console.log("after", text)
+    console.log(allErrorsAreT)
+    if (text.every((item) => item.Error === 'T')) {
+      navigate('/newintregation/8')
+      console.log('All errors are T. Do something...');
+    } else {
+      // Not all Error properties are 'T'
+      console.log('Not all errors are T.');
+    }
+  }
+
+  const LoadingCheckErro = () => {
+    let timerInterval
+    Swal.fire({
+      title: 'Loading ...',
+      html: 'I will close in <b></b> milliseconds.',
+      timer: 500,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading()
+        const b = Swal.getHtmlContainer().querySelector('b')
+        timerInterval = setInterval(() => {
+          b.textContent = Swal.getTimerLeft()
+        }, 100)
+      },
+      willClose: () => {
+        clearInterval(timerInterval)
+      }
+    }).then((result) => {
+      /* Read more about handling dismissals below */
+      if (result.dismiss === Swal.DismissReason.timer) {
+        console.log('I was closed by the timer')
+      }
+    })
+
+  }
+  const handleSave = () => {
+    setSave(true);
+    searchError()
+    setTimeout(() => {
+      checkALLError()
+      setMessage('Delayed message');
+    }, 500);
+    LoadingCheckErro()
   };
 
-  // useEffect(() => {
-  //   checkError(text);
-  // }, [text]);
 
-  const WhiteNativeSelect = styled(InputBase)(({ theme }) => ({
-    color: "white",
-    textDecoration: "underline",
-    fontSize: 14,
-    "& svg": {
-      fill: "white",
-    },
-  }));
-
-  const Delete = styled(ClearIcon)({
-    borderRadius: "16px",
-    transition: "color 0.3s, border 0.3s",
-    border: "2px solid white",
-    cursor: "pointer",
-
-  });
-
-  const handleChange = (e, field, index) => {
-    const updatedText = [...text];
-    updatedText[index][field] = e.target.value;
-    setText(updatedText);
-  };
 
   const handleCreateAttribute = () => {
     const newAttribute = {
       name: "",
       dataType: "",
       traitType: "",
+      Error: "F",
     };
 
     setText([...text, newAttribute]);
-    console.log(text);
+
   };
 
-  const handleDeleteAttribute = (index) => {
-    const updatedText = [...text.slice(0, index), ...text.slice(index + 1)];
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          icon: "success",
-          title: "Your token attribute has been deleted.",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(() => {
-          setText(updatedText);
-        });
-      }
-    });
-  };
 
+  const [helpStep, sethelpStep] = useState(0)
   const handleHelp = () => {
-    document.getElementById("0").style.zIndex = "50";
-    document.getElementById("delete2").style.zIndex = "50";
-    document.getElementById("plus").style.zIndex = "50";
-  }
+    const element0 = document.getElementById("0");
+    const elementDelete2 = document.getElementById("delete2");
+    const elementPlus = document.getElementById("plus");
+
+    if (element0 && elementDelete2 && elementPlus) {
+      element0.style.zIndex = "0";
+      elementDelete2.style.zIndex = "0";
+      elementPlus.style.zIndex = "0";
+
+      console.log(helpStep);
+      sethelpStep(helpStep + 1);
+    }
+  };
+
+  useEffect(() => {
+    document.getElementById("plus").style.zIndex = "0";
+    document.getElementById("delete2").style.zIndex = "0";
+    document.getElementById("0").style.zIndex = "0";
+    if (helpStep === 1) {
+      document.getElementById("0").style.zIndex = "50";
+      document.getElementById("0").scrollIntoView({ behavior: 'smooth' });
+    } else if (helpStep === 2) {
+      document.getElementById("delete2").style.zIndex = "50";
+      document.getElementById("delete2").scrollIntoView({ behavior: 'smooth' });
+    } else if (helpStep === 3) {
+      document.getElementById("plus").style.zIndex = "50";
+      document.getElementById("plus").scrollIntoView({ behavior: 'smooth' });
+
+    } else if (helpStep === 5) {
+      setIsShow(false)
+      sethelpStep(0)
+    }
+
+  }, [helpStep]);
+
+  const handleClickScroll = () => {
+    const element = document.getElementById('10');
+    if (element) {
+      // 👇 Will scroll smoothly to the top of the next section
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
 
   return (
     <div className="w-full flex justify-center ">
@@ -153,110 +174,54 @@ const NewIntregation7 = () => {
               <Stepper2 ActiveStep={3}></Stepper2>
               <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
             </div>
-            <div className="w-full h-[700px] overflow-scroll flex justify-center relative">
-              <div className="grid-cols-3 grid gap-y-6 gap-x-6 py-5  absolute">
+            <div className="w-full h-[700px] overflow-scroll flex  justify-start relative">
+              <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
                 {text.map((item, index) => (
-                  <div
-                    id={index}
+                  <AttributeBox
+                    Title={["abc", "123", "Y/N"]}
+                    Name={item.name}
+                    DataType={item.dataType}
+                    TraitType={item.traitType}
+                    Value={null}
+                    text={text}
+                    setText={setText}
                     key={index}
-                    className="w-[267px] h-[187px] bg-transparent border-solid border  border-white-600 rounded-xl px-3 pt-5 pb-5 "
-                  >
-                    <div id={`delete${index}`} className="w-[0px] h-[0px] rounded-full ml-[226px] mt-[-18px] absolute hover:scale-105 duration-500 ">
-                      <Delete className=" hover:border-red-600 hover:text-red-600" onClick={() => handleDeleteAttribute(index)} />
-                    </div>
-                    <div className="h-full flex flex-col  justify-between">
-                      <div className="flex text-[14px] items-center">
-                        Name :&ensp;{" "}
-                        <input
-                          type="text"
-                          value={item.name}
-                          onChange={(e) => handleChange(e, "name", index)}
-                          className='bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1  focus:outline-none focus:scale-105 duration-1000 w-[160px]'
-                          placeholder="Add attribute name"
-                        />
-                      </div>
-                      <div className="flex text-[14px] items-center">
-                        Data type :&ensp;{" "}
-                        {/* <NativeSelect
-                          defaultValue={30}
-                          value={item.dataType}
-                          onChange={(e) => handleChange(e, "dataType", index)}
-                          input={<WhiteNativeSelect />}
-                          id={item.name}
-                        >
-                          <option value={"boolean"}>Boolean</option>
-                          <option value={"number"}>Number</option>
-                          <option value={"string"}>String</option>
-                        </NativeSelect> */}
-                        <Select
-                          sx={{ color: "rgb(209 213 219)" }}
-                          className='bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-105 duration-1000 w-auto h-[40px] text-red-400'
-                          displayEmpty
-                          value={item.dataType}
-                          onChange={(e) => handleChange(e, "dataType", index)}
-                          input={<WhiteNativeSelect></WhiteNativeSelect>}
-                          id={item.name}
-                          renderValue={(selected) => {
-                            if (
-                              selected !== "boolean" &&
-                              selected !== "number" &&
-                              selected !== "string"
-                            ) {
-                              return "Select Type";
-                            } else {
-                              return selected;
-                            }
-                          }}
-                        >
-                          <MenuItem value={"boolean"}>boolean</MenuItem>
-                          <MenuItem value={"number"}>number</MenuItem>
-                          <MenuItem value={"string"}>string</MenuItem>
-                        </Select>
-                        {/* <Select
-                          type="text"
-                          value={item.dataType}
-                          onChange={(e) => handleChange(e, "dataType", index)}
-                          className="flex text-[14px] bg-transparent h-[21px] w-20 outline-none border-b border-transparent focus:border-sky-400 duration-300 underline focus:no-underline"
-                          placeholder="add data type here"
-                        /> */}
-                      </div>
-                      <div className="flex text-[14px] items-center">
-                        Trait type :&ensp;{" "}
-                        <input
-                          type="text"
-                          value={item.traitType}
-                          onChange={(e) => handleChange(e, "traitType", index)}
-                          className='bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1  focus:outline-none focus:scale-105 duration-1000 w-[140px]'
-                          placeholder="Add trait type here"
-                        />
-                      </div>
-                    </div>
-                    {error ? (
-                      <RedAleart
-                        Height={20}
-                        Width={150}
-                        Rotate={90}
-                        ML={151}
-                        MT={-76}
-                        detailsText={errorMessage}
-                      />
-                    ) : null}
-                  </div>
+                    index={index}
+                    save={save}
+                    setSave={setSave}
+                    isShow={isShow}
+                    setIsShow={setIsShow}
+                    helpStep={helpStep}
+                  // Enum={Enum}
+                  // setEnum={setEnum}
+                  />
                 ))}
                 <div
                   id="plus"
                   onClick={handleCreateAttribute}
-                  className="w-[257px] h-[187px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300 "
+                  className="w-[267px] h-[187px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
                 >
                   <img src={Add}></img>
+                  {isShow && helpStep === 3 && (
+                    <div className="">
+                      <AlertCard
+                        BG={1}
+                        ML={130}
+                        MT={-70}
+                        Width={266}
+                        Height={140}
+                        heaDer={`Add attributes`}
+                        detailsText="You can add more attributes than the original on your origin base uri if you want"
+                      ></AlertCard>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-
           </div>
           <div className="w-2/6 h-5/6 flex flex-col items-end justify-between  ">
             <Conectwalet></Conectwalet>
-            <div className="w-[266px] h-[414px] border-[1px] border-white rounded-xl mt-[30px] flex flex-col items-center py-[10px] z-10">
+            <div className={`w-[266px] h-[414px] border-[1px] border-white rounded-xl mt-[30px] flex flex-col items-center py-[10px] z-${helpStep === 4 && "10"}`}>
               <p className="text-[24px] w-[231px] font-bold text-white text-center">
                 Origin Token Attributes
               </p>
@@ -271,23 +236,29 @@ const NewIntregation7 = () => {
                 value and change to your proper design.
               </p>
             </div>
-            <div id="img1" className=" w-full mt-[80px] flex items-center	justify-center ">
-              <NextPageButton
-                TextTitle="Next"
-                BorderRadius={0}
-                NextPage="/newintregation/8"
-                FontSize={40}
-              ></NextPageButton>
-            </div>
             <div
-              onClick={() => {
-                setIsShow(!isShow);
-                handleHelp();
-              }}
-              className="absolute text-[50px] mt-[730px] mr-[20px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
+
+              className=" w-full mt-[20px] flex items-center justify-between px-2 "
             >
-              ?
+              <div onClick={handleClickScroll} >
+                <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={32}></NormalButton>
+              </div>
+              <div onClick={handleSave} >
+                <NormalButton TextTitle="NEXT" BorderRadius={0} FontSize={32}></NormalButton>
+              </div>
+
             </div>
+            <Tooltip title={"help"}>
+              <div
+                onClick={() => {
+                  setIsShow(true);
+                  handleHelp();
+                }}
+                className=" z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[730px] mr-[20px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
+              >
+                ?
+              </div>
+            </Tooltip>
           </div>
         </div>
         {isShow && (
@@ -295,27 +266,11 @@ const NewIntregation7 = () => {
             className="absolute duration-500"
             onClick={() => {
               setIsShow(!isShow);
+              sethelpStep(0)
             }}
           >
             <Darkbg></Darkbg>
-            <div className="absolute mt-[140px] ml-[-350px] z-20">
-              <img
-                src={logo3}
-                className="mt-[80px] mr-[150px] rotate-[160deg] "
-              ></img>
-              <p className="ml-[300px] mt-[-60px] absolute w-full font-bold">
-                Double Click to edit
-              </p>
-            </div>
-            <div className="absolute mt-[0px] ml-[-430px] z-20">
-              <img
-                src={logo2}
-                className="mt-[50px] mr-[200px] rotate-[160deg] "
-              ></img>
-              <p className="ml-[0px] mt-[0px] absolute w-full font-bold">
-                Click to delete component
-              </p>
-            </div>
+
           </div>
         )}
       </div>

@@ -5,6 +5,7 @@ import Goblackbutton from '../pic/Back.png'
 import { Button } from '@mui/material'
 import { Link } from 'react-router-dom'
 import GobackButton from '../component/GobackButton'
+import WhiteBox from '../component/WhiteBox'
 
 const NewIntregation2 = () => {
     return (
@@ -26,7 +27,14 @@ const NewIntregation2 = () => {
                                 <img src={logo1} className='absolute mt-[120px] mr-[80px] scale-75'></img>
                             </div>
                         </div>
+                        <WhiteBox
+                            Width={450}
+                            Title={''}
+                            DeTail={'Data Layer - NFT Gen 2 is designed to empower existing NFTs for various business applications. Its dynamic attributes can be modified on the blockchain with permission, bridging real-world businesses and blockchain technology. It allows for the creation of NFTs that can serve as membership cards, event tickets, health tags for hospitality, and much more. If you want to explore further, please visit NFT Gen 2 for additional information.'}
+                            Height={300}
+                            TitleSize={0}>
 
+                        </WhiteBox>
                         <div className='w-[770px] h-[223px] border-[1px] border-white rounded-xl mt-[100px] flex flex-col justify-center items-center p-[10px] text-white mb-[40px] '>
                             <p>Data Layer - NFT Gen 2 is designed to empower existing NFTs for various business applications. Its dynamic attributes can be modified on the blockchain with permission, bridging real-world businesses and blockchain technology. It allows for the creation of NFTs that can serve as membership cards, event tickets, health tags for hospitality, and much more. If you want to explore further, please visit NFT Gen 2 for additional information.</p>
                         </div>
@@ -34,10 +42,12 @@ const NewIntregation2 = () => {
                     </div>
                     <div className='flex justify-between items-center flex-col'>
                         <Conectwalet></Conectwalet>
-                        <div className='w-[266px] h-[284px] border-[1px] border-white rounded-xl  flex flex-col items-center p-[10px]  '>
-                            <p className='text-[20px] w-[231px] font-bold text-white'>About  Data Layer - NFT Gen 2</p>
-                            <p className='text-[16px] w-[216px]  text-white pt-[20px]'>Briefly explain about NFT Gen 2, first data layer in SIX Protocol</p>
-                        </div>
+                        <WhiteBox
+                            TitleSize={20}
+                            Title={'About Data Layer - NFT Gen 2'}
+                            DeTail={'Briefly explain about NFT Gen 2, first data layer in SIX Protocol'}
+                            Height={300}>
+                        </WhiteBox>
                         <Link to={`/newintregation/3`}>
                             <Button variant="outlined"
                                 style={{

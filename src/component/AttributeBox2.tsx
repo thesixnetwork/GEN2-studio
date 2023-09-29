@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Select, MenuItem, styled, InputBase } from "@mui/material";
 import Swal from "sweetalert2";
 import ClearIcon from "@mui/icons-material/Clear";
-import RedAleart from "../component/Alert/RedAleart";
+import RedAleart from "./Alert/RedAleart";
 import ReactDOM from "react-dom";
 import { set, useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -18,10 +18,10 @@ interface MyComponentProps {
     TraitType: string;
     Value: string | null;
     index: number;
-    text: Array<{ name: string; dataType: string; traitType: string }>;
+    text: Array<{ name: string; dataType: string; traitType: string; value: string }>;
     setText: React.Dispatch<
         React.SetStateAction<
-            Array<{ name: string; dataType: string; traitType: string }>
+            Array<{ name: string; dataType: string; traitType: string; value: string }>
         >
     >;
     isShow: boolean;
@@ -190,8 +190,6 @@ export default function AttributeBox(props: MyComponentProps) {
 
 
     const CheckErrorI = async (e) => {
-
-
         setPartI(false)
         if (!e.target.value) {
             setErrorMessage("Not Availible")
@@ -214,7 +212,6 @@ export default function AttributeBox(props: MyComponentProps) {
             setErrorMessage("Uppercase")
             setIser(true)
         }
-
         else {
             setIser(false)
             setPartI(true)
@@ -223,29 +220,27 @@ export default function AttributeBox(props: MyComponentProps) {
     }
     const checkErrorII = (e) => {
         if (!e.target.value) {
-
             setErrorMessage("Not Availible")
+            setIser(true)
+        }
+        else if (containsSpace(e.target.value)) {
+            setErrorMessage("Space")
             setIser(true)
         }
         else {
             setIser(false)
         }
-
     }
 
     const checkErrorIII = async () => {
         await setPartII(false)
-
         if (props.text[props.index].dataType === "") {
             setErrorMessage("Need datatype")
             setIser(true)
         } else {
             setIser(false)
             setPartII(true)
-
-
         }
-
     }
 
     const SavecheckErrorIII = async () => {
@@ -259,21 +254,22 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(false)
             setPartII(true)
             // console.log("partII",partII)
-
         }
-
     }
 
     const SavecheckErrorII = (str) => {
         setIser(false)
         if (!str) {
-            //("11111111")
             setErrorMessage("Not Availible")
+            setIser(true)
+        }
+        else if (containsSpace(str)) {
+            setErrorMessage("Space")
             setIser(true)
         }
         else {
             setIser(false)
-            return(true)
+            return (true)
         }
 
     }
@@ -359,7 +355,7 @@ export default function AttributeBox(props: MyComponentProps) {
     useEffect(() => {
         if (props.save) {
             fetchError()
-            searchError()
+            // searchError()
         }
         props.setSave(false);
     }, [props.save]);
@@ -378,11 +374,19 @@ export default function AttributeBox(props: MyComponentProps) {
             //.log("partII",partII)
             if (partII) {
                 SavecheckErrorII(props.text[props.index].traitType)
-                if (SavecheckErrorII(props.text[props.index].traitType)) {
-                    document.getElementById(props.index).style.zIndex = "0";
-                    const updatedText = [...props.text];
-                    updatedText[props.index]["Error"] = "T";
-                    props.setText(updatedText);  
+                if (SavecheckErrorII(props.text[props.index].traitType)){
+                    SavecheckErrorII(props.text[props.index].value)
+                    console.log("COCO:",SavecheckErrorII(props.text[props.index].value))
+                    if (SavecheckErrorII(props.text[props.index].value)) {
+                        document.getElementById(props.index).style.zIndex = "0";
+                        const updatedText = [...props.text];
+                        updatedText[props.index]["Error"] = "T";
+                        props.setText(updatedText);
+                    }
+                    else {
+                        document.getElementById(props.index).style.zIndex = "50";
+                        props.setIsShow(true)
+                    }
                 }
                 else {
                     document.getElementById(props.index).style.zIndex = "50";
@@ -398,8 +402,6 @@ export default function AttributeBox(props: MyComponentProps) {
             document.getElementById(props.index).style.zIndex = "50";
             props.setIsShow(true)
         }
-
-
 
 
         // props.setEnum(0)
@@ -459,7 +461,7 @@ export default function AttributeBox(props: MyComponentProps) {
     };
 
     return (
-        <div id={`${props.index}`} className="w-[267px] h-[187px] bg-transparent border-solid border border-white-600 rounded-xl px-3 pt-5 pb-5">
+        <div id={`${props.index}`} className="w-[267px] h-[227px] bg-transparent border-solid border border-white-600 rounded-xl px-3 pt-5 pb-5">
             <div
                 id={`delete${props.index}`}
                 className="w-[0px] h-[0px] rounded-full ml-[226px] mt-[-18px] absolute hover:scale-105 duration-500 "
@@ -494,7 +496,7 @@ export default function AttributeBox(props: MyComponentProps) {
                         onChange={async (e) => {
                             await handleChange(e, "name");
                             await CheckErrorI(e);
-                            
+
                         }}
                         // onBlur={() => { fetchError() }}
                         className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[160px]"
@@ -539,25 +541,28 @@ export default function AttributeBox(props: MyComponentProps) {
                         value={props.TraitType}
                         onChange={(e) => {
                             handleChange(e, "traitType")
-                            checkErrorII(e)
+                            SavecheckErrorII(props.text[props.index].traitType)
                         }}
                         // onBlur={fetchError}
                         className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
                         placeholder="Add trait type here"
                     />
                 </div>
-                {props.Value !== undefined && props.Value !== null ? (
-                    <div className="flex text-[14px] items-center">
-                        Value :&ensp;{" "}
-                        <input
-                            type="text"
-                            value={props.Value}
-                            onChange={(e) => handleChange(e, "traitType")}
-                            className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
-                            placeholder="Add trait type here"
-                        />
-                    </div>
-                ) : null}
+                <div className="flex text-[14px] items-center">
+                    Value :&ensp;{" "}
+                    <input
+                        type="text"
+                        // value={props.Value}
+                        onChange={(e) => {
+                            handleChange(e, "value")
+                            SavecheckErrorII(props.text[props.index].value)
+                        }}
+                        // onBlur={fetchError}
+                        className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
+                        placeholder="Add trait type here"
+                    />
+                </div>
+
             </div>
             {iser &&
                 <RedAleart
