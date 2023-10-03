@@ -98,7 +98,6 @@ export class Tree {
             this.nodes.push(newNode);
             this.nodeMap.set(node.id, newNode);
         }
-
         this.root = this.findRoot();
         this.generateTree();
     }
@@ -257,14 +256,14 @@ export const drawTree = async(nodes:Node[],tree:Tree,node: TreeNode, x: number, 
     const nodesMap = _.keyBy(nodes,'id')
 
     if(node.id===tree.root.id) {
-        console.log("ROOT",node.id)
+        // console.log("ROOT",node.id)
 
     }
 
     return new Promise(async (resolve) => {
         const newBox = createBox(node,tree,x, y, node.name,node.treeLevel!)
 
-        console.log("newBox",newBox,node.id)
+        // console.log("newBox",newBox,node.id)
 
         if(!newBox.result) {
             resolve(newBox)
@@ -302,11 +301,11 @@ export const drawTree = async(nodes:Node[],tree:Tree,node: TreeNode, x: number, 
                         while(!drawStatus) {
                                 const drawResult = await drawTree(nodes,tree,child, updatedX +pX, pY)
                                 drawStatus = drawResult.result
-                                console.log("======-drawStatus",drawStatus)
+                                // console.log("======-drawStatus",drawStatus)
                 
                                 if(!drawStatus) {
                                     updatedX += (drawResult.maxX! - (updatedX +pX)) + (GRID_WIDTH*2)
-                                    console.log("updatedX",updatedX)
+                                    // console.log("updatedX",updatedX)
                                 }
                              
                         }
@@ -316,7 +315,7 @@ export const drawTree = async(nodes:Node[],tree:Tree,node: TreeNode, x: number, 
                 // }
                 if(updatedX!=x) {
                     node.setX(updatedX)
-                    console.log("update X",node.id,node.getPos().x,x)
+                    // console.log("update X",node.id,node.getPos().x,x)
                 }
             }
         }

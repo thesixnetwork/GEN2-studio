@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import Box from "../component/Box";
+import NormalButton from "../component/NormalButton";
 import { useState, DragEvent, useRef } from "react";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -15,17 +15,17 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   Controls,
-  NodeOrigin,
-  Background,
-  BackgroundVariant,
   MiniMap,
-  useStoreApi,
+  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/base.css";
-
+import { Factory } from "../function/convertMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Flowbar";
 import Customnode from "../component/node/Customnode";
 import inputNode from "../component/ReactFlow/CustomNode/InputNode";
+
+import SyntaxHighlighter from "react-syntax-highlighter";
+import docco from "react-syntax-highlighter/dist/esm/styles/hljs/docco";
 
 import {
   Tree,
@@ -46,7 +46,7 @@ const initialNodes: Node[] = [
     position: { x: 0, y: 0 },
     draggable: false,
     data: {
-      showType: "testnos",
+      showType: "addNode",
       id: "1",
       parentNode: "root",
       label: { x: 0, y: 0 },
@@ -54,12 +54,7 @@ const initialNodes: Node[] = [
   },
 ];
 
-const onDragOver = (event: DragEvent) => {
-  event.preventDefault();
-  event.dataTransfer.dropEffect = "move";
-};
-
-let id = 1;
+let id = 2;
 
 const getId = () => `${id++}`;
 
@@ -67,16 +62,7 @@ const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
-const nodeOrigin: NodeOrigin = [0.5, 0.5];
-
 const BasicFlow = () => {
-  const store = useStoreApi();
-  const {
-    height,
-    width,
-    transform: [transformX, transformY, zoomLevel],
-  } = store.getState();
-
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -84,8 +70,19 @@ const BasicFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
+  const [metaData, setMetaData] = useState("please add item");
+  const { setCenter } = useReactFlow();
 
   const [redraw, setRedraw] = useState(false);
+
+  const focusNode = (node) => {
+    const x = node.position.x + node.width / 2;
+    const y = node.position.y + node.height / 2;
+    const zoom = 1;
+
+
+    setCenter(x, y, { zoom, duration: 1000 });
+  };
 
   const onConnect = (params: Connection | Edge) =>
     setEdges((eds) => addEdge(params, eds));
@@ -96,20 +93,157 @@ const BasicFlow = () => {
     event.dataTransfer.dropEffect = "move";
   };
 
+  const resetNode = () => {
+    setNodes({
+      id: "1",
+      type: "customInputNode",
+      position: { x: 0, y: 0 },
+      draggable: false,
+      data: {
+        showType: "addNode",
+        id: "1",
+        parentNode: "root",
+        label: { x: 0, y: 0 },
+      },
+    },);
+    console.log(nodes[0])
+    focusNode(nodes[0])
+  };
+
+  const getDataFromNode = () => {
+    const tempArr: string[] = [];
+    nodes.forEach((node) => {
+      tempArr.push(node.data);
+    });
+
+    const transformData = (data, id) => {
+      // loop nodes
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < nodes.length; j++) {
+          if (
+            nodes[i].data.parentNode === nodes[j].data.parentNode &&
+            nodes[i].data.showType === "attributeNode" &&
+            nodes[j].data.showType === "valueNode"
+          ) {
+            nodes[j].data.dataType = nodes[i].data.dataType;
+          }
+
+          if (
+            (nodes[i].id === nodes[j].data.parentNode &&
+              nodes[i].data.showType === "equalNode") ||
+            nodes[i].data.showType === "notEqualNode" ||
+            nodes[i].data.showType === "moreThanNode" ||
+            nodes[i].data.showType === "lessThanNode" ||
+            nodes[i].data.showType === "moreThanAndEqualNode" ||
+            (nodes[i].data.showType === "lessThanAndEqualNode" &&
+              nodes[j].data.showType === "valueNode")
+          ) {
+            nodes[i].data.dataType = nodes[j].data.dataType;
+          }
+        }
+      }
+      const node = data.find((item) => item.id === id);
+      if (!node) return null;
+
+      const result = {};
+
+      if (node.showType === "andNode" || node.showType === "orNode") {
+        result.type = "condition_oper";
+        result.value = node.showType === "andNode" ? "AND" : "OR";
+      } else if (
+        node.showType === "equalNode" ||
+        node.showType === "notEqualNode" ||
+        node.showType === "moreThanNode" ||
+        node.showType === "moreThanAndEqualNode" ||
+        node.showType === "lessThan" ||
+        node.showType === "lessThanAndEqualNode"
+      ) {
+        result.type =
+          node.dataType === "number"
+            ? "number_compare_oper"
+            : node.dataType === "float"
+            ? "float_compare_oper"
+            : node.dataType === "boolean"
+            ? "boolean_compare_oper"
+            : "string_compare_oper";
+        result.value =
+          node.value === "equal"
+            ? "=="
+            : node.value === "morethan"
+            ? ">"
+            : node.value === "morethanandequal"
+            ? ">="
+            : node.value === "lessthan"
+            ? "<"
+            : node.value === "lessthanandequal"
+            ? "<="
+            : "!=";
+      } else if (node.showType === "attributeNode") {
+        result.type = "meta_function";
+        if (node.dataType === "boolean") {
+          result.functionName = "meta.GetBoolean";
+        } else if (node.dataType === "string") {
+          result.functionName = "meta.GetString";
+        } else if (node.dataType === "number") {
+          result.functionName = "meta.GetNumber";
+        } else if (node.dataType === "float") {
+          result.functionName = "meta.GetFloat";
+        }
+        result.attributeName = {
+          type: "constant",
+          dataType: "string",
+          value: node.value,
+        };
+      } else if (node.showType === "valueNode") {
+        result.type = "constant";
+        result.dataType = node.dataType;
+        result.value =
+          node.dataType === "number"
+            ? parseInt(node.value)
+            : node.dataType === "float"
+            ? parseFloat(node.value)
+            : node.dataType === "boolean"
+            ? node.value === "true"
+            : node.value;
+      } else {
+        result.type = "addNode";
+      }
+
+      const leftNode = data.find(
+        (item) => item.parentNode === id && item.id !== id
+      );
+      if (leftNode) {
+        result.left = transformData(data, leftNode.id);
+      }
+
+      const rightNode = data.find(
+        (item) => item.parentNode === id && item.id !== leftNode?.id
+      );
+      if (rightNode) {
+        result.right = transformData(data, rightNode.id);
+      }
+
+      return result;
+    };
+
+    const generateObject = transformData(tempArr, "1");
+    console.log(generateObject);
+    const object = Factory.createObject(generateObject).toString();
+    console.log(object);
+    setMetaData(object);
+  };
+
   const onDrop = async (event: DragEvent) => {
     event.preventDefault();
-
+    let nodeOnDrop;
     if (reactFlowInstance) {
       const type = event.dataTransfer.getData("application/reactflow");
-
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
 
       const mousePosition = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
-
-      console.log(mousePosition);
 
       const isInsideLength = (position, startX, startY, width, height) => {
         const halfWidth = width / 2;
@@ -124,9 +258,6 @@ const BasicFlow = () => {
 
       const updateNode = (node, type) => {
         let updatedNode;
-
-        const findLevel = Math.floor(node.position.y / 2 / NODE_HEIGHT) + 1;
-
         if (type === "orNode") {
           updatedNode = {
             ...node,
@@ -247,13 +378,12 @@ const BasicFlow = () => {
           };
         }
 
+        nodeOnDrop = node;
         return updatedNode;
       };
 
       let updatedNodes = [];
       let dropped = false;
-
-      let updatedEdges = edges;
 
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
@@ -292,11 +422,11 @@ const BasicFlow = () => {
 
               const leftNode = {
                 id: leftId,
-                position: positionRightNode,
+                position: positionLeftNode,
                 type: "customInputNode",
                 data: {
-                  showType: "testnos",
-                  label: positionRightNode,
+                  showType: "addNode",
+                  label: positionLeftNode,
                   id: leftId,
                   parentNode: node.id,
                 },
@@ -304,11 +434,11 @@ const BasicFlow = () => {
               };
               const rightNode = {
                 id: rightId,
-                position: positionLeftNode,
+                position: positionRightNode,
                 type: "customInputNode",
                 data: {
-                  showType: "testnos",
-                  label: positionLeftNode,
+                  showType: "addNode",
+                  label: positionRightNode,
                   id: rightId,
                   parentNode: node.id,
                 },
@@ -321,16 +451,19 @@ const BasicFlow = () => {
                   source: node.id,
                   target: rightId,
                   animated: true,
+                  style: { stroke: "#FFAA9A" },
+                  type: "smoothstep",
                 },
                 {
                   id: `e1-${leftId}`,
                   source: node.id,
                   target: leftId,
                   animated: true,
+                  style: { stroke: "#FFAA9A" },
+                  type: "smoothstep",
                 },
               ];
 
-              console.log("update fking node", updateNode(node, type));
               if (
                 updateNode(node, type).data.showType !== "paramNode" &&
                 updateNode(node, type).data.showType !== "attributeNode" &&
@@ -351,30 +484,27 @@ const BasicFlow = () => {
       if (dropped) {
         setNodes(updatedNodes);
         setRedraw(true);
+        console.log("node on drop", nodeOnDrop);
+        focusNode(nodeOnDrop);
       }
     }
   };
 
   useEffect(() => {
     if (redraw && nodes.length > 0) {
-      console.log("Redraw");
       setRedraw(false);
       const treeNodes = generateTreeFromReactFlow(nodes, edges);
-      console.log("treeNodes", treeNodes);
 
       const tree = new Tree(treeNodes);
       tree.root.setBox(nodes.filter((node) => node.id === tree.root.id)[0]);
       // log tree
-      console.log(tree);
 
       const redrawTree = async () => {
         await drawTree(nodes, tree, tree.root, 0, 0);
 
-        console.log("tree", tree.getAllBoxes());
-
         // adjust parents
         await adjustParents(tree);
-        await adjustTreePosition(tree, 10);
+        await adjustTreePosition(tree, 0);
         setUpdatedNodes(tree.getAllBoxes());
       };
       redrawTree();
@@ -386,11 +516,13 @@ const BasicFlow = () => {
   }, [updatedNodes]);
 
   useEffect(() => {
-    console.log(transformX, transformY);
-  }, [transformX]);
+    if (nodes.length > 2) {
+      getDataFromNode();
+    }
+  }, [nodes]);
 
   return (
-    <div style={{ height: 500, width: 931 }}>
+    <div style={{ height: 500, width: 1200 }}>
       <div ref={reactFlowWrapper} className="h-full">
         <ReactFlow
           nodes={nodes}
@@ -402,19 +534,23 @@ const BasicFlow = () => {
           onInit={onInit}
           onDrop={onDrop}
           onDragOver={onDragOver}
-          nodeOrigin={nodeOrigin}
+          fitView
         >
-          <Background
-            id="2"
-            gap={15}
-            offset={1}
-            color="#ccc"
-            variant={BackgroundVariant.Lines}
-          />
-          <Background variant={BackgroundVariant.Dots} />
           <Controls />
           <MiniMap></MiniMap>
         </ReactFlow>
+      </div>
+      <SyntaxHighlighter language="javascript">{metaData}</SyntaxHighlighter>
+      <div>
+        <div className="flex">
+          <div onClick={getDataFromNode}>
+            <NormalButton
+              TextTitle="SAVE"
+              BorderRadius={0}
+              FontSize={32}
+            ></NormalButton>
+            </div>
+        </div>
       </div>
     </div>
   );
@@ -422,47 +558,24 @@ const BasicFlow = () => {
 
 export default function Newintregationb1() {
   const [isShow, setIsShow] = React.useState(false);
+
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div>
-              <Stepper2 ActiveStep={6}></Stepper2>
-              <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
+            <div className="flex ">
+              <div>
+                <Stepper2 ActiveStep={6}></Stepper2>
+                <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
+              </div>
+              <Conectwalet></Conectwalet>
             </div>
-            <div className="mt-[20px]">
+            <div className="mt-[20px] flex flex-col items-center justify-center">
               <ReactFlowProvider>
                 <Flowbar></Flowbar>
                 <BasicFlow />
               </ReactFlowProvider>
-            </div>
-          </div>
-          <div className="w-2/6 h-5/6 flex flex-col items-end  ">
-            <Conectwalet></Conectwalet>
-            <Box
-              Title="Action Name"
-              DeTail="Name of action must be unique. And will call action by its name when we want to perform it"
-            ></Box>
-            <Box
-              Title="Description"
-              DeTail="To clarify what is the action mean"
-            ></Box>
-            <Box
-              Title="Parameters"
-              DeTail="Some action might require parameter to perform it"
-            ></Box>
-            <Box
-              Title="Condition and Action"
-              DeTail="Action can be perform while condition is met. When condition is unmet tx will be error"
-            ></Box>
-            <div
-              onClick={() => {
-                setIsShow(!isShow);
-              }}
-              className="absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
-            >
-              ?
             </div>
           </div>
         </div>

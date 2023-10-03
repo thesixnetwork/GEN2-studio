@@ -40,7 +40,7 @@ function inputNode  ({ data }) {
       ) : data.showType === "paramNode" ? (
         <DynamicNode description='P' data={data}/>
       ) :(
-        <DynamicNode description='+' />
+        <DynamicNode description='+'/>
       )}
        {/* <div  
                 className="w-full p-2 rounded-full flex items-center justify-center border-2">

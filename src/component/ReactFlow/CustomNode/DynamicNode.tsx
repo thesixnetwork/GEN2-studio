@@ -37,7 +37,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     return (
         props.description === "V" ? (
             <div  
-                className={`w-full p-2 rounded-full flex items-center justify-center border-2
+                className={`w-full p-2 rounded-full flex items-center justify-center border-2 text-black
                 ${props.description === "V" ? 'bg-[#E8EFFF]' 
                 : props.description === "@" ? 'bg-[#D298DD]' 
                 : props.description === "P" ? 'bg-[#FFCE74]'
@@ -68,7 +68,7 @@ const DynamicNode = (props: CircleNodeProps) => {
                 <Handle type="target" position={Position.Top} />
                 <div className = 'flex items-center justify-center'>
                     <p className={`${hovered ? 'text-indigo-600 ' : 'text-gray-600'}`}> {props.description}:&nbsp; </p>
-                    <select id="" name="" form="" className='rounded-full' onChange={handleSelect}>
+                    <select id="" name="" form="" className='rounded-full text-black' onChange={handleSelect}>
                         <option value={JSON.stringify({ name: "point", dataType: "number" })}>point</option>
                         <option value={JSON.stringify({ name: "check_in", dataType: "boolean" })}>check_in</option>
                         <option value={JSON.stringify({ name: "score", dataType: "number" })}>score</option>
