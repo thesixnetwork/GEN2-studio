@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import AttributeBox from "../component/AttributeBox";
 import NormalButton from "../component/NormalButton";
 import { useNavigate } from "react-router-dom";
+import GobackButton from "../component/GobackButton";
 
 const NewIntregation7 = () => {
 
@@ -55,22 +56,13 @@ const NewIntregation7 = () => {
   }
 
   const checkALLError = () => {
-    console.log("before", text)
-    text.filter((item) => console.log("=item=", item.Error))
-    const allErrorsAreT = text.every((item) => item.Error === 'T');
-    console.log("after", text)
-    console.log(allErrorsAreT)
     if (text.every((item) => item.Error === 'T')) {
       navigate('/newintregation/8')
-      console.log('All errors are T. Do something...');
-    } else {
-      // Not all Error properties are 'T'
-      console.log('Not all errors are T.');
     }
   }
 
   const LoadingCheckErro = () => {
-    let timerInterval
+    let timerInterval = 500
     Swal.fire({
       title: 'Loading ...',
       html: 'I will close in <b></b> milliseconds.',
@@ -89,7 +81,7 @@ const NewIntregation7 = () => {
     }).then((result) => {
       /* Read more about handling dismissals below */
       if (result.dismiss === Swal.DismissReason.timer) {
-        console.log('I was closed by the timer')
+
       }
     })
 
@@ -99,7 +91,6 @@ const NewIntregation7 = () => {
     searchError()
     setTimeout(() => {
       checkALLError()
-      setMessage('Delayed message');
     }, 500);
     LoadingCheckErro()
   };
@@ -121,6 +112,7 @@ const NewIntregation7 = () => {
 
   const [helpStep, sethelpStep] = useState(0)
   const handleHelp = () => {
+    console.log(text)
     const element0 = document.getElementById("0");
     const elementDelete2 = document.getElementById("delete2");
     const elementPlus = document.getElementById("plus");
@@ -130,7 +122,7 @@ const NewIntregation7 = () => {
       elementDelete2.style.zIndex = "0";
       elementPlus.style.zIndex = "0";
 
-      console.log(helpStep);
+
       sethelpStep(helpStep + 1);
     }
   };
@@ -169,13 +161,13 @@ const NewIntregation7 = () => {
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
-          <div className="w-full h-full px-[20px]">
+          <div className="w-full h-full px-[20px] relative">
             <div>
               <Stepper2 ActiveStep={3}></Stepper2>
               <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
             </div>
-            <div className="w-full h-[700px] overflow-scroll flex  justify-start relative">
-              <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
+            <div className="w-full h-[80%] overflow-scroll flex  justify-start relative">
+              <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-3   absolute ">
                 {text.map((item, index) => (
                   <AttributeBox
                     Title={["abc", "123", "Y/N"]}
@@ -206,8 +198,8 @@ const NewIntregation7 = () => {
                     <div className="">
                       <AlertCard
                         BG={1}
-                        ML={130}
-                        MT={-70}
+                        ML={-0}
+                        MT={-240}
                         Width={266}
                         Height={140}
                         heaDer={`Add attributes`}
@@ -216,6 +208,11 @@ const NewIntregation7 = () => {
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+            <div className='  flex justify-start  absolute left-0 bottom-0 '>
+              <div className={``}>
+                <GobackButton BackPage='/newintregation/6'></GobackButton>
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { walletcounterSelector } from "../store/slices/walletcounterSlice";
 import Help from '../component/Alert/Help';
 import { Tooltip } from '@mui/material';
+import { getAccessTokenFromLocalStorage } from '../helpers/AuthService';
 
 const Connect = () => {
     //redux
@@ -16,12 +17,14 @@ const Connect = () => {
     const navigate = useNavigate();
 
     const [isShow, setIsShow] = React.useState(false);
+
+    
     React.useEffect(() => {
         if (walletcounterReducer.isloggin) {
             navigate('/')
         }
 
-    }, [walletcounterReducer.cosmosbalance]);
+    }, [walletcounterReducer.isloggin]);
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24 from-white to-[#7A8ED7]'>

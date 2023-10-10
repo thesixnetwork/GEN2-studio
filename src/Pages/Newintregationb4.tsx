@@ -2,7 +2,7 @@ import React from 'react'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2';
 import Darkbg from '../component/Alert/Darkbg';
-import Box from '../component/Box';
+import WhiteBox from '../component/WhiteBox';
 
 import Add from "../pic/Group 40.png";
 import { useNavigate } from 'react-router-dom';

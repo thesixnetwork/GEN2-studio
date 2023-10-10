@@ -32,21 +32,21 @@ export default function Newintregation8() {
             name: "",
             dataType: "",
             traitType: "",
-            value:"" ,
+            value: "",
             Error: "",
         },
         {
             name: "",
             dataType: "",
             traitType: "",
-            value:"" ,
+            value: "",
             Error: "",
         },
         {
             name: "",
             dataType: "",
             traitType: "",
-            value:"" ,
+            value: "",
             Error: "",
         },
 
@@ -150,6 +150,7 @@ export default function Newintregation8() {
         document.getElementById("plus").style.zIndex = "0";
         document.getElementById("delete2").style.zIndex = "0";
         document.getElementById("0").style.zIndex = "0";
+        document.getElementById("detail").style.zIndex = "0";
         if (helpStep === 1) {
             document.getElementById("0").style.zIndex = "50";
             document.getElementById("0").scrollIntoView({ behavior: 'smooth' });
@@ -159,6 +160,9 @@ export default function Newintregation8() {
         } else if (helpStep === 3) {
             document.getElementById("plus").style.zIndex = "50";
             document.getElementById("plus").scrollIntoView({ behavior: 'smooth' });
+        } else if (helpStep === 4) {
+            document.getElementById("detail").style.zIndex = "50";
+            document.getElementById("detail").scrollIntoView({ behavior: 'smooth' });
 
         } else if (helpStep === 5) {
             setIsShow(false)
@@ -202,7 +206,7 @@ export default function Newintregation8() {
                                         isShow={isShow}
                                         setIsShow={setIsShow}
                                         helpStep={helpStep}
-                                    
+
                                     />
                                 ))}
                                 <div
@@ -215,8 +219,8 @@ export default function Newintregation8() {
                                         <div className="">
                                             <AlertCard
                                                 BG={1}
-                                                ML={130}
-                                                MT={-70}
+                                                ML={-180}
+                                                MT={-300}
                                                 Width={266}
                                                 Height={140}
                                                 heaDer={`Add attributes`}
@@ -228,15 +232,15 @@ export default function Newintregation8() {
                             </div>
                         </div>
                     </div>
-                    <div className="w-2/6 h-5/6 flex flex-col items-end justify-between  ">
+                    <div className="w-2/6 h-5/6 flex flex-col items-end justify-between   ">
                         <Conectwalet></Conectwalet>
-                        <Box Title='Onchain Collection Attributes' DeTail='Onchain Collection attributes is the dynamic type of metadata which represent the global attribute of the schema. And every NFT Metadata will include these attributes and its value by default.
-
-These attributes can change base on action that we performed.&thinsp;
-
-If the name key of the Onchain attribute matches, the module will prioritize the Onchain attribute over the Origin Attribute.
- 
-  You can edit/add/ remove value of attributes by double click the value/ click + button and click x button  and change to your proper design.'></Box>
+                        <div id='detail' className='mt-[15px] w-[266px] h-auto border-[1px] border-white rounded-xl flex flex-col items-center py-[10px] px-1'>
+                            <p className='text-[24px] font-bold text-white text-center'>Onchain Collection Attributes</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;Onchain Collection attributes is the dynamic type of metadata which represent the global attribute of the schema. And every NFT Metadata will include these attributes and its value by default.</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;These attributes can change base on action that we performed.</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;If the name key of the Onchain attribute matches, the module will prioritize the Onchain attribute over the Origin Attribute.</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;You can edit/add/ remove value of attributes by double click the value/ click + button and click x button  and change to your proper design.</p>
+                        </div>
                         <div
 
                             className=" w-full mt-[20px] flex items-center justify-between px-2 "
@@ -255,7 +259,7 @@ If the name key of the Onchain attribute matches, the module will prioritize the
                                     setIsShow(true);
                                     handleHelp();
                                 }}
-                                className=" z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[730px] mr-[20px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
+                                className="z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[750px] mr-[5px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
                             >
                                 ?
                             </div>

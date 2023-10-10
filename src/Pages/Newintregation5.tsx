@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react'
-import { Button } from '@mui/material'
+import { useState, useRef, SetStateAction } from 'react'
+import { Button, CircularProgress } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2'
 import { Link, Navigate } from 'react-router-dom'
@@ -9,11 +9,60 @@ import RedAleart from '../component/Alert/RedAleart'
 import { useNavigate } from 'react-router-dom';
 import GobackButton from '../component/GobackButton'
 import NextPageButton from '../component/NextPageButton'
+import WhiteBox from '../component/WhiteBox'
+import InputBoxforNP5 from '../component/InputBoxforNP5'
+import BoxButton from '../component/BoxButton'
+import Help from '../component/Alert/Help'
+import axios from 'axios'
+//Redux
+import { useSelector } from "react-redux";
+import {
+    walletcounterSelector,
+    setAccess_token,
+    setRefresh_token,
+} from "../store/slices/walletcounterSlice";
+import { useAppDispatch } from "../store/store";
+import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from '../helpers/AuthService'
+import { ABCDE } from '../App'
+//Redux
 
 
 const NewIntregation5 = () => {
+    //Redux
+    const dispatch = useAppDispatch();
+    const walletcounterReducer = useSelector(walletcounterSelector);
 
-    const myElementRef = useRef(null);
+
+    const [text, setText] = useState([
+
+        {
+            Name: "Schema code",
+            placeholder: "sixnetwork.whalegate",
+            value: "",
+            require: true,
+            Error: false,
+        },
+        {
+            Name: "Collection name",
+            placeholder: "whalegate",
+            value: "",
+            require: false,
+            Error: true,
+        },
+        {
+            Name: "Description",
+            placeholder: "WhaleGate Gen2 NFT With SIX",
+            value: "",
+            require: false,
+            Error: true,
+        },
+
+    ]);
+
+    const [isLoading, setisLoading] = useState(false)
+    const [isValidate, setisValidate] = useState(false)
+
+    const [Next, setNext] = useState(false)
 
     const navigate = useNavigate();
 
@@ -24,14 +73,14 @@ const NewIntregation5 = () => {
     const [collectionName, setcollectionName] = useState('')
     const [isSpace1, setisSpace1] = useState(false)
     const [isSpace2, setisSpace2] = useState(false)
+    const [isDuplicateShemaCode,setisDuplicateShemaCode]=useState(false);
 
-    const [placeHolderColor1, setplaceHolderColor1] = useState("white")
-    const [placeHolderColor2, setplaceHolderColor2] = useState("gray")
 
     const handleInputschemaCode = (e) => {
         setschemaCode(e.target.value);
         console.log(e.target.value)
         handleReset()
+
     };
     const handleInputcollectionName = (e) => {
         setcollectionName(e.target.value);
@@ -41,7 +90,6 @@ const NewIntregation5 = () => {
 
     const handleReset = () => {
         setisError(false);
-
         setisSpace1(false);
         setisSpace2(false);
         setplaceHolderColor1("white")
@@ -96,70 +144,203 @@ const NewIntregation5 = () => {
             setisSpace2(true)
         }
     };
+
+    const handleFormsubmit = async () => {
+        const apiUrl = 'https://six-gen2-studio-backend-traffic-workers-oxdveggapq-as.a.run.app/schema/create_schema_info'; // Replace with your API endpoint
+        const requestData = {
+            "schema_name": `${text[0].value}`,
+            "status": "Draft",
+            "current_state": "1",
+            "description": `${text[2].value}`,
+            "collection_name": `${text[1].value}`,
+        };
+
+        axios.post(apiUrl, requestData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+                // Add any other headers your API requires
+            },
+        })
+            .then(response => {
+                console.log('API Response:', response.data);
+                console.log(requestData)
+                // You can handle the API response here
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // Handle errors here
+            });
+
+        // axios.get("https://six-gen2-studio-backend-api-gateway-1w6bfx2j.an.gateway.dev/api/helloworld", {
+        //     headers: {
+        //         // Add any headers your API requires for the GET request
+        //     },
+        // })
+        //     .then(response => {
+        //         console.log('API Response:', response);
+        //         // You can handle the API response here
+        //     })
+        //     .catch(error => {
+        //         console.error('API Error:', error);
+        //         // Handle errors here
+        //     });
+    }
+
+    //-------------------------------------------Refresh token test---------------------------------------------------//
+    // const handleFormsubmitI = async () => {
+    //     const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/auth/refreshToken'; // Replace with your API endpoint
+    //     const requestData = {
+    //         "refresh_token": `${getRefreshTokenFromLocalStorage()}`,
+    //     };
+    //     axios.post(apiUrl, requestData, {
+    //         headers: {
+    //             // Set the content type to JSON
+    //             'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+    //             // Add any other headers your API requires
+    //         },
+    //     })
+    //         .then(response => {
+    //             console.log('API Response from refresh :', response.data);
+    //             saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token)
+    //             const accessToken = getAccessTokenFromLocalStorage();
+    //             const refreshToken = getRefreshTokenFromLocalStorage();
+    //             console.log("New Access: ", accessToken)
+    //             console.log("New Refresh: ", refreshToken)
+    //         })
+    //         .catch(error => {
+    //             console.error('API Error:', error);
+    //             // Handle errors here
+    //         });
+    // }
+
+
+    const handleNext = () => {
+        setNext(true);
+        handleFormsubmit();
+        const allErrorsTrue = text.every(item => item.Error === true);
+
+        if (allErrorsTrue) {
+            // navigate('/newintregation/6')
+            console.log("All errors are true.");
+
+
+        } else {
+            console.log("Not all errors are true.");
+            setisError(true)
+        }
+
+    }
+
+    const FindSchemaCode = async () => {
+        const updatedText = [...text];
+        updatedText[0].duplicate = true;
+        setisLoading(true)
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/validate_schema_code'; // Replace with your API endpoint
+        console.log(text[0].value)
+        const params = {
+            schema_code: `${text[0].value}`,
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+        }
+
+        // Make a GET request with parameters
+        await axios.get(apiUrl, {
+            params: params, // Pass parameters as an object
+            headers: headers, // Pass headers as an object
+        })
+            .then((response) => {
+                // Handle successful response here
+                console.log('Response:', response.data);
+                if(!response.data.data.status){
+                    const updatedText = [...text];
+                    updatedText[0].duplicate = response.data.data.status ;
+                }
+                console.log(text)
+                setisValidate(true)
+            })
+            .catch((error) => {
+                // Handle errors here
+                console.error('Error:', error);
+            });
+        setisLoading(false)
+    }
+
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
-                    <div className='w-full h-full px-[20px] flex flex-col justify-between'>
-                        <div>
+                    <div className='w-full h-full flex flex-col justify-between'>
+                        <div className=''>
                             <div className='flex flex-rows justify-between'>
                                 <Stepper2 ActiveStep={1}></Stepper2>
                             </div>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
-                        <form onSubmit={handleSubmit} className=' flex flex-col justify-between items-center mt-[100px] h-4/6 '>
-                            <div id="img1" className=' w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-center z-10'>
-                                <p className='font-bold text-[24px] mr-10'>Schema code</p>
-                                <input onChange={handleInputschemaCode} onFocus={handleReset} type="text" placeholder="sixnetwork.whalegate" className={`placeholder-${placeHolderColor1}-600 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 z-50 focus:outline-none focus:scale-105 duration-1000`}></input>
-                                <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[630px] mb-[90px]'></div>
-                            </div>
-                            <div id="img2" className='w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-center z-10 '>
-                                <p className='font-bold text-[24px] mr-10'>Collection name</p>
-                                <input onChange={handleInputcollectionName} onFocus={handleReset} type="text" placeholder="WHALEGATE" className={`placeholder-${placeHolderColor2}-600 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-105 duration-1000`}></input>
-                                <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[630px] mb-[90px]'></div>
-                            </div>
-                            {/* <Link to={`/newintregation/6`} > */}
-                            <Button type='submit' variant="outlined"
-                                style={{
-                                    borderRadius: 0,
-                                    color: 'white',
-                                    borderColor: 'white',
-                                    padding: "10px 36px",
-                                    fontSize: "68px",
-                                }}
-                            >NEXT</Button>
-                            {/* </Link> */}
+                        <div className=' flex flex-col justify-between items-center py-[5%] h-4/6 relative '>
+                            {text.map((item, index) => (
+                                <InputBoxforNP5
+                                    Next={Next}
+                                    index={index}
+                                    text={text}
+                                    setisError={setisError}
+                                    isDuplicateShemaCode={isDuplicateShemaCode}
+                                    setisDuplicateShemaCode={setisDuplicateShemaCode}
+                                    FindSchemaCode={FindSchemaCode}
+                                >
+                                </InputBoxforNP5>
+                            ))}
+                            {isLoading &&
+                                <div className=' absolute ml-[52%] mt-[4%] scale-50'>
+                                    <CircularProgress className=" text-white" sx={{
+                                        width: 100,
+                                        color: 'white',
+                                    }}
+                                    ></CircularProgress>
+                                </div>
+                            }
 
 
-
-                        </form>
+                        </div>
                         <div className=' w-full flex justify-start  '>
-                            <div className={`scale-50`}>
+                            <div className={``}>
                                 <GobackButton BackPage='/newintregation/4'></GobackButton>
                             </div>
                         </div>
                     </div>
-                    <div className='w-2/6 h-5/6 flex flex-col items-end   '>
+                    <div className='h-5/6 flex flex-col items-end h-full   '>
                         <Conectwalet></Conectwalet>
-                        <div className='w-[266px] h-[414px] border-[1px] border-white rounded-xl mt-[30px] flex flex-col items-center py-[10px]  '>
-                            <p className='text-[24px] w-[231px] font-bold text-white'>Schema Code</p>
-                            <p className='text-[14px] w-[216px]  text-white pt-[10px]'>A schema code serves as an identifier for your Gen 2 NFT definition. It can be in a formatted or free-text format. In the case of a formatted code, the initial set of characters before the full stop (".") represents your organization code. This organization code is unique to you and enables you to create other schemas using the same code.</p>
+                        <WhiteBox
+                            Title={'Schema Code'}
+                            DeTail={'A schema code serves as an identifier for your Gen 2 NFT definition. It can be in a formatted or free-text format. In the case of a formatted code, the initial set of characters before the full stop (".") represents your organization code. This organization code is unique to you and enables you to create other schemas using the same code.'}
+                            Height={414} Width={266} TitleSize={20} DetailSize={15}>
+                        </WhiteBox>
+                        <WhiteBox
+                            Title={'Collection Name'}
+                            DeTail={'The term "Collection name" is exclusively used within the SIX Protocol Ecosystem (Gen2 Studio, SIX Scan, etc.) and does not refer to the actual collection name.'}
+                            Height={414} Width={266} TitleSize={20} DetailSize={15}>
+                        </WhiteBox>
+                        <div onClick={() => { handleNext(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
+                            <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
                         </div>
-                        <div className='w-[266px] h-[240px] border-[1px] border-white rounded-xl mt-[30px] flex flex-col items-center py-[15px]'>
-                            <p className='text-[24px] w-[231px] font-bold text-white'>Collection Name</p>
-                            <p className='text-[14px] w-[216px]  text-white pt-[20px]'>The term "Collection name" is exclusively used within the SIX Protocol Ecosystem (Gen2 Studio, SIX Scan, etc.) and does not refer to the actual collection name.</p>
+                  
+                        {/* <div onClick={() => { handleFormsubmitI(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
+                            <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT2'}></BoxButton>
+                        </div> */}
+                        <div className=' w-full h-full flex justify-end items-end '>
+                            <Help></Help>
                         </div>
                     </div>
                 </div>
                 {isError &&
                     <div className='absolute duration-500' onClick={handleReset}>
                         <Darkbg ></Darkbg>
-                        <AlertCard BG={1} ML={250} MT={-150} Width={300} Height={150} heaDer="Error" detailsText="This code has already been taken or include space , empthy text."  ></AlertCard>
-
+                        {/* <AlertCard BG={1} ML={250} MT={-150} Width={300} Height={150} heaDer="Error" detailsText="This code has already been taken or include space , empthy text."  ></AlertCard> */}
                     </div>
                 }
-                {isError1 && <RedAleart Height={20} Width={120} Rotate={90} ML={420} MT={-277} detailsText={!isSpace1 ? "Required" : "Inclued Space"} ></RedAleart>}
-                {isError2 && <RedAleart Height={20} Width={120} Rotate={90} ML={420} MT={90} detailsText={!isSpace2 ? "Required" : "Inclued Space"}></RedAleart>}
             </div>
         </div>
     )

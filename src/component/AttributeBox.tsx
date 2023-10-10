@@ -33,7 +33,6 @@ interface MyComponentProps {
         React.SetStateAction<Array<{ error: boolean; errorMessage: string }>>
     >;
     helpStep: number;
-
 }
 
 // interface MyComponentProps2 {
@@ -124,17 +123,13 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const handleChange = (e, field) => {
         const updatedText = [...props.text];
-        //(updatedText)
-        //(field)
-        //(e.target.value)
         updatedText[props.index][field] = e.target.value;
-        // //(updatedText)
         props.setText(updatedText);
         props.setIsShow(false)
     };
 
     const saveCheckErrorI = async (str) => {
-
+        console.log(str)
         setIser(false)
         setPartI(false)
         if (!str) {
@@ -166,20 +161,15 @@ export default function AttributeBox(props: MyComponentProps) {
             setPartI(true)
 
         }
-
-
     }
 
     function containsSame(str) {
-
         for (var i = 0; i <= props.text.length - 1; i++) {
             if ((i != props.index) && (str === props.text[i].name) && (props.text[i].name != "")) {
-
                 return true
                 break
             }
         }
-
     }
 
     // useEffect(() => {
@@ -190,8 +180,6 @@ export default function AttributeBox(props: MyComponentProps) {
 
 
     const CheckErrorI = async (e) => {
-
-
         setPartI(false)
         if (!e.target.value) {
             setErrorMessage("Not Availible")
@@ -250,15 +238,15 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const SavecheckErrorIII = async () => {
         await setPartII(false)
-        // console.log(props.text[props.index].dataType)
-        // console.log(props.text[props.index].dataType === "")
+        // //(props.text[props.index].dataType)
+        // //(props.text[props.index].dataType === "")
         if (props.text[props.index].dataType === "") {
             setErrorMessage("Need datatype")
             setIser(true)
         } else {
             setIser(false)
             setPartII(true)
-            // console.log("partII",partII)
+            // //("partII",partII)
 
         }
 
@@ -273,7 +261,7 @@ export default function AttributeBox(props: MyComponentProps) {
         }
         else {
             setIser(false)
-            return(true)
+            return (true)
         }
 
     }
@@ -348,7 +336,7 @@ export default function AttributeBox(props: MyComponentProps) {
     // };
 
     const searchError = () => {
-        // console.log(`name :${props.text[props.index].name}`)
+        // //(`name :${props.text[props.index].name}`)
         for (var i = 0; i <= props.text.length; i++) {
 
             // //.log(`dataType :${props.text[i].dataType}`)
@@ -364,14 +352,48 @@ export default function AttributeBox(props: MyComponentProps) {
         props.setSave(false);
     }, [props.save]);
 
-    const fetchError = async () => {
-        //.log(props.index)
-
+    const CheckT = async () => {
+        setPartI(false)
         const updatedText = [...props.text];
         updatedText[props.index]["Error"] = "F";
         props.setText(updatedText);
+        saveCheckErrorI(props.text[props.index].name);
+        if (partI) {
+            await SavecheckErrorIII()
+            //.log("partII",partII)
+            if (partII) {
+                SavecheckErrorII(props.text[props.index].traitType)
+                if (SavecheckErrorII(props.text[props.index].traitType)) {
+                    document.getElementById(props.index).style.zIndex = "0";
+                    const updatedText = [...props.text];
+                    updatedText[props.index]["Error"] = "T";
+                    props.setText(updatedText);
+                }
+                else {
 
-        await saveCheckErrorI(props.text[props.index].name);
+                }
+            }
+            else {
+
+            }
+        }
+        else {
+
+        }
+
+    }
+
+    const fetchError = async () => {
+        //.log(props.index)
+        setPartI(false)
+        const updatedText = [...props.text];
+        updatedText[props.index]["Error"] = "F";
+        props.setText(updatedText);
+        //(props.text[props.index].name)
+        //("B:", props.text)
+
+        saveCheckErrorI(props.text[props.index].name);
+
         //.log("partI",partI)
         if (partI) {
             await SavecheckErrorIII()
@@ -382,7 +404,7 @@ export default function AttributeBox(props: MyComponentProps) {
                     document.getElementById(props.index).style.zIndex = "0";
                     const updatedText = [...props.text];
                     updatedText[props.index]["Error"] = "T";
-                    props.setText(updatedText);  
+                    props.setText(updatedText);
                 }
                 else {
                     document.getElementById(props.index).style.zIndex = "50";
@@ -397,11 +419,9 @@ export default function AttributeBox(props: MyComponentProps) {
         else {
             document.getElementById(props.index).style.zIndex = "50";
             props.setIsShow(true)
+            setIser(true)
         }
-
-
-
-
+        //("A:", props.text)
         // props.setEnum(0)
     };
 
@@ -494,9 +514,10 @@ export default function AttributeBox(props: MyComponentProps) {
                         onChange={async (e) => {
                             await handleChange(e, "name");
                             await CheckErrorI(e);
-                            
+                            await CheckT();
+
                         }}
-                        // onBlur={() => { fetchError() }}
+                        onBlur={() => { CheckErrorI(e) }}
                         className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[160px]"
                         placeholder="Add attribute name"
                     />

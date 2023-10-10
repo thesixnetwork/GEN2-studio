@@ -11,7 +11,7 @@ export default function GobackButton(props: MyComponentProps) {
     return (
         <Tooltip title="Go back">
             <Link to={`${props.BackPage}`}>
-                <img width="90px" height="90px" src={Goblackbutton} className='hover:scale-125 duration-500 hover:opacity-70'></img>
+                <img width="50px" height="50px" src={Goblackbutton} className='hover:scale-125 duration-500 hover:opacity-70'></img>
             </Link>
         </Tooltip>
 

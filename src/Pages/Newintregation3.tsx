@@ -6,6 +6,7 @@ import GobackButton from '../component/GobackButton'
 import NextPageButton from '../component/NextPageButton'
 import { Tooltip } from '@mui/material'
 import Help from '../component/Alert/Help'
+import WhiteBox from '../component/WhiteBox'
 
 const NewIntregation3 = () => {
     const [isShow, setIsShow] = React.useState(true);
@@ -18,25 +19,31 @@ const NewIntregation3 = () => {
                         <Conectwalet ></Conectwalet>
                     </div>
                     <div className='w-[80%] h-full flex justify-between  pt-[200px]   '>
-                        <div className='w-[230px] h-[166px] border-[1px] border-white rounded-xl p-2 flex flex-col items-center  '>
-                            <p className='font-bold text-xl text-white'>This is information</p>
-                            <p className='text-white mt-6'>This is the content of the information</p>
+                        <div>
+                            <WhiteBox
+                                Title={'This is information'}
+                                DeTail={'This is the content of the information'}
+                                Height={136} Width={230} TitleSize={20} DetailSize={15}>
+                            </WhiteBox>
                             {isShow &&
-                                <div>
-                                    <img src={logo1} className='mt-[80px] mr-[150px]'></img>
+                                <div className=' absolute'>
+                                    <img src={logo1} className='mt-[-10px] mr-[200px]'></img>
                                     <p className='ml-[80px]'>This is info box</p>
                                 </div>
                             }
                         </div>
+
                         <div className='w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-center  '>
                             <p className='font-bold text-[24px] mr-10'>Field Title / Label</p>
                             <input type="text" placeholder="textfield input" className='bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 z-50 focus:outline-none focus:scale-105 duration-1000  '></input>
                             <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[630px] mb-[90px]'></div>
+                            <div className='mt-[20%] ml-[-200px] absolute z-50'>
+                                <NextPageButton TextTitle='GO FOR IT' NextPage='/newintregation/4' FontSize={50} BorderRadius={0}  ></NextPageButton>
+                            </div>
+
                             {isShow &&
                                 <div className='absolute mt-[300px]'>
-                                    <div className='mt-[210px] ml-[-200px] absolute'>
-                                        <NextPageButton TextTitle='GO FOR IT' NextPage='/newintregation/4' FontSize={50} BorderRadius={0}  ></NextPageButton>
-                                    </div>
+
                                     <img src={logo1} className='mt-[280px] mr-[150px] -rotate-[75deg] '></img>
                                     <p className='ml-[160px] mt-[-95px] absolute '>This is button</p>
                                 </div>
@@ -60,8 +67,8 @@ const NewIntregation3 = () => {
                             }
                         </div>
                     </div>
-                    <div className='flex justify-between items-center w-full px-2'>
-                        <div className='scale-50'>
+                    <div className='flex justify-between items-center w-full '>
+                        <div className=''>
                             <GobackButton BackPage='/newintregation/2' ></GobackButton>
                         </div>
                         <div onClick={() => { setIsShow(!isShow) }} >

@@ -44,95 +44,11 @@ const user = false ;
 
 
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home></Home>,
-  },
-  {
-    path: "/connect",
-    element: <Connect></Connect>,
-  },
-  {
-    path: "/newintregation/1",
-    element: <NewIntregation1></NewIntregation1>,
-  },
-  {
-    path: "/newintregation/2",
-    element: <NewIntregation2></NewIntregation2>,
-  },
-  {
-    path: "/newintregation/3",
-    element: <NewIntregation3></NewIntregation3>,
-  },
-  {
-    path: "/newintregation/4",
-    element: <NewIntregation4></NewIntregation4>
-  },
-  {
-    path: "/newintregation/5",
-    element: <NewIntregation5></NewIntregation5>
-  },
-  {
-    path: "/newintregation/6",
-    element: <NewIntregation6></NewIntregation6>
-  },
-  {
-    path: "/newintregation/7",
-    element: <NewIntregation7></NewIntregation7>
-  },
-  {
-    path: "/test",
-    element: <Test></Test>
-  },
-  {
-    path: "/test2",
-    element: <Test2></Test2>
-  },
-  {
-    path: "/test3",
-    element: <Test3></Test3>
-  },
-  {
-    path: "/newintregation/8",
-    element: <Newintregation8></Newintregation8>
-  },
-  {
-    path: "/newintregation/9",
-    element: <Newintregation9></Newintregation9>
-  },
-  {
-    path: "/newintregation/beginer",
-    element: <Newintregationb></Newintregationb>
-  },
-  {
-    path: "/newintregation/beginer/1",
-    element: <Newintregationb1></Newintregationb1>
-  },
-  {
-    path: "/newintregation/beginer/2",
-    element: <Newintregationb2></Newintregationb2>
-  },
-  {
-    path: "/newintregation/beginer/3",
-    element: <Newintregationb3></Newintregationb3>
-  },
-  {
-    path: "/newintregation/beginer/4",
-    element: <Newintregationb4></Newintregationb4>
-  },
-  {
-    path: "testflow",
-    element: <Newintregationb2copy></Newintregationb2copy>
-  },
-
-]);
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
 
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+     <App/>
     </Provider>
   </React.StrictMode>,
 
