@@ -11,6 +11,7 @@ import logo9 from '../pic/SCR-25660710-nkmd 1.png'
 import logo10 from '../pic/klaytn-klay-logo 1.png'
 import Conectwalet from '../component/Connectwallet'
 import { Link } from 'react-router-dom'
+import WhiteBox from '../component/WhiteBox'
 
 const Home = () => {
     return (
@@ -53,18 +54,16 @@ const Home = () => {
                     </div>
                     <div className='w-2/6 h-full flex flex-col items-end  '>
                         <Conectwalet></Conectwalet>
-                        <div className='w-[266px] h-[314px] border-[1px] border-white rounded-xl mt-[200px] flex flex-col items-center py-[15px]  '>
-                            <p className='text-[24px] w-[231px] font-bold text-white'>Choose your collection</p>
-                            <p className='text-[16px] w-[216px]  text-white pt-[20px]'>Create new integration, modify existing draft or manage collection which already in production.</p>
+                        <div className=' mt-[70%]'>
+                            <WhiteBox
+                                Title={'Choose your collection'}
+                                DeTail={'Create new integration, modify existing draft or manage collection which already in production.'}
+                                Height={174} Width={266} TitleSize={20} DetailSize={15}>
+                            </WhiteBox>
                         </div>
-
                     </div>
-
                 </div>
-
-
             </div>
-
         </div>
     )
 }

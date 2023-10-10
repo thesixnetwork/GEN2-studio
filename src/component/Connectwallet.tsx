@@ -15,6 +15,7 @@ import {
   setisloggin,
   setAddress,
   setBalance,
+  setLoading,
 } from "../store/slices/walletcounterSlice";
 import { useAppDispatch } from "../store/store";
 import {
@@ -23,6 +24,11 @@ import {
   Skeleton,
   Tooltip,
 } from "@mui/material";
+import axios from 'axios'
+
+import { clearTokensFromLocalStorage, getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage, } from '../helpers/AuthService';
+import { ABCDE } from "../App";
+
 
 const Conectwalet = () => {
   //Redux
@@ -52,11 +58,12 @@ const Conectwalet = () => {
       text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
+      confirmButtonColor: '#7A8ED7',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, Logout '
     }).then((result) => {
       if (result.isConfirmed) {
+        clearTokensFromLocalStorage()
         Swal.fire(
           'Logout Complete!',
           'Your file has been deleted.',
@@ -66,16 +73,14 @@ const Conectwalet = () => {
         dispatch(setAddress(""));
         dispatch(setBalance(0));
         navigate("/connect")
-        
       }
     })
-
   };
 
   // Connect Keplr
   const buttonHandlerKeplrConnect = async () => {
     if (window.keplr) {
-      setisLoading(true);
+      dispatch(setLoading(true));
       // Unlock the wallet.
       await window.keplr.enable(chainId);
       // Use offlineSigner to get first wallet and public key.
@@ -83,7 +88,7 @@ const Conectwalet = () => {
       const offlineSigner = await window.getOfflineSigner(chainId);
       const keplrAccounts = await offlineSigner.getAccounts();
       // Set state value as first address.
-      console.log("KEPL ADREESS :" + keplrAccounts[0].address);
+      // console.log("KEPL ADREESS :" + keplrAccounts[0].address);
       dispatch(setAddress(keplrAccounts[0].address));
       setCosmosAddress(keplrAccounts[0].address);
     } else {
@@ -95,7 +100,6 @@ const Conectwalet = () => {
   const getKeplrBalance = async () => {
     // Use StargateClient and RPC because of its lightweight payloads and high performance.
     const client = await StargateClient.connect(rpcEndpoint);
-
     // Get balance as Coin.
     // Amount is the number of coins, while denom is the identifier of the coins.
     const balanceAsCoin = await client.getBalance(
@@ -103,11 +107,8 @@ const Conectwalet = () => {
       token
     );
     const balance = (parseInt(balanceAsCoin.amount) * 1) / exponent;
-
     // Set state values.
     dispatch(setBalance(balance.toFixed(2)));
-    dispatch(setisloggin(true));
-    setisLoading(false);
   };
 
   const getSignature = async () => {
@@ -119,8 +120,8 @@ const Conectwalet = () => {
           cosmosAddress,
           "My Message"
         );
-        console.log(signedMessage);
-        console.log(signedMessage.pub_key);
+        // console.log(signedMessage.signature);
+        // console.log(signedMessage.pub_key);
         const verified = await offlineSigner.keplr.verifyArbitrary(
           chainId,
           cosmosAddress,
@@ -144,19 +145,82 @@ const Conectwalet = () => {
       walletcounterReducer.isloggin && getKeplrBalance();
     }
     getSignature();
+    LoginApi();
   }, [cosmosAddress]);
 
-  useEffect(() => {
-    getKeplrBalance();
-  }, [walletcounterReducer.cosmosaddress]);
+  // useEffect(() => {
+  //   getKeplrBalance();
+  // }, [walletcounterReducer.cosmosaddress]);
+
+  const LoginApi = async () => {
+    const offlineSigner = window.getOfflineSigner(chainId);
+    const keplrAccounts = await offlineSigner.getAccounts();
+    // console.log("KEPL ADREESS :" + keplrAccounts[0].address);
+    // console.log("gust")
+    const signedMessage = await offlineSigner.keplr.signArbitrary(
+      chainId,
+      cosmosAddress,
+      "My Message"
+    );
+    console.log(signedMessage)
+    // DB request
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/auth/login'; // Replace with your API endpoint
+    const requestData = {
+      "channel": "Keply",
+      "ssoID": `${keplrAccounts[0].address}`,
+      "messagge": "My Message",
+      "signature": `${signedMessage.signature}`
+    };
+    console.log(signedMessage)
+    await  axios.post(apiUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json', // Set the content type to JSON
+        // Add any other headers your API requires
+      },
+    })
+      .then(response => {
+        // console.log('API Response:', response.data);
+        // console.log('Access_token:', response.data.data.access_token);
+        // console.log('Refresh_token:', response.data.data.refresh_token);
+        // console.log('Refresh_token:', response.data.data.id);
+        saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token);
+        const accessToken = getAccessTokenFromLocalStorage();
+        const refreshToken = getRefreshTokenFromLocalStorage();
+        console.log("Access-: ", accessToken)
+        console.log("Refresh: ", refreshToken)
+        // You can handle the API response here
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+      });
+
+    dispatch(setLoading(false));
+    dispatch(setisloggin(true))
+  }
 
   return (
-    <div className="w-[266px] h-[95px] border-[1px] border-white rounded-xl px-[12px] py-[9px]">
-      {isLoading ? (
-        <CircularProgress className="mt-[15px] ml-[100px]"></CircularProgress>
+    <div className="w-[266px] h-[95px] border-[1px] border-white rounded-xl px-[12px] py-[9px] flex justify-center items-center">
+      {walletcounterReducer.loading ? (
+        <CircularProgress className=" text-white"   sx={{
+          width: 300,
+          color: 'white',
+        }}
+      ></CircularProgress>
       ) : (
         <div>
-          {walletcounterReducer.isloggin ? (
+          {(getAccessTokenFromLocalStorage() == null) ? (
+            <Tooltip title="Connect to keplr wallet">
+              <div className="flex justify-center items-center h-[80px]">
+                <p
+                  className="text-3xl text-white cursor-pointer hover:scale-105 duration-500"
+                  onClick={()=>{buttonHandlerKeplrConnect(); ABCDE();}}
+                >
+                  Connect Wallet
+                </p>
+              </div>
+            </Tooltip>
+          ) : (
             <div>
               <div className=" flex justify-between">
                 <p className=" text-[20px] ml-2  text-gray-200">
@@ -205,19 +269,8 @@ const Conectwalet = () => {
                 </div>
               </div>
             </div>
-          ) : (
-            <Tooltip title="Connect to keplr wallet">
-              <div className="flex justify-center items-center h-[80px]">
-                <p
-                  className="text-3xl text-white cursor-pointer hover:scale-105 duration-500"
-                  onClick={buttonHandlerKeplrConnect}
-                >
-                  Connect Wallet
-                </p>
-              </div>
-            </Tooltip>
-
-          )}
+          )
+          }
         </div>
       )}
     </div>

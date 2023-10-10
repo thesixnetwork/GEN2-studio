@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2';
 import Darkbg from '../component/Alert/Darkbg';
-import Box from '../component/Box';
+import WhiteBox from '../component/WhiteBox';
 import { useState, DragEvent } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ReactFlow, {
@@ -128,7 +128,7 @@ const BasicFlow = () => {
     );
 };
 
-export default function Newintregationb1() {
+export default function Newintregationb2() {
     const [isShow, setIsShow] = React.useState(false);
     return (
         <div className='w-full flex justify-center ' >
@@ -149,10 +149,10 @@ export default function Newintregationb1() {
                     </div>
                     <div className='w-2/6 h-5/6 flex flex-col items-end  '>
                         <Conectwalet></Conectwalet>
-                        <Box Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it'></Box>
-                        <Box Title='Description' DeTail='To clarify what is the action mean'></Box>
-                        <Box Title='Parameters' DeTail='Some action might require parameter to perform it'></Box>
-                        <Box Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></Box>
+                        <WhiteBox Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it'></WhiteBox>
+                        <WhiteBox Title='Description' DeTail='To clarify what is the action mean'></WhiteBox>
+                        <WhiteBox Title='Parameters' DeTail='Some action might require parameter to perform it'></WhiteBox>
+                        <WhiteBox Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></WhiteBox>
                         <div onClick={() => { setIsShow(!isShow) }} className='absolute text-[50px] mt-[750px] ml-[1150px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500'>?</div>
                     </div>
                 </div>

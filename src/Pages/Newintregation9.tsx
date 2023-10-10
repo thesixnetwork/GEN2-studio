@@ -24,21 +24,21 @@ const NewIntregation9 = () => {
             name: "",
             dataType: "",
             traitType: "",
-            value:"" ,
+            value: "",
             Error: "",
         },
         {
             name: "",
             dataType: "",
             traitType: "",
-            value:"" ,
+            value: "",
             Error: "",
         },
         {
             name: "",
             dataType: "",
             traitType: "",
-            value:"" ,
+            value: "",
             Error: "",
         },
 
@@ -225,20 +225,12 @@ const NewIntregation9 = () => {
                     </div>
                     <div className="w-2/6 h-5/6 flex flex-col items-end justify-between  ">
                         <Conectwalet></Conectwalet>
-                        <div className={`w-[266px] h-[414px] border-[1px] border-white rounded-xl mt-[30px] flex flex-col items-center py-[10px] z-${helpStep === 4 && "10"}`}>
-                            <p className="text-[24px] w-[231px] font-bold text-white text-center">
-                                Origin Token Attributes
-                            </p>
-                            <p className="text-[16px] w-[216px]  text-white pt-[15px]">
-                                &emsp;Mostly NFT token will need attributes of it called
-                                metadata. Origin attributes is the static type of metadata. And
-                                it cannot be change ( but it can be override by token attributes
-                                we will discuss next step ).
-                            </p>
-                            <p className="text-[16px] w-[216px]  text-white pt-[15px]">
-                                &emsp; You can edit value of attributes by double click the
-                                value and change to your proper design.
-                            </p>
+                        <div id='detail' className='mt-[15px] w-[266px] h-auto border-[1px] border-white rounded-xl flex flex-col items-center py-[10px] px-1'>
+                            <p className='text-[24px] font-bold text-white text-center'>Onchain token Attributes</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;Onchain token attributes is the dynamic type of metadata which represent the the of its token. And value to the attributes can be different from others</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;These attributes can change base on action that we performed.</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;If the name key of the Onchain attribute matches, the module will prioritize the Onchain attribute over the Origin Attribute.</p>
+                            <p className='text-[14px] w-[216px] text-white pt-[10px]'>&emsp;You can edit/add/ remove value of attributes by double click the value/ click + button and click x button  and change to your proper design.</p>
                         </div>
                         <div
 

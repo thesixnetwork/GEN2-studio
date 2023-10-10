@@ -2,7 +2,7 @@ import React from 'react'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2';
 import Darkbg from '../component/Alert/Darkbg';
-import Box from '../component/Box';
+import WhiteBox from '../component/WhiteBox';
 
 import Add from "../pic/Group 40.png";
 import { useNavigate } from 'react-router-dom';
@@ -35,10 +35,10 @@ export default function Newintregation9() {
                     </div>
                     <div className='w-2/6 h-[full] flex flex-col items-center justify-between  '>
                         <Conectwalet></Conectwalet>
-                        <Box Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it'></Box>
-                        <Box Title='Description' DeTail='To clarify what is the action mean'></Box>
-                        <Box Title='Parameters' DeTail='Some action might require parameter to perform it'></Box>
-                        <Box Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></Box>
+                        <WhiteBox Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it'></WhiteBox>
+                        <WhiteBox Title='Description' DeTail='To clarify what is the action mean'></WhiteBox>
+                        <WhiteBox Title='Parameters' DeTail='Some action might require parameter to perform it'></WhiteBox>
+                        <WhiteBox Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></WhiteBox>
 
                         <div className='flex w-full  justify-between items-end px-2  '>
                             <div  >

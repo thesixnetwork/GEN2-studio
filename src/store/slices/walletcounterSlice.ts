@@ -9,6 +9,8 @@ type WalletcounterState = {
   loading: boolean;
   isloggin: boolean;
   cosmosaddress: string;
+  refresh_token:string;
+  access_token:string;
 };
 
 const initialValues: WalletcounterState = {
@@ -16,6 +18,8 @@ const initialValues: WalletcounterState = {
   loading: false,
   isloggin: false,
   cosmosaddress: "",
+  refresh_token:"",
+  access_token:"",
 };
 
 export const buttonHandlerKeplrConnect = createAsyncThunk(
@@ -30,7 +34,6 @@ export const buttonHandlerKeplrConnect = createAsyncThunk(
         }
       }, 1000);
     });
-
     return await job;
   }
   
@@ -49,7 +52,17 @@ const walletcounterSlice = createSlice({
     ,
     setAddress :(state: WalletcounterState,action)=>{
       state.cosmosaddress=action.payload
-    }
+    },
+    setAccess_token :(state: WalletcounterState,action)=>{
+      state.access_token=action.payload
+    },
+    setRefresh_token :(state: WalletcounterState,action)=>{
+      state.refresh_token=action.payload
+    },
+    setLoading: (state: WalletcounterState,action) => {
+      state.loading = action.payload;
+    },
+    
   },
   extraReducers: (builder) => {
     // builder.addCase(setValueAsync.fulfilled, (state, action) => {
@@ -71,6 +84,6 @@ const walletcounterSlice = createSlice({
   },
 });
 
-export const { setisloggin,setBalance,setAddress } = walletcounterSlice.actions;
+export const { setisloggin,setBalance,setAddress,setAccess_token,setRefresh_token,setLoading } = walletcounterSlice.actions;
 export const walletcounterSelector = (store: RootState) => store.walletcounterReducer;
 export default walletcounterSlice.reducer;

@@ -17,13 +17,17 @@
     "@fontsource/roboto": "^5.0.8",
     "@hookform/error-message": "^2.0.1",
     "@mui/icons-material": "^5.14.7",
-    "@mui/material": "^5.14.7",
-    "@mui/styled-engine-sc": "^5.14.7",
+    "@mui/material": "^5.14.12",
+    "@mui/styled-engine-sc": "^5.14.12",
     "@react-navigation/native-stack": "^6.9.13",
     "@reduxjs/toolkit": "^1.9.5",
     "autoprefixer": "^10.4.15",
+    "axios": "^1.5.1",
+    "crypto-js": "^4.1.1",
     "framer-motion": "^10.16.4",
     "gradient": "^0.2.0",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "postcss-cli": "^10.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -34,13 +38,14 @@
     "react-type-animation": "^3.1.0",
     "reactflow": "^11.8.3",
     "redux-promises": "^1.0.0",
-    "styled-components": "^6.0.7",
+    "styled-components": "^6.0.8",
     "sweetalert2": "^11.7.28",
     "sweetalert2-react-content": "^5.0.7",
     "tailwindcss": "^3.3.3",
     "web3": "^4.1.1"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
@@ -52,6 +57,6 @@
     "redux-devtools-extension": "^2.13.9",
     "tailwindcss-bg-patterns": "^0.2.0",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.11"
   }
 }
