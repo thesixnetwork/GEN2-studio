@@ -37,7 +37,7 @@ const Stepper2 = (props: MyComponentProps) => {
                     <div className='text-center ml-2  flex items-center justify-center w-[90px] text-[20px] font-bold'>{steps[activeStep-1]}</div>
                 </div>
             </div>
-            {isFinal && <div className='flex justify-center items-center h-full w-[120px] text-[20px]'>{totalSteps() - activeStep} step left</div>}
+            {activeStep !== 6 && <div className='flex justify-center items-center h-full w-[120px] text-[20px]'>{totalSteps() - activeStep} step left</div>}
             
         </Box>
     )

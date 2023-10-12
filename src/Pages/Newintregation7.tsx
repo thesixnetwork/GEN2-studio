@@ -13,6 +13,8 @@ import AttributeBox from "../component/AttributeBox";
 import NormalButton from "../component/NormalButton";
 import { useNavigate } from "react-router-dom";
 import GobackButton from "../component/GobackButton";
+import { getAccessTokenFromLocalStorage, getOriginContractAddressFromLocalStorage, getSCHEMA_CODE } from "../helpers/AuthService";
+import axios from "axios";
 
 const NewIntregation7 = () => {
 
@@ -20,25 +22,60 @@ const NewIntregation7 = () => {
   const [save, setSave] = useState(false);
   const navigate = useNavigate();
   const [text, setText] = useState([
-    {
-      name: "",
-      dataType: "",
-      traitType: "",
-      Error: "",
-
-    },
-    {
-      name: "",
-      dataType: "",
-      traitType: "",
-      Error: "",
-    },
-    {
-      name: "",
-      dataType: "",
-      traitType: "",
-      Error: "",
-    },
+    // {
+    //   "name": "",
+    //   "data_type": "",
+    //   "required": false,
+    //   "display_value_field": "",
+    //   "display_option": {
+    //     "bool_true_value": "",
+    //     "bool_false_value": "",
+    //     "opensea": {
+    //       "display_type": "",
+    //       "trait_type": "",
+    //       "max_value": "0"
+    //     }
+    //   },
+    //   "default_mint_value": null,
+    //   "hidden_overide": false,
+    //   "hidden_to_marketplace": false
+    // },
+    // {
+    //   "name": "",
+    //   "data_type": "",
+    //   "required": false,
+    //   "display_value_field": "",
+    //   "display_option": {
+    //     "bool_true_value": "",
+    //     "bool_false_value": "",
+    //     "opensea": {
+    //       "display_type": "",
+    //       "trait_type": "",
+    //       "max_value": "0"
+    //     }
+    //   },
+    //   "default_mint_value": null,
+    //   "hidden_overide": false,
+    //   "hidden_to_marketplace": false
+    // },
+    //  {
+    //   "name": "",
+    //   "data_type": "",
+    //   "required": false,
+    //   "display_value_field": "",
+    //   "display_option": {
+    //     "bool_true_value": "",
+    //     "bool_false_value": "",
+    //     "opensea": {
+    //       "display_type": "",
+    //       "trait_type": "",
+    //       "max_value": "0"
+    //     }
+    //   },
+    //   "default_mint_value": null,
+    //   "hidden_overide": false,
+    //   "hidden_to_marketplace": false
+    // },
 
   ]);
 
@@ -86,7 +123,9 @@ const NewIntregation7 = () => {
     })
 
   }
-  const handleSave = () => {
+  const handleSave = async () => {
+    
+    await saveOriginTokenAttributes()
     setSave(true);
     searchError()
     setTimeout(() => {
@@ -99,13 +138,26 @@ const NewIntregation7 = () => {
 
   const handleCreateAttribute = () => {
     const newAttribute = {
-      name: "",
-      dataType: "",
-      traitType: "",
-      Error: "F",
+      "name": "",
+      "data_type": "",
+      "required": false,
+      "display_value_field": "",
+      "display_option": {
+        "bool_true_value": "",
+        "bool_false_value": "",
+        "opensea": {
+          "display_type": "",
+          "trait_type": "",
+          "max_value": "0"
+        }
+      },
+      "default_mint_value": null,
+      "hidden_overide": false,
+      "hidden_to_marketplace": false
     };
 
-    setText([...text, newAttribute]);
+    setText([...text,newAttribute]);
+    console.log(text)
 
   };
 
@@ -121,32 +173,109 @@ const NewIntregation7 = () => {
       element0.style.zIndex = "0";
       elementDelete2.style.zIndex = "0";
       elementPlus.style.zIndex = "0";
-
-
       sethelpStep(helpStep + 1);
     }
   };
 
-  useEffect(() => {
-    document.getElementById("plus").style.zIndex = "0";
-    document.getElementById("delete2").style.zIndex = "0";
-    document.getElementById("0").style.zIndex = "0";
-    if (helpStep === 1) {
-      document.getElementById("0").style.zIndex = "50";
-      document.getElementById("0").scrollIntoView({ behavior: 'smooth' });
-    } else if (helpStep === 2) {
-      document.getElementById("delete2").style.zIndex = "50";
-      document.getElementById("delete2").scrollIntoView({ behavior: 'smooth' });
-    } else if (helpStep === 3) {
-      document.getElementById("plus").style.zIndex = "50";
-      document.getElementById("plus").scrollIntoView({ behavior: 'smooth' });
+  const saveOriginTokenAttributes = async () => {
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
+    const requestData = {
+      "payload": {
+        "schema_info": {
+          "origin_data": {
+            "origin_attributes": text     
+          }
+        },
+        "schema_code":getSCHEMA_CODE() ,
+        "status": "Draft",
+        "current_state": "3"
+      }
+    }
+      ;
 
-    } else if (helpStep === 5) {
-      setIsShow(false)
-      sethelpStep(0)
+    await axios.post(apiUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+        // Add any other headers your API requires
+      },
+    })
+      .then(response => {
+        console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
+        console.log("Request :",requestData)
+        // You can handle the API response here
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+      });
+
+  }
+
+  const getOriginAttributFromContract = async () => {
+
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/origin_attribute_from_baseuri/${getOriginContractAddressFromLocalStorage()}`; // Replace with your API endpoint
+    const params = {
+
+    };
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
     }
 
-  }, [helpStep]);
+    // Make a GET request with parameters
+    await axios.get(apiUrl, {
+      params: params, // Pass parameters as an object
+      headers: headers, // Pass headers as an object
+    })
+      .then((response) => {
+        // Handle successful response here
+        // console.log('Response:', response.data.data.origin_attributes);
+
+        // Map the "origin_attributes" data and update the state
+        // const updatedText = response.data.data.origin_attributes.map((attribute, index) => ({
+        //   name: attribute.name,
+        //   dataType: attribute.data_type,
+        //   traitType: attribute.display_option.opensea.trait_type,
+        //   Error: "",
+        // }));
+
+        setText(response.data.data.origin_attributes);
+        console.log("Text :", response.data.data.origin_attributes)
+
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error('Error:', error);
+      });
+  }
+
+  useEffect(() => {
+    getOriginAttributFromContract()
+
+  }, [])
+
+  // useEffect(() => {
+  //   document.getElementById("plus").style.zIndex = "0";
+  //   document.getElementById("delete2").style.zIndex = "0";
+  //   document.getElementById("0").style.zIndex = "0";
+  //   if (helpStep === 1) {
+  //     document.getElementById("0").style.zIndex = "50";
+  //     document.getElementById("0").scrollIntoView({ behavior: 'smooth' });
+  //   } else if (helpStep === 2) {
+  //     document.getElementById("delete2").style.zIndex = "50";
+  //     document.getElementById("delete2").scrollIntoView({ behavior: 'smooth' });
+  //   } else if (helpStep === 3) {
+  //     document.getElementById("plus").style.zIndex = "50";
+  //     document.getElementById("plus").scrollIntoView({ behavior: 'smooth' });
+
+  //   } else if (helpStep === 5) {
+  //     setIsShow(false)
+  //     sethelpStep(0)
+  //   }
+
+  // }, [helpStep]);
 
   const handleClickScroll = () => {
     const element = document.getElementById('10');
@@ -172,9 +301,9 @@ const NewIntregation7 = () => {
                   <AttributeBox
                     Title={["abc", "123", "Y/N"]}
                     Name={item.name}
-                    DataType={item.dataType}
-                    TraitType={item.traitType}
-                    Value={null}
+                    DataType={item.data_type}
+                    TraitType={item.display_option.opensea.trait_type}
+                    // Value={null}   .display_option.opensea.trait_type
                     text={text}
                     setText={setText}
                     key={index}
@@ -237,7 +366,7 @@ const NewIntregation7 = () => {
 
               className=" w-full mt-[20px] flex items-center justify-between px-2 "
             >
-              <div onClick={handleClickScroll} >
+              <div onClick={getOriginAttributFromContract} >
                 <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={32}></NormalButton>
               </div>
               <div onClick={handleSave} >
@@ -247,10 +376,10 @@ const NewIntregation7 = () => {
             </div>
             <Tooltip title={"help"}>
               <div
-                onClick={() => {
-                  setIsShow(true);
-                  handleHelp();
-                }}
+                // onClick={() => {
+                //   setIsShow(true);
+                //   handleHelp();
+                // }}
                 className=" z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[730px] mr-[20px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
               >
                 ?

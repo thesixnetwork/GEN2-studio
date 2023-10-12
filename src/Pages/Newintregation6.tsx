@@ -19,7 +19,7 @@ import BoxButton from '../component/BoxButton'
 import Help from '../component/Alert/Help'
 import GobackButton from '../component/GobackButton'
 import axios from 'axios'
-import { getAccessTokenFromLocalStorage } from '../helpers/AuthService'
+import { getAccessTokenFromLocalStorage, getOriginContractAddressFromLocalStorage, getSCHEMA_CODE, saveOriginContractAddressToLocalStorage } from '../helpers/AuthService'
 
 const NewIntregation6 = () => {
     const [isLoading, setisLoading] = useState(false)
@@ -62,21 +62,57 @@ const NewIntregation6 = () => {
         setisError(false)
     }
     const handleSubmit = async (e) => {
+        await saveOriginContractAddressAndOriginBaseURI();
         e.preventDefault();
         if (isSelection) {
             navigate('/newintregation/7');
-            console.log('navigate')
         }
         else {
             setisError(true)
         }
-
     }
 
     const HandleText = (e) => {
         const updatedText = [...text];
         updatedText[e.target.id].value = e.target.value;
         console.log(text)
+    }
+
+    const saveOriginContractAddressAndOriginBaseURI = async () => {
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
+        const requestData = {
+            "payload": {
+                "schema_info": {
+                    "origin_data": {
+                        "origin_chain": "SIXNET",
+                        "origin_contract_address": `${text[1].value}` ,
+                        "origin_base_uri": `${text[2].value}` 
+                    }
+                },
+                "schema_code": getSCHEMA_CODE(),
+                "status": "Draft",
+                "current_state": "2"
+            }
+        }
+            ;
+
+        await axios.post(apiUrl, requestData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+                // Add any other headers your API requires
+            },
+        })
+            .then(response => {
+                console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
+                console.log(requestData)
+                // You can handle the API response here
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // Handle errors here
+            });
+
     }
 
     const getBaseURIFromContract = async () => {
@@ -106,6 +142,8 @@ const NewIntregation6 = () => {
                 const updatedText = [...text];
                 updatedText[2].value = response.data.data.base_uri
                 console.log(text)
+                saveOriginContractAddressToLocalStorage(text[1].value)
+                console.log(getOriginContractAddressFromLocalStorage())
             })
             .catch((error) => {
                 // Handle errors here
@@ -162,7 +200,7 @@ const NewIntregation6 = () => {
                                     onChange={(e) => { HandleText(e); getBaseURIFromContract(); }}
                                     type="text"
                                     placeholder={text[1].placeholder}
-                                    className='bg-transparent text-[16px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-105 duration-1000 w-[429px] '>
+                                    className='bg-transparent text-[16px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[429px] '>
                                 </input>
                                 <div className='w-[15px] h-[15px]  bg-transparent border rounded-full absolute ml-[710px] mb-[90px]'></div>
                             </div>
@@ -200,10 +238,15 @@ const NewIntregation6 = () => {
                             DeTail={'An existing endpoint URL you use as NFT metadata. This is not required in case you plan to create all attributes in Gen 2'}
                             Height={414} Width={266} TitleSize={24} DetailSize={14}>
                         </WhiteBox>
-                        <div onClick={handleSubmit} className=' w-[266px] h-full flex  justify-between items-center  mt-8'>
-                            <BoxButton BorderRadius={0} FontSize={30} TextTitle={'SKIP'}></BoxButton>
-                            <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
+                        <div className=' w-[266px] h-full flex  justify-between items-center  mt-8'>
+                            <div onClick={() => { navigate('/newintregation/7') }}>
+                                <BoxButton BorderRadius={0} FontSize={30} TextTitle={'SKIP'}></BoxButton>
+                            </div>
+                            <div onClick={handleSubmit} >
+                                <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
+                            </div>
                         </div>
+
                         <div className=' w-full h-full flex justify-end items-end '>
                             <Help></Help>
                         </div>

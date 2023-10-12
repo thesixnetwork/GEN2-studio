@@ -12,6 +12,7 @@ import AlertCard from "./Alert/AlertCard";
 
 
 interface MyComponentProps {
+    State:number;
     Title: string[];
     Name: string;
     DataType: string;
@@ -122,13 +123,26 @@ export default function AttributeBox(props: MyComponentProps) {
     }
 
 
-    const handleChange = (e, field) => {
+    const handleChange = (e, fieldPath) => {
         const updatedText = [...props.text];
-        //(updatedText)
-        //(field)
-        //(e.target.value)
-        updatedText[props.index][field] = e.target.value;
-        // //(updatedText)
+        const fieldPathArray = fieldPath.split('.'); // Split the fieldPath into an array of nested properties
+
+        let target = updatedText[props.index];
+        for (let i = 0; i < fieldPathArray.length - 1; i++) {
+            target = target[fieldPathArray[i]];
+        }
+
+        const lastField = fieldPathArray[fieldPathArray.length - 1];
+        target[lastField] = e.target.value;
+
+        console.log(updatedText[props.index]);
+        props.setText(updatedText);
+        props.setIsShow(false);
+    };
+
+    const handleChangetrait_type = (e, path) => {
+        const updatedText = [...props.text];
+        updatedText[props.index].path = e.target.value;
         props.setText(updatedText);
         props.setIsShow(false)
     };
@@ -234,7 +248,7 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const checkErrorIII = async () => {
         await setPartII(false)
-        if (props.text[props.index].dataType === "") {
+        if (props.text[props.index].data_type === "") {
             setErrorMessage("Need datatype")
             setIser(true)
         } else {
@@ -247,7 +261,7 @@ export default function AttributeBox(props: MyComponentProps) {
         await setPartII(false)
         // console.log(props.text[props.index].dataType)
         // console.log(props.text[props.index].dataType === "")
-        if (props.text[props.index].dataType === "") {
+        if (props.text[props.index].data_type === "") {
             setErrorMessage("Need datatype")
             setIser(true)
         } else {
@@ -373,10 +387,10 @@ export default function AttributeBox(props: MyComponentProps) {
             await SavecheckErrorIII()
             //.log("partII",partII)
             if (partII) {
-                SavecheckErrorII(props.text[props.index].traitType)
-                if (SavecheckErrorII(props.text[props.index].traitType)){
+                SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)
+                if (SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)) {
                     SavecheckErrorII(props.text[props.index].value)
-                    console.log("COCO:",SavecheckErrorII(props.text[props.index].value))
+                    console.log("COCO:", SavecheckErrorII(props.text[props.index].value))
                     if (SavecheckErrorII(props.text[props.index].value)) {
                         document.getElementById(props.index).style.zIndex = "0";
                         const updatedText = [...props.text];
@@ -449,13 +463,13 @@ export default function AttributeBox(props: MyComponentProps) {
         const updatedText = [...props.text];
         // //(typeof e.target.id)
         if (e.target.id == "Icon0") {
-            updatedText[props.index]["dataType"] = "string";
+            updatedText[props.index]["data_type"] = "string";
         }
         else if (e.target.id == "Icon1") {
-            updatedText[props.index]["dataType"] = "Number";
+            updatedText[props.index]["data_type"] = "Number";
         }
         else if (e.target.id == "Icon2") {
-            updatedText[props.index]["dataType"] = "Boolean";
+            updatedText[props.index]["data_type"] = "Boolean";
         }
         props.setText(updatedText);
     };
@@ -488,7 +502,6 @@ export default function AttributeBox(props: MyComponentProps) {
 
             <div className="h-full flex flex-col justify-between">
                 <div className="flex text-[14px] items-center">
-                    {props.index}
                     Name :&ensp;{" "}
                     <input
                         type="text"
@@ -540,8 +553,9 @@ export default function AttributeBox(props: MyComponentProps) {
                         type="text"
                         value={props.TraitType}
                         onChange={(e) => {
-                            handleChange(e, "traitType")
-                            SavecheckErrorII(props.text[props.index].traitType)
+                            handleChange(e,"display_option.opensea.trait_type");
+                            // handleChangetrait_type(e);
+                            SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)
                         }}
                         // onBlur={fetchError}
                         className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
@@ -554,7 +568,12 @@ export default function AttributeBox(props: MyComponentProps) {
                         type="text"
                         // value={props.Value}
                         onChange={(e) => {
-                            handleChange(e, "value")
+                            if(props.State===4){
+                                handleChange(e,"default_mint_value.float_attribute_value.value")
+                            }
+                            else if(props.State===5){
+                                handleChange(e,"default_mint_value.string_attribute_value.value")
+                            }
                             SavecheckErrorII(props.text[props.index].value)
                         }}
                         // onBlur={fetchError}

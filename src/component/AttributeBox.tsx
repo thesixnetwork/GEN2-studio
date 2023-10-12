@@ -107,7 +107,7 @@ export default function AttributeBox(props: MyComponentProps) {
     // });
 
     function containsSpecialChars(str) {
-        const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
         return specialChars.test(str);
     }
 
@@ -121,12 +121,31 @@ export default function AttributeBox(props: MyComponentProps) {
     }
 
 
-    const handleChange = (e, field) => {
+    const handleChange = (e, fieldPath) => {
         const updatedText = [...props.text];
-        updatedText[props.index][field] = e.target.value;
+        const fieldPathArray = fieldPath.split('.'); // Split the fieldPath into an array of nested properties
+
+        let target = updatedText[props.index];
+        for (let i = 0; i < fieldPathArray.length - 1; i++) {
+            target = target[fieldPathArray[i]];
+        }
+
+        const lastField = fieldPathArray[fieldPathArray.length - 1];
+        target[lastField] = e.target.value;
+
+        console.log(updatedText[props.index]);
+        props.setText(updatedText);
+        props.setIsShow(false);
+    };
+
+    const handleChangetrait_type = (e) => {
+        const updatedText = [...props.text];
+        updatedText[props.index].display_option.opensea.trait_type = e.target.value;
         props.setText(updatedText);
         props.setIsShow(false)
     };
+
+
 
     const saveCheckErrorI = async (str) => {
         console.log(str)
@@ -223,15 +242,12 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const checkErrorIII = async () => {
         await setPartII(false)
-
         if (props.text[props.index].dataType === "") {
             setErrorMessage("Need datatype")
             setIser(true)
         } else {
             setIser(false)
             setPartII(true)
-
-
         }
 
     }
@@ -346,8 +362,8 @@ export default function AttributeBox(props: MyComponentProps) {
 
     useEffect(() => {
         if (props.save) {
-            fetchError()
-            searchError()
+            // fetchError()
+            // searchError()
         }
         props.setSave(false);
     }, [props.save]);
@@ -362,8 +378,8 @@ export default function AttributeBox(props: MyComponentProps) {
             await SavecheckErrorIII()
             //.log("partII",partII)
             if (partII) {
-                SavecheckErrorII(props.text[props.index].traitType)
-                if (SavecheckErrorII(props.text[props.index].traitType)) {
+                SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)
+                if (SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)) {
                     document.getElementById(props.index).style.zIndex = "0";
                     const updatedText = [...props.text];
                     updatedText[props.index]["Error"] = "T";
@@ -391,16 +407,14 @@ export default function AttributeBox(props: MyComponentProps) {
         props.setText(updatedText);
         //(props.text[props.index].name)
         //("B:", props.text)
-
         saveCheckErrorI(props.text[props.index].name);
-
         //.log("partI",partI)
         if (partI) {
             await SavecheckErrorIII()
             //.log("partII",partII)
             if (partII) {
-                SavecheckErrorII(props.text[props.index].traitType)
-                if (SavecheckErrorII(props.text[props.index].traitType)) {
+                SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)
+                if (SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)) {
                     document.getElementById(props.index).style.zIndex = "0";
                     const updatedText = [...props.text];
                     updatedText[props.index]["Error"] = "T";
@@ -466,14 +480,14 @@ export default function AttributeBox(props: MyComponentProps) {
     const handleChangeIcon = (e) => {
         const updatedText = [...props.text];
         // //(typeof e.target.id)
-        if (e.target.id == "Icon0") {
-            updatedText[props.index]["dataType"] = "string";
+        if (e.target.id == "string") {
+            updatedText[props.index]["data_type"] = "string";
         }
-        else if (e.target.id == "Icon1") {
-            updatedText[props.index]["dataType"] = "Number";
+        else if (e.target.id == "number") {
+            updatedText[props.index]["data_type"] = "number";
         }
-        else if (e.target.id == "Icon2") {
-            updatedText[props.index]["dataType"] = "Boolean";
+        else if (e.target.id == "boolean") {
+            updatedText[props.index]["data_type"] = "boolean";
         }
         props.setText(updatedText);
     };
@@ -506,7 +520,7 @@ export default function AttributeBox(props: MyComponentProps) {
 
             <div className="h-full flex flex-col justify-between">
                 <div className="flex text-[14px] items-center">
-                    {props.index}
+
                     Name :&ensp;{" "}
                     <input
                         type="text"
@@ -528,16 +542,16 @@ export default function AttributeBox(props: MyComponentProps) {
                         <div
                             onClick={(e) => { changeBgColorButton(e); checkErrorIII(); }}
                             // onMouseLeave={() => fetchError()}
-                            id="Icon0"
-                            className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${selectedItem === 'Icon0' ? 'bg-[#D9D9D975]' : 'bg-transparent'}`}
+                            id="string"
+                            className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${props.text[props.index].data_type === 'string' ? 'bg-[#D9D9D975]' : 'bg-transparent'}`}
                         >
                             {props.Title[0]}
                         </div>
                         <div
                             onClick={(e) => { changeBgColorButton(e); checkErrorIII(); }}
                             // onMouseLeave={() => fetchError()}
-                            id="Icon1"
-                            className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${selectedItem === 'Icon1' ? 'bg-[#D9D9D975]' : 'bg-transparent'
+                            id="number"
+                            className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${props.text[props.index].data_type === 'number' ? 'bg-[#D9D9D975]' : 'bg-transparent'
                                 }`}
                         >
                             {props.Title[1]}
@@ -545,8 +559,8 @@ export default function AttributeBox(props: MyComponentProps) {
                         <div
                             onClick={(e) => { changeBgColorButton(e); checkErrorIII(); }}
                             // onMouseLeave={() => fetchError()}
-                            id="Icon2"
-                            className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${selectedItem === 'Icon2' ? 'bg-[#D9D9D975]' : 'bg-transparent'
+                            id="boolean"
+                            className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${props.text[props.index].data_type === 'boolean' ? 'bg-[#D9D9D975]' : 'bg-transparent'
                                 }`}
                         >
                             {props.Title[2]}
@@ -559,7 +573,7 @@ export default function AttributeBox(props: MyComponentProps) {
                         type="text"
                         value={props.TraitType}
                         onChange={(e) => {
-                            handleChange(e, "traitType")
+                            handleChange(e, "display_option.opensea.trait_type");
                             checkErrorII(e)
                         }}
                         // onBlur={fetchError}

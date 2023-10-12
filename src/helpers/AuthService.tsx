@@ -39,6 +39,8 @@ export const decryptWithAES = (ciphertext: string) => {
 
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
+const ORIGIN_CONTRACT_ADDRESS='origin_contract_address';
+const SCHEMA_CODE ="SCHEMA_CODE";
 
 export const saveTokensToLocalStorage = (accessToken: string, refreshToken: string) => {
   const encryptedAccessToken = encryptWithAES(accessToken);
@@ -48,6 +50,21 @@ export const saveTokensToLocalStorage = (accessToken: string, refreshToken: stri
   localStorage.setItem(REFRESH_TOKEN_KEY, encryptedRefreshToken);
 };
 
+export const saveOriginContractAddressToLocalStorage =(OriginContractAddress :string)=>{
+  localStorage.setItem(ORIGIN_CONTRACT_ADDRESS,OriginContractAddress );
+}
+
+export const saveSCHEMA_CODE =(schema_code :string)=>{
+  localStorage.setItem(SCHEMA_CODE,schema_code );
+}
+
+export const getSCHEMA_CODE=()=>{
+  return localStorage.getItem(SCHEMA_CODE)
+}
+
+export const getOriginContractAddressFromLocalStorage=()=>{
+  return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
+}
 
 export const getAccessTokenFromLocalStorage = () => {
   const encryptedAccessToken = localStorage.getItem(ACCESS_TOKEN_KEY);

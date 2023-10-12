@@ -73,6 +73,7 @@ const Conectwalet = () => {
         dispatch(setAddress(""));
         dispatch(setBalance(0));
         navigate("/connect")
+        localStorage.clear();
       }
     })
   };

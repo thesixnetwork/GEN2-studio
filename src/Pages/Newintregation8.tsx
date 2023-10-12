@@ -20,6 +20,8 @@ import AttributeBox from "../component/AttributeBox";
 import NormalButton from "../component/NormalButton";
 import { useNavigate } from "react-router-dom";
 import AttributeBox2 from '../component/AttributeBox2';
+import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
+import axios from 'axios';
 
 
 export default function Newintregation8() {
@@ -28,27 +30,60 @@ export default function Newintregation8() {
     const [save, setSave] = useState(false);
     const navigate = useNavigate();
     const [text, setText] = useState([
-        {
-            name: "",
-            dataType: "",
-            traitType: "",
-            value: "",
-            Error: "",
-        },
-        {
-            name: "",
-            dataType: "",
-            traitType: "",
-            value: "",
-            Error: "",
-        },
-        {
-            name: "",
-            dataType: "",
-            traitType: "",
-            value: "",
-            Error: "",
-        },
+        // {
+        //     "name": "",
+        //     "data_type": "",
+        //     "required": false,
+        //     "display_value_field": "",
+        //     "display_option": {
+        //         "bool_true_value": "",
+        //         "bool_false_value": "",
+        //         "opensea": {
+        //             "display_type": "",
+        //             "trait_type": "",
+        //             "max_value": "0"
+        //         }
+        //     },
+        //     "default_mint_value": null,
+        //     "hidden_overide": false,
+        //     "hidden_to_marketplace": false
+        // },
+        // {
+        //     "name": "",
+        //     "data_type": "",
+        //     "required": false,
+        //     "display_value_field": "",
+        //     "display_option": {
+        //         "bool_true_value": "",
+        //         "bool_false_value": "",
+        //         "opensea": {
+        //             "display_type": "",
+        //             "trait_type": "",
+        //             "max_value": "0"
+        //         }
+        //     },
+        //     "default_mint_value": null,
+        //     "hidden_overide": false,
+        //     "hidden_to_marketplace": false
+        // },
+        // {
+        //     "name": "",
+        //     "data_type": "",
+        //     "required": false,
+        //     "display_value_field": "",
+        //     "display_option": {
+        //         "bool_true_value": "",
+        //         "bool_false_value": "",
+        //         "opensea": {
+        //             "display_type": "",
+        //             "trait_type": "",
+        //             "max_value": "0"
+        //         }
+        //     },
+        //     "default_mint_value": null,
+        //     "hidden_overide": false,
+        //     "hidden_to_marketplace": false
+        // },
 
     ]);
 
@@ -80,6 +115,40 @@ export default function Newintregation8() {
         }
     }
 
+    const saveOnchainCollectionAttributes = async () => {
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
+        const requestData = {
+            "payload": {
+                "schema_info": {
+                    "onchain_data": {
+                        "nft_attributes": text
+                    }
+                },
+                "schema_code": getSCHEMA_CODE(),
+                "status": "Draft",
+                "current_state": "4"
+            }
+        };
+
+        await axios.post(apiUrl, requestData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+                // Add any other headers your API requires
+            },
+        })
+            .then(response => {
+                console.log('API Response saveOnchainCollectionAttributes :', response.data);
+                console.log("Request :", requestData)
+                // You can handle the API response here
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // Handle errors here
+            });
+
+    }
+
     const LoadingCheckErro = () => {
         let timerInterval
         Swal.fire({
@@ -106,6 +175,7 @@ export default function Newintregation8() {
 
     }
     const handleSave = () => {
+        saveOnchainCollectionAttributes()
         setSave(true);
         searchError()
         setTimeout(() => {
@@ -119,14 +189,29 @@ export default function Newintregation8() {
 
     const handleCreateAttribute = () => {
         const newAttribute = {
-            name: "",
-            dataType: "",
-            traitType: "",
-            Error: "F",
+            "name": "",
+            "data_type": "",
+            "required": false,
+            "display_value_field": "",
+            "display_option": {
+                "bool_true_value": "",
+                "bool_false_value": "",
+                "opensea": {
+                    "display_type": "",
+                    "trait_type": "",
+                    "max_value": "0"
+                }
+            },
+            "default_mint_value": {
+                "float_attribute_value": {
+                    "value": 0
+                }
+            },
+            "hidden_overide": false,
+            "hidden_to_marketplace": false
         };
-
         setText([...text, newAttribute]);
-
+        console.log(text)
     };
 
 
@@ -146,30 +231,30 @@ export default function Newintregation8() {
         }
     };
 
-    useEffect(() => {
-        document.getElementById("plus").style.zIndex = "0";
-        document.getElementById("delete2").style.zIndex = "0";
-        document.getElementById("0").style.zIndex = "0";
-        document.getElementById("detail").style.zIndex = "0";
-        if (helpStep === 1) {
-            document.getElementById("0").style.zIndex = "50";
-            document.getElementById("0").scrollIntoView({ behavior: 'smooth' });
-        } else if (helpStep === 2) {
-            document.getElementById("delete2").style.zIndex = "50";
-            document.getElementById("delete2").scrollIntoView({ behavior: 'smooth' });
-        } else if (helpStep === 3) {
-            document.getElementById("plus").style.zIndex = "50";
-            document.getElementById("plus").scrollIntoView({ behavior: 'smooth' });
-        } else if (helpStep === 4) {
-            document.getElementById("detail").style.zIndex = "50";
-            document.getElementById("detail").scrollIntoView({ behavior: 'smooth' });
+    // useEffect(() => {
+    //     document.getElementById("plus").style.zIndex = "0";
+    //     document.getElementById("delete2").style.zIndex = "0";
+    //     document.getElementById("0").style.zIndex = "0";
+    //     document.getElementById("detail").style.zIndex = "0";
+    //     if (helpStep === 1) {
+    //         document.getElementById("0").style.zIndex = "50";
+    //         document.getElementById("0").scrollIntoView({ behavior: 'smooth' });
+    //     } else if (helpStep === 2) {
+    //         document.getElementById("delete2").style.zIndex = "50";
+    //         document.getElementById("delete2").scrollIntoView({ behavior: 'smooth' });
+    //     } else if (helpStep === 3) {
+    //         document.getElementById("plus").style.zIndex = "50";
+    //         document.getElementById("plus").scrollIntoView({ behavior: 'smooth' });
+    //     } else if (helpStep === 4) {
+    //         document.getElementById("detail").style.zIndex = "50";
+    //         document.getElementById("detail").scrollIntoView({ behavior: 'smooth' });
 
-        } else if (helpStep === 5) {
-            setIsShow(false)
-            sethelpStep(0)
-        }
+    //     } else if (helpStep === 5) {
+    //         setIsShow(false)
+    //         sethelpStep(0)
+    //     }
 
-    }, [helpStep]);
+    // }, [helpStep]);
 
     const handleClickScroll = () => {
         const element = document.getElementById('10');
@@ -194,8 +279,8 @@ export default function Newintregation8() {
                                     <AttributeBox2
                                         Title={["abc", "123", "Y/N"]}
                                         Name={item.name}
-                                        DataType={item.dataType}
-                                        TraitType={item.traitType}
+                                        DataType={item.data_type}
+                                        TraitType={item.display_option.opensea.trait_type}
                                         Value={null}
                                         text={text}
                                         setText={setText}
@@ -212,7 +297,7 @@ export default function Newintregation8() {
                                 <div
                                     id="plus"
                                     onClick={handleCreateAttribute}
-                                    className="w-[267px] h-[187px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
+                                    className="w-[267px] h-[227px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
                                 >
                                     <img src={Add}></img>
                                     {isShow && helpStep === 3 && (
@@ -255,10 +340,10 @@ export default function Newintregation8() {
                         </div>
                         <Tooltip title={"help"}>
                             <div
-                                onClick={() => {
-                                    setIsShow(true);
-                                    handleHelp();
-                                }}
+                                // onClick={() => {
+                                //     setIsShow(true);
+                                //     handleHelp();
+                                // }}
                                 className="z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[750px] mr-[5px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
                             >
                                 ?

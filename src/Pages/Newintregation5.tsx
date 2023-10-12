@@ -1,4 +1,4 @@
-import { useState, useRef, SetStateAction } from 'react'
+import { useState, useRef, SetStateAction, useEffect } from 'react'
 import { Button, CircularProgress } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2'
@@ -22,12 +22,12 @@ import {
     setRefresh_token,
 } from "../store/slices/walletcounterSlice";
 import { useAppDispatch } from "../store/store";
-import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage } from '../helpers/AuthService'
+import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, getSCHEMA_CODE, saveSCHEMA_CODE, saveTokensToLocalStorage } from '../helpers/AuthService'
 import { ABCDE } from '../App'
 //Redux
 
 
-const NewIntregation5 = () => {
+const NewIntregation5 =  () => {
     //Redux
     const dispatch = useAppDispatch();
     const walletcounterReducer = useSelector(walletcounterSelector);
@@ -73,8 +73,8 @@ const NewIntregation5 = () => {
     const [collectionName, setcollectionName] = useState('')
     const [isSpace1, setisSpace1] = useState(false)
     const [isSpace2, setisSpace2] = useState(false)
-    const [isDuplicateShemaCode,setisDuplicateShemaCode]=useState(false);
-
+    const [isDuplicateShemaCode, setisDuplicateShemaCode] = useState(false);
+    const [isDuplicate, setisDuplicate] = useState(true)
 
     const handleInputschemaCode = (e) => {
         setschemaCode(e.target.value);
@@ -164,7 +164,8 @@ const NewIntregation5 = () => {
         })
             .then(response => {
                 console.log('API Response:', response.data);
-                console.log(requestData)
+                saveSCHEMA_CODE(response.data.data.schema_code);
+                // console.log(requestData)
                 // You can handle the API response here
             })
             .catch(error => {
@@ -213,15 +214,55 @@ const NewIntregation5 = () => {
     //             // Handle errors here
     //         });
     // }
+    const GethistoryFormSchemaCode = async () => {
+        // const updatedText = [...text];
+        // updatedText[0].duplicate = true;
+        // setisLoading(true)
+        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+        const params = {
+
+        };
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+        }
+        // Make a GET request with parameters
+        await axios.get(apiUrl, {
+            params: params, // Pass parameters as an object
+            headers: headers, // Pass headers as an object
+        })
+            .then((response) => {
+                console.log('Response:', response.data);
+                const updatedText = [...text];
+                updatedText[0].value = response.data.data.schema_info.schema_name;
+                updatedText[1].value = response.data.data.schema_info.schema_info.name;
+                updatedText[2].value = response.data.data.schema_info.schema_info.description;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        setisLoading(false)
+    }
+    
+
+    useEffect(() => {
+        console.log("SCHEMACODE:",getSCHEMA_CODE())
+        if(getSCHEMA_CODE()){
+            GethistoryFormSchemaCode();
+        }
+    },[]);
 
 
     const handleNext = () => {
         setNext(true);
-        handleFormsubmit();
+        if (text[0].duplicate) {
+            handleFormsubmit();
+        }
+
         const allErrorsTrue = text.every(item => item.Error === true);
 
         if (allErrorsTrue) {
-            // navigate('/newintregation/6')
+            navigate('/newintregation/6')
             console.log("All errors are true.");
 
 
@@ -254,13 +295,14 @@ const NewIntregation5 = () => {
         })
             .then((response) => {
                 // Handle successful response here
-                console.log('Response:', response.data);
-                if(!response.data.data.status){
+                console.log('Response:', response.data.data.status);
+                if (!response.data.data.status) {
                     const updatedText = [...text];
-                    updatedText[0].duplicate = response.data.data.status ;
+                    updatedText[0].duplicate = response.data.data.status;
+                    console.log(text)
                 }
-                console.log(text)
                 setisValidate(true)
+
             })
             .catch((error) => {
                 // Handle errors here
@@ -290,6 +332,7 @@ const NewIntregation5 = () => {
                                     isDuplicateShemaCode={isDuplicateShemaCode}
                                     setisDuplicateShemaCode={setisDuplicateShemaCode}
                                     FindSchemaCode={FindSchemaCode}
+                                    InitialData={[text[0].value,text[1].value,text[2].value]}
                                 >
                                 </InputBoxforNP5>
                             ))}
@@ -326,7 +369,7 @@ const NewIntregation5 = () => {
                         <div onClick={() => { handleNext(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
                             <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
                         </div>
-                  
+
                         {/* <div onClick={() => { handleFormsubmitI(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
                             <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT2'}></BoxButton>
                         </div> */}

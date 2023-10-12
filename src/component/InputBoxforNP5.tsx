@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import RedAleart from './Alert/RedAleart';
 
 interface MyComponentProps {
-    Title: string[];
+   
     Name: string;
     DataType: string;
     TraitType: string;
@@ -28,7 +28,7 @@ interface MyComponentProps {
     FindSchemaCode: any;
     isDuplicateShemaCode: boolean;
     setisDuplicateShemaCode: React.Dispatch<React.SetStateAction<boolean>>;
-
+    InitialData:string[];
 }
 
 export default function InputBoxforNP5(props: MyComponentProps) {
@@ -147,6 +147,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
             <div className=' w-4/5 flex justify-start items-center '>
                 <p className='font-bold text-[24px] w-2/5 mr-[5%]'>{props.text[props.index].Name}</p>
                 <input
+                    value={props.text[props.index].value}
                     type="text"
                     // onChange={handleInputschemaCode}
                     onChange={async (e) => {
