@@ -42,8 +42,6 @@ import Newintregationb2copy from './Pages/Newintregationb2copy.tsx'
 
 const user = false ;
 
-
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
 
   <React.StrictMode>

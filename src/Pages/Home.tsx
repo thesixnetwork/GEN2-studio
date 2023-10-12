@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import logo1 from '../pic/Keplr_Icon 1.png'
 import logo2 from '../pic/Copy.png'
 import logo3 from '../pic/Share.png'
@@ -12,8 +12,41 @@ import logo10 from '../pic/klaytn-klay-logo 1.png'
 import Conectwalet from '../component/Connectwallet'
 import { Link } from 'react-router-dom'
 import WhiteBox from '../component/WhiteBox'
+import axios from 'axios'
+import { getAccessTokenFromLocalStorage } from '../helpers/AuthService'
 
 const Home = () => {
+
+    const getOriginAttributFromContract = async () => {
+
+        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/list_draft`; // Replace with your API endpoint
+        const params = {
+
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+        }
+
+        // Make a GET request with parameters
+        await axios.get(apiUrl, {
+            params: params, // Pass parameters as an object
+            headers: headers, // Pass headers as an object
+        })
+            .then((response) => {
+                console.log("Response :", response.data)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    useEffect(() => {
+        getOriginAttributFromContract();
+    }, [])
+
+
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
