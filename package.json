@@ -22,6 +22,7 @@
     "@react-navigation/native-stack": "^6.9.13",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/lodash": "^4.14.199",
+    "@types/react-syntax-highlighter": "^15.5.7",
     "autoprefixer": "^10.4.15",
     "framer-motion": "^10.16.4",
     "gradient": "^0.2.0",

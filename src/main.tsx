@@ -35,11 +35,15 @@ import Newintregationb from './Pages/Newintregationb.tsx'
 import Newintregationb1 from './Pages/Newintregationb1.tsx'
 import Newintregationb2 from './Pages/Newintregationb2.tsx'
 import Newintregationb3 from './Pages/Newintregationb3.tsx'
-
 import CollisionDetectionFlow from './component/TEST/CollisionDetectionFlow.tsx'
 import Newintregationb4 from './Pages/Newintregationb4.tsx'
 import Newintregationb2copy from './Pages/Newintregationb2copy.tsx'
-
+import NewIntregationThenAttribute from './Pages/NewIntregationThenAttribute.tsx'
+import NewIntregationThenTransfer from './Pages/NewIntregationThenTransfer.tsx'
+import NewIntregationThenTransform from './Pages/NewintregationThenTransform.tsx'
+import NewIntregationThenTransformDynamic from './Pages/NewintregationThenTransformDynamic.tsx'
+import NewIntregationThenTransformStatic from './Pages/NewIntregationThenTransformStatic.tsx'
+import NewIntregationThen from './Pages/NewIntregationThen.tsx'
 const user = false ;
 
 
@@ -120,6 +124,30 @@ const router = createBrowserRouter([
   {
     path: "/newintregation/beginer/4",
     element: <Newintregationb4></Newintregationb4>
+  },
+  {
+    path: "/newintregation/beginer/then",
+    element: <NewIntregationThen></NewIntregationThen>
+  },
+  {
+    path: "/newintregation/beginer/then/attribute",
+    element: <NewIntregationThenAttribute></NewIntregationThenAttribute>
+  },
+  {
+    path: "/newintregation/beginer/then/transfer",
+    element: <NewIntregationThenTransfer></NewIntregationThenTransfer>
+  },
+  {
+    path: "/newintregation/beginer/then/transform",
+    element: <NewIntregationThenTransform></NewIntregationThenTransform>
+  },
+  {
+    path: "/newintregation/beginer/then/transform/static",
+    element: <NewIntregationThenTransformStatic></NewIntregationThenTransformStatic>
+  },
+  {
+    path: "/newintregation/beginer/then/transform/dynamic",
+    element: <NewIntregationThenTransformDynamic></NewIntregationThenTransformDynamic>
   },
   {
     path: "testflow",

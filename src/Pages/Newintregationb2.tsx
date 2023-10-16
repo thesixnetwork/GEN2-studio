@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import NormalButton from "../component/NormalButton";
+import NextPageButton from "../component/NextPageButton";
 import { useState, DragEvent, useRef } from "react";
 
 import ReactFlow, {
@@ -17,15 +18,12 @@ import ReactFlow, {
   Controls,
   MiniMap,
   useReactFlow,
+  NodeChange,
 } from "reactflow";
 import "reactflow/dist/base.css";
 import { Factory } from "../function/convertMetadata/Factory";
-import Flowbar from "../component/ReactFlow/Flowbar";
-import Customnode from "../component/node/Customnode";
-import inputNode from "../component/ReactFlow/CustomNode/InputNode";
-
-import SyntaxHighlighter from "react-syntax-highlighter";
-import docco from "react-syntax-highlighter/dist/esm/styles/hljs/docco";
+import Flowbar from "../component/ReactFlow/When/Flowbar";
+import InputNode from "../component/ReactFlow/When/CustomNode/InputNode";
 
 import {
   Tree,
@@ -34,11 +32,53 @@ import {
   drawTree,
   generateTreeFromReactFlow,
 } from "../function/auto-layout/";
+import { update } from "lodash";
 
-const nodeTypes = {
-  custom: Customnode,
-  customInputNode: inputNode,
+// const nodeTypes = {
+//   custom: Customnode,
+//   customInputNode: InputNode,
+// };
+
+interface NodeProps {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  draggable: boolean;
+  data: {
+    id: string;
+    showType: string;
+    value: string;
+    dataType: string;
+    label: { x: number; y: number };
+  };
+}
+
+interface ResultProps {
+  type: string | number | boolean;
+  value: string | number | boolean;
+  left?: ResultProps;
+  right?: ResultProps;
+  functionName?: string;
+  dataType?: string;
+  attributeName?: {
+    type: string;
+    dataType: string;
+    value: string;
+  };
+}
+
+let id = 2;
+
+const getId = () => `${id++}`;
+
+const nodeWidthAndHeight = {
+  width: 150,
+  height: 57,
+  width_input: 151.2,
+  height_input: 35.2,
+  grid_padding: 60,
 };
+
 const initialNodes: Node[] = [
   {
     id: "1",
@@ -50,17 +90,11 @@ const initialNodes: Node[] = [
       id: "1",
       parentNode: "root",
       label: { x: 0, y: 0 },
+      width: nodeWidthAndHeight.width,
+      height: nodeWidthAndHeight.height,
     },
   },
 ];
-
-let id = 2;
-
-const getId = () => `${id++}`;
-
-const NODE_WIDTH = 150;
-const NODE_HEIGHT = 57;
-const GRID_PADDING = 60;
 
 const BasicFlow = () => {
   const [reactFlowInstance, setReactFlowInstance] =
@@ -68,21 +102,18 @@ const BasicFlow = () => {
 
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const nodeTypes = useMemo(() => {
+    return {
+      customInputNode: InputNode,
+      textUpdate: InputNode,
+    };
+  }, []);
+
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
   const { setCenter } = useReactFlow();
-
   const [redraw, setRedraw] = useState(false);
-
-  const focusNode = (node) => {
-    const x = node.position.x + node.width / 2;
-    const y = node.position.y + node.height / 2;
-    const zoom = 1;
-
-
-    setCenter(x, y, { zoom, duration: 1000 });
-  };
 
   const onConnect = (params: Connection | Edge) =>
     setEdges((eds) => addEdge(params, eds));
@@ -93,31 +124,13 @@ const BasicFlow = () => {
     event.dataTransfer.dropEffect = "move";
   };
 
-  const resetNode = () => {
-    setNodes({
-      id: "1",
-      type: "customInputNode",
-      position: { x: 0, y: 0 },
-      draggable: false,
-      data: {
-        showType: "addNode",
-        id: "1",
-        parentNode: "root",
-        label: { x: 0, y: 0 },
-      },
-    },);
-    console.log(nodes[0])
-    focusNode(nodes[0])
-  };
-
   const getDataFromNode = () => {
-    const tempArr: string[] = [];
+    const tempArr: NodeProps[] = [];
     nodes.forEach((node) => {
       tempArr.push(node.data);
     });
 
-    const transformData = (data, id) => {
-      // loop nodes
+    const transformData = (data: NodeProps, id: string) => {
       for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
           if (
@@ -140,13 +153,38 @@ const BasicFlow = () => {
           ) {
             nodes[i].data.dataType = nodes[j].data.dataType;
           }
+
+          if (
+            nodes[i].data.parentNode === nodes[j].data.parentNode &&
+            nodes[i].data.showType === "paramNode" &&
+            nodes[j].data.showType === "valueNode"
+          ) {
+            const dataType = nodes[j].data.value;
+            console.log("1", nodes[i].data);
+            if (dataType.includes(".")) {
+              nodes[i].data.dataTypeFromValue = "float";
+              nodes[j].data.dataType = "float";
+            } else {
+              const parsedValue = parseInt(dataType);
+              if (!isNaN(parsedValue)) {
+                nodes[i].data.dataTypeFromValue = typeof(parsedValue);
+                nodes[j].data.dataType = typeof(parsedValue);
+              } else if (dataType.toLowerCase() === "true" || dataType.toLowerCase() === "false") {
+                nodes[i].data.dataTypeFromValue = "boolean";
+                nodes[j].data.dataType = "bool";
+              } else {
+                nodes[i].data.dataTypeFromValue = "string";
+                nodes[j].data.dataType = "string";
+              }
+            }
+            nodes[j].data.dataType === nodes[i].data.dataType
+          }
         }
       }
       const node = data.find((item) => item.id === id);
       if (!node) return null;
 
-      const result = {};
-
+      const result: ResultProps = {};
       if (node.showType === "andNode" || node.showType === "orNode") {
         result.type = "condition_oper";
         result.value = node.showType === "andNode" ? "AND" : "OR";
@@ -181,18 +219,46 @@ const BasicFlow = () => {
       } else if (node.showType === "attributeNode") {
         result.type = "meta_function";
         if (node.dataType === "boolean") {
-          result.functionName = "meta.GetBoolean";
+          result.functionName = "GetBoolean";
         } else if (node.dataType === "string") {
-          result.functionName = "meta.GetString";
+          result.functionName = "GetString";
         } else if (node.dataType === "number") {
-          result.functionName = "meta.GetNumber";
+          result.functionName = "GetNumber";
         } else if (node.dataType === "float") {
-          result.functionName = "meta.GetFloat";
+          result.functionName = "GetFloat";
         }
         result.attributeName = {
           type: "constant",
           dataType: "string",
           value: node.value,
+        };
+      } else if (node.showType === "paramNode") {
+        result.type = "meta_function";
+        if (node.dataTypeFromValue === "boolean") {
+          result.functionName = "GetBoolean";
+        } else if (node.dataTypeFromValue === "string") {
+          result.functionName = "GetString";
+        } else if (node.dataTypeFromValue === "number") {
+          result.functionName = "GetNumber";
+        } else if (node.dataTypeFromValue === "float") {
+          result.functionName = "GetFloat";
+        }
+
+        result.attributeName = {
+          type: "param_function",
+          functionName:
+            node.dataType === "boolean"
+              ? "GetBoolean"
+              : node.dataType === "number"
+              ? "GetNumber"
+              : node.dataType === "float"
+              ? "GetFloat"
+              : "GetString",
+          attributeName: {
+            type: "constant",
+            dataType: "string",
+            value: node.value,
+          },
         };
       } else if (node.showType === "valueNode") {
         result.type = "constant";
@@ -202,8 +268,10 @@ const BasicFlow = () => {
             ? parseInt(node.value)
             : node.dataType === "float"
             ? parseFloat(node.value)
-            : node.dataType === "boolean"
-            ? node.value === "true"
+            : node.value.toLowerCase() === "true" 
+            ? true
+            :node.value.toLowerCase() === "false"
+            ? false
             : node.value;
       } else {
         result.type = "addNode";
@@ -222,41 +290,51 @@ const BasicFlow = () => {
       if (rightNode) {
         result.right = transformData(data, rightNode.id);
       }
-
       return result;
     };
 
     const generateObject = transformData(tempArr, "1");
-    console.log(generateObject);
     const object = Factory.createObject(generateObject).toString();
-    console.log(object);
     setMetaData(object);
+    console.log(generateObject);
   };
 
   const onDrop = async (event: DragEvent) => {
     event.preventDefault();
-    let nodeOnDrop;
     if (reactFlowInstance) {
       const type = event.dataTransfer.getData("application/reactflow");
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-
       const mousePosition = reactFlowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
 
-      const isInsideLength = (position, startX, startY, width, height) => {
-        const halfWidth = width / 2;
-        const halfHeight = height / 2;
+      const isInsideLength = (
+        position: object,
+        startX: number,
+        startY: number,
+        width: number,
+        height: number
+      ) => {
+        // const halfWidth = width / 2;
+        // const halfHeight = height / 2;
+
+        // return (
+        //   position.x >= startX - halfWidth &&
+        //   position.x <= startX + halfWidth &&
+        //   position.y >= startY - halfHeight &&
+        //   position.y <= startY + halfHeight
+        // );
+
         return (
-          position.x >= startX - halfWidth &&
-          position.x <= startX + halfWidth &&
-          position.y >= startY - halfHeight &&
-          position.y <= startY + halfHeight
+          position.x >= startX &&
+          position.x <= startX + width &&
+          position.y >= startY &&
+          position.y <= startY + height
         );
       };
 
-      const updateNode = (node, type) => {
+      const updateNode = (node: NodeProps, type: string) => {
         let updatedNode;
         if (type === "orNode") {
           updatedNode = {
@@ -287,6 +365,8 @@ const BasicFlow = () => {
               showType: "valueNode",
               dataType: "",
               label: { x: node.position.x, y: node.position.y },
+              width: nodeWidthAndHeight.width_input,
+              height: nodeWidthAndHeight.height_input,
             },
           };
         } else if (type === "attributeNode") {
@@ -298,6 +378,8 @@ const BasicFlow = () => {
               value: "",
               showType: "attributeNode",
               label: { x: node.position.x, y: node.position.y },
+              width: nodeWidthAndHeight.width_input,
+              height: nodeWidthAndHeight.height_input,
             },
           };
         } else if (type === "paramNode") {
@@ -308,6 +390,9 @@ const BasicFlow = () => {
               value: "",
               showType: "paramNode",
               label: { x: node.position.x, y: node.position.y },
+              width: nodeWidthAndHeight.width_input,
+              height: nodeWidthAndHeight.height_input,
+              dataTypeFromValue: "",
             },
           };
         } else if (type === "equalNode") {
@@ -378,27 +463,25 @@ const BasicFlow = () => {
           };
         }
 
-        nodeOnDrop = node;
         return updatedNode;
       };
 
-      let updatedNodes = [];
+      const updatedNodes = [];
       let dropped = false;
 
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        const { id, position } = node;
-        const { x, y } = position;
 
         if (
           !isInsideLength(
             mousePosition,
             node.position.x,
             node.position.y,
-            NODE_WIDTH,
-            NODE_HEIGHT
+            node.data.width,
+            node.data.height
           )
         ) {
+          console.log(type);
           console.log("f**k");
           updatedNodes.push(node);
         } else {
@@ -410,12 +493,18 @@ const BasicFlow = () => {
               type !== "valueNode"
             ) {
               const positionLeftNode = {
-                x: node.position.x + NODE_WIDTH,
-                y: node.position.y + NODE_HEIGHT + GRID_PADDING,
+                x: node.position.x + nodeWidthAndHeight.width,
+                y:
+                  node.position.y +
+                  nodeWidthAndHeight.height +
+                  nodeWidthAndHeight.grid_padding,
               };
               const positionRightNode = {
-                x: node.position.x - NODE_WIDTH,
-                y: node.position.y + NODE_HEIGHT + GRID_PADDING,
+                x: node.position.x - nodeWidthAndHeight.width,
+                y:
+                  node.position.y +
+                  nodeWidthAndHeight.height +
+                  nodeWidthAndHeight.grid_padding,
               };
               const leftId = getId();
               const rightId = getId();
@@ -429,6 +518,8 @@ const BasicFlow = () => {
                   label: positionLeftNode,
                   id: leftId,
                   parentNode: node.id,
+                  width: nodeWidthAndHeight.width,
+                  height: nodeWidthAndHeight.height,
                 },
                 draggable: false,
               };
@@ -441,6 +532,8 @@ const BasicFlow = () => {
                   label: positionRightNode,
                   id: rightId,
                   parentNode: node.id,
+                  width: nodeWidthAndHeight.width,
+                  height: nodeWidthAndHeight.height,
                 },
                 draggable: false,
               };
@@ -463,19 +556,17 @@ const BasicFlow = () => {
                   type: "smoothstep",
                 },
               ];
-
-              if (
-                updateNode(node, type).data.showType !== "paramNode" &&
-                updateNode(node, type).data.showType !== "attributeNode" &&
-                updateNode(node, type).data.showType !== "valueNode"
-              ) {
+              const childrenCount = edges.filter(
+                (edge) => edge.source === node.id
+              ).length;
+              if (childrenCount < 2) {
                 setEdges([...edges, ...newEdges]);
-
                 updatedNodes.push(leftNode);
                 updatedNodes.push(rightNode);
               }
             }
             updatedNodes.push(updateNode(node, type));
+
             setNodes(updatedNodes);
           }
         }
@@ -484,8 +575,6 @@ const BasicFlow = () => {
       if (dropped) {
         setNodes(updatedNodes);
         setRedraw(true);
-        console.log("node on drop", nodeOnDrop);
-        focusNode(nodeOnDrop);
       }
     }
   };
@@ -511,45 +600,125 @@ const BasicFlow = () => {
     }
   }, [nodes, edges, redraw]);
 
+  const handleEdgesChange = (changes: NodeChange[]) => {
+    console.log(changes);
+    changes.forEach((element) => {
+      console.log("here-", element);
+    });
+    // onEdgesChange(changes);
+  };
+
+  const handleNodesChange = (changes: NodeChange[]) => {
+    changes.forEach((element) => {
+      if (element.type === "remove") {
+        const nodeIndex = nodes.findIndex((node) => node.id === element.id);
+        const cloneUpdatedNodes = [...nodes];
+        cloneUpdatedNodes[nodeIndex] = {
+          ...nodes[nodeIndex],
+          data: {
+            ...nodes[nodeIndex].data,
+            showType: "addNode",
+          },
+        };
+        setUpdatedNodes(cloneUpdatedNodes);
+      }
+      if (element.type !== "remove") {
+        onNodesChange(changes);
+      }
+    });
+    // onNodesChange(changes);
+  };
+
+  const focusNode = () => {
+    const positionX = [];
+    const positionY = [];
+    const minMax = {
+      minX: 0,
+      maxX: 0,
+      minY: 0,
+      maxY: 0,
+    };
+    for (let i = 0; i < nodes.length; i++) {
+      positionX.push(nodes[i].position.x);
+      positionY.push(nodes[i].position.y);
+    }
+
+    minMax.minX = Math.min(...positionX);
+    minMax.maxX = Math.max(...positionX);
+    minMax.minY = Math.min(...positionY);
+    minMax.maxY = Math.max(...positionY);
+
+    const x = (minMax.minX + minMax.maxX) / 2;
+    const y = (minMax.minY + minMax.maxY) / 2;
+    let zoom = 1;
+    if (nodes.length > 5) {
+      zoom = 0.8;
+    }
+    if (nodes.length > 8) {
+      zoom = 0.6;
+    }
+    if (nodes.length > 11) {
+      zoom = 0.4;
+    }
+    setCenter(x, y, { zoom, duration: 1000 });
+  };
+
   useEffect(() => {
     setNodes(updatedNodes);
+    if (nodes.length > 1) {
+      setTimeout(() => {
+        focusNode();
+      }, 100);
+      // focusNode(nodeOnDrop);
+    }
   }, [updatedNodes]);
 
   useEffect(() => {
-    if (nodes.length > 2) {
+    if (nodes.length > 1) {
       getDataFromNode();
     }
-  }, [nodes]);
+  }, [nodes, setNodes]);
+
+  const reset = () => {
+    setNodes(initialNodes);
+    setEdges([]);
+    setUpdatedNodes(initialNodes);
+    setMetaData("please add item");
+  };
 
   return (
-    <div style={{ height: 500, width: 1200 }}>
-      <div ref={reactFlowWrapper} className="h-full">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onEdgesChange={onEdgesChange}
-          onNodesChange={onNodesChange}
-          onConnect={onConnect}
-          onInit={onInit}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          fitView
-        >
-          <Controls />
-          <MiniMap></MiniMap>
-        </ReactFlow>
-      </div>
-      <SyntaxHighlighter language="javascript">{metaData}</SyntaxHighlighter>
-      <div>
-        <div className="flex">
-          <div onClick={getDataFromNode}>
-            <NormalButton
-              TextTitle="SAVE"
-              BorderRadius={0}
-              FontSize={32}
-            ></NormalButton>
+    <div>
+      <Flowbar metaData={metaData}></Flowbar>
+      <div style={{ height: 500, width: 1200 }}>
+        <div ref={reactFlowWrapper} className="h-full">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onEdgesChange={handleEdgesChange}
+            onNodesChange={handleNodesChange}
+            onConnect={onConnect}
+            onInit={onInit}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            fitView
+          >
+            <Controls position="top-left" />
+            <MiniMap position="top-right"></MiniMap>
+          </ReactFlow>
+        </div>
+        {/* <SyntaxHighlighter language="javascript">{metaData}</SyntaxHighlighter> */}
+        <div>
+          <div className="flex justify-center">
+            <div onClick={getDataFromNode}>
+              <NextPageButton
+                TextTitle="SAVE"
+                BorderRadius={0}
+                NextPage="/newintregation/beginer/3"
+                FontSize={32}
+              ></NextPageButton>
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -573,11 +742,20 @@ export default function Newintregationb1() {
             </div>
             <div className="mt-[20px] flex flex-col items-center justify-center">
               <ReactFlowProvider>
-                <Flowbar></Flowbar>
                 <BasicFlow />
               </ReactFlowProvider>
             </div>
           </div>
+          <Tooltip title={"help"}>
+            <div
+              onClick={() => {
+                setIsShow(true);
+              }}
+              className=" z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[750px] ml-[1180px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
+            >
+              ?
+            </div>
+          </Tooltip>
         </div>
         {isShow && (
           <div

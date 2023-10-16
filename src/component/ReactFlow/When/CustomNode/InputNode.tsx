@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Handle, Position } from 'reactflow';
-import addNode from './Add more object.png'
 import DynamicNode from './DynamicNode';
 
+interface DataProps{
+  data: {
+    id: string;
+    showType: string;
+    value: string;
+    dataType: string;
+  }
+}
 
-function inputNode  ({ data }) {
-
+function InputNode  ({ data }:DataProps) {
 
   // useEffect(()=>{
   //   const test = async() =>{
@@ -18,29 +22,29 @@ function inputNode  ({ data }) {
   return (
     <div>
       {data.showType === "orNode" ? (
-        <DynamicNode description='OR' />
+        <DynamicNode data={data}/>
       ) : data.showType === "andNode" ? (
-        <DynamicNode description='AND' />
+        <DynamicNode data={data}/>
       ) : data.showType === "equalNode" ? (
-        <DynamicNode description='=' />
+        <DynamicNode data={data}/>
       ) : data.showType === "notEqualNode" ? (
-        <DynamicNode description='!=' />
+        <DynamicNode data={data} />
       ) : data.showType === "moreThanNode" ? (
-        <DynamicNode description='>' />
+        <DynamicNode data={data}/>
       ) : data.showType === "moreThanAndEqualNode" ? (
-        <DynamicNode description='>=' />
+        <DynamicNode data={data}/>
       ) : data.showType === "lessThanNode" ? (
-        <DynamicNode description='<' />
+        <DynamicNode data={data}/>
       ) : data.showType === "lessThanAndEqualNode" ? (
-        <DynamicNode description='<=' />
+        <DynamicNode data={data}/>
       ) : data.showType === "valueNode" ? (
-        <DynamicNode description='V' data={data}/>
+        <DynamicNode data={data}/>
       ) : data.showType === "attributeNode" ? (
-        <DynamicNode description='@' data={data}/>
+        <DynamicNode data={data}/>
       ) : data.showType === "paramNode" ? (
-        <DynamicNode description='P' data={data}/>
+        <DynamicNode data={data}/>
       ) :(
-        <DynamicNode description='+'/>
+        <DynamicNode data={data}/>
       )}
        {/* <div  
                 className="w-full p-2 rounded-full flex items-center justify-center border-2">
@@ -60,4 +64,4 @@ function inputNode  ({ data }) {
   
 }
 
-export default inputNode;
+export default InputNode;

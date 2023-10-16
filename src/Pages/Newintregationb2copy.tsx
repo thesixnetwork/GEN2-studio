@@ -22,11 +22,8 @@ import ReactFlow, {
     useStoreApi
 } from 'reactflow';
 import 'reactflow/dist/base.css';
-import Flowbar from '../component/ReactFlow/Flowbar';
-import Customnode from '../component/node/Customnode';
-const nodeTypes = {
-    custom: Customnode,
-};
+import Flowbar from '../component/ReactFlow/When/Flowbar';
+
 
 
 
@@ -115,7 +112,7 @@ const BasicFlow = () => {
     );
 };
 
-export default function Newintregationb1() {
+export default function Newintregationb2() {
     const [isShow, setIsShow] = React.useState(false);
     return (
         <div className='w-full flex justify-center ' >
