@@ -37,7 +37,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
 
 
 
-    const handleChange = (e, field) => {
+    const handleChange = (e) => {
         const updatedText = [...props.text];
         updatedText[props.index].value = e.target.value;
         //props.setText(updatedText);
@@ -147,18 +147,18 @@ export default function InputBoxforNP5(props: MyComponentProps) {
             <div className=' w-4/5 flex justify-start items-center '>
                 <p className='font-bold text-[24px] w-2/5 mr-[5%]'>{props.text[props.index].Name}</p>
                 <input
-                    value={props.text[props.index].value}
+                    // value={props.text[props.index].value}
                     type="text"
                     // onChange={handleInputschemaCode}
                     onChange={async (e) => {
-                        await handleChange(e, "schemacode");
+                        await handleChange(e);
                         if (props.index === 0) {
                             await props.FindSchemaCode();
                         }
                         await saveCheckErrorI(props.text[props.index].value);
                         props.setisError(false)
+                        console.log(props.text)
                     }}
-
                     placeholder={props.text[props.index].placeholder}
                     className={` placeholder-slate-300 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 focus:outline-none focus:scale-105 duration-1000`}>
                 </input>

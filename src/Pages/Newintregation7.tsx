@@ -123,13 +123,14 @@ const NewIntregation7 = () => {
     })
 
   }
+
   const handleSave = async () => {
-    
     await saveOriginTokenAttributes()
     setSave(true);
     searchError()
     setTimeout(() => {
       checkALLError()
+      navigate('/newintregation/8')
     }, 500);
     LoadingCheckErro()
   };
@@ -155,14 +156,11 @@ const NewIntregation7 = () => {
       "hidden_overide": false,
       "hidden_to_marketplace": false
     };
-
     setText([...text,newAttribute]);
-    console.log(text)
-
   };
 
-
   const [helpStep, sethelpStep] = useState(0)
+
   const handleHelp = () => {
     console.log(text)
     const element0 = document.getElementById("0");

@@ -8,7 +8,7 @@ import Add from "../pic/Group 40.png";
 import { useNavigate } from 'react-router-dom';
 import NormalButton from '../component/NormalButton';
 import Help from '../component/Alert/Help';
-import EnterBox from '../component/EnterBox copy';
+import EnterBoxII from '../component/EnterBox copy';
 
 
 export default function Newintregation9() {
@@ -25,7 +25,7 @@ export default function Newintregation9() {
                         </div>
                         <div className='w-full h-[500px] flex flex-col justify-between items-center mt-[30px]'>
                             <div className=''>
-                                <EnterBox Height={280} Width={931} detailsText={'Enter your “Action” name'} ML={0} MT={0}></EnterBox>
+                                <EnterBoxII Height={280} Width={931} detailsText={'Enter your “Action” name'} ML={0} MT={0}></EnterBoxII>
                             </div>
                             <div className='mt-[0]'>
                                 <NormalButton TextTitle="SAVE" BorderRadius={0} FontSize={24}></NormalButton>
@@ -38,7 +38,6 @@ export default function Newintregation9() {
                         <WhiteBox Title='Description' DeTail='To clarify what is the action mean'></WhiteBox>
                         <WhiteBox Title='Parameters' DeTail='Some action might require parameter to perform it'></WhiteBox>
                         <WhiteBox Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></WhiteBox>
-
                         <div className='flex w-full  justify-between items-end px-2  '>
                             <div  >
                                 <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={24}></NormalButton>
@@ -50,9 +49,6 @@ export default function Newintregation9() {
                                 <Help></Help>
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
                 {isShow &&

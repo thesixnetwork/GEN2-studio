@@ -6,13 +6,15 @@ import EastIcon from '@mui/icons-material/East';
 import NormalButton from './NormalButton';
 import RedAleart from './Alert/RedAleart';
 import { useNavigate } from 'react-router-dom';
+import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
+import axios from 'axios';
 interface MyComponentProps {
     Height: number;
     Width: number;
     detailsText: string;
     ML: number;
     MT: number;
-    isSave:boolean;
+    isSave: boolean;
     setIsSave: React.Dispatch<React.SetStateAction<boolean>>;
 
 }
@@ -24,16 +26,17 @@ export default function EnterBox(props: MyComponentProps) {
     const [showII, setshowII] = React.useState(false)
     const [partI, setPartI] = React.useState(false)
     const [partII, setPartII] = React.useState(false)
-    const [errorMessageII,setErrorMessageII] = React.useState("Not avaliabe")
-    const [errorMessageI,setErrorMessageI] = React.useState("Not avaliabe")
+    const [errorMessageII, setErrorMessageII] = React.useState("Not avaliabe")
+    const [errorMessageI, setErrorMessageI] = React.useState("Not avaliabe")
     const [iser, setIser] = React.useState(false)
+    const [isLoadingPos,setisLoadingPos] = React.useState(false)
     const [iserII, setIserII] = React.useState(false)
     const [text, setText] = React.useState(
         [{
-          name: "",
-          description:"",
+            name: "",
+            description: "",
         }]
-      );
+    );
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -57,14 +60,14 @@ export default function EnterBox(props: MyComponentProps) {
     }
 
 
-    const handleChange = (e,field) => {
-    
+    const handleChange = (e, field) => {
+
         const updatedText = [...text];
         updatedText[0][field] = e.target.value;
-       
+
         setText(updatedText);
         console.log(updatedText)
-     
+
     };
 
     const CheckErrorI = async (e) => {
@@ -129,45 +132,75 @@ export default function EnterBox(props: MyComponentProps) {
             setErrorMessageII("Not Availible")
             setIserII(true)
         }
-        else if (containsSpace(str)) {
-            setErrorMessageII("Space")
-            setIserII(true)
-        }
         else {
             setIserII(false)
             setPartII(true)
         }
     }
 
-    useEffect(()=>{
-        if(!partI){
-          
+    useEffect(() => {
+        if (!partI) {
+
             setshowII(false)
         }
-         
-    },[partI])
 
-    useEffect(()=>{
-        if(partI){
+    }, [partI])
+
+    useEffect(() => {
+        if (partI) {
             saveCheckErrorII(text[0].description)
-        } ;
-       
+        };
 
-        if(partI && partII){
+        const SaveAction = async () => {
+            await saveAction()
             navigate("/newintregation/beginer/2")
-        }else{
-            props.setIsSave(false)
-        } ;
-       
-    },[props.isSave])
+        }
 
-    useEffect(()=>{
-        if(props.isSave){
+        if (partI && partII) {
+            SaveAction()
+        } else {
+            props.setIsSave(false)
+        };
+
+    }, [props.isSave])
+
+    useEffect(() => {
+        if (props.isSave) {
             saveCheckErrorI(text[0].name)
-        } ;
-        if(partI){setshowII(true)};
-      
-    },[props.isSave])
+        };
+        if (partI) { setshowII(true) };
+
+    }, [props.isSave])
+
+
+    const saveAction = async () => {
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
+        const requestData = {
+            "payload": {
+                "schema_code": getSCHEMA_CODE(),
+                "name": text[0].name,
+                "desc": text[0].description,
+            }
+        };
+
+        await axios.post(apiUrl, requestData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+                // Add any other headers your API requires
+            },
+        })
+            .then(response => {
+                console.log('API Response saveOnchainCollectionAttributes :', response.data);
+                console.log("Request :", requestData)
+                // You can handle the API response here
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // Handle errors here
+            });
+
+    }
 
     return (
         <div style={{ width: `${props.Width}px`, height: `${props.Height}px`, marginLeft: `${props.ML}px`, marginTop: `${props.MT}px` }}
@@ -191,7 +224,7 @@ export default function EnterBox(props: MyComponentProps) {
                         <div className=''>
                             <EastIcon  ></EastIcon>
                         </div>
-                        <div  className='ml-[15px]'>
+                        <div className='ml-[15px]'>
                             <input
                                 id='1'
                                 type="text"
@@ -199,12 +232,12 @@ export default function EnterBox(props: MyComponentProps) {
                                 className={`bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
                                 placeholder={""}
                                 onChange={async (e) => {
-                                    await handleChange(e,"name");
-                                    await CheckErrorI(e); 
+                                    await handleChange(e, "name");
+                                    await CheckErrorI(e);
                                 }}
                             />
                         </div>
-                        <div className='ml-[15px]' onClick={() => {if(partI){setshowII(true)} ; saveCheckErrorI(text[0].name)  }}>
+                        <div className='ml-[15px]' onClick={() => { if (partI) { setshowII(true) }; saveCheckErrorI(text[0].name) }}>
                             <NormalButton BorderRadius={0} FontSize={0} TextTitle={'Next'}></NormalButton>
                         </div>
                     </div>
@@ -233,12 +266,12 @@ export default function EnterBox(props: MyComponentProps) {
                                 className={`bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
                                 placeholder={""}
                                 onChange={async (e) => {
-                                    await handleChange(e,"description");
+                                    await handleChange(e, "description");
                                     saveCheckErrorII(text[0].description)
                                 }}
                             />
                         </div>
-                     
+
                     </div>
                     {iserII &&
                         <RedAleart

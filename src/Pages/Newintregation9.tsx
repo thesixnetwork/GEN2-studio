@@ -180,7 +180,7 @@ export default function Newintregation9() {
         searchError()
         setTimeout(() => {
             checkALLError()
-            setMessage('Delayed message');
+            navigate('/newintregation/beginer')
         }, 500);
         LoadingCheckErro()
     };
