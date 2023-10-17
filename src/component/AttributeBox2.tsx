@@ -148,11 +148,9 @@ export default function AttributeBox(props: MyComponentProps) {
     };
 
     const saveCheckErrorI = async (str) => {
-
         setIser(false)
         setPartI(false)
         if (!str) {
-            //("1")
             setErrorMessage("Not Availible")
             setIser(true)
         }
@@ -161,39 +159,30 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(true)
         }
         else if (containsSpecialChars(str)) {
-            //("2")
             setErrorMessage("Sp Chars")
             setIser(true)
         }
         else if (containsSpace(str)) {
-            //("3")
             setErrorMessage("Space")
             setIser(true)
         }
         else if (containsUppercase(str)) {
-            //("4")
             setErrorMessage("Uppercase")
             setIser(true)
         }
         else {
             setIser(false)
             setPartI(true)
-
         }
-
-
     }
 
     function containsSame(str) {
-
         for (var i = 0; i <= props.text.length - 1; i++) {
             if ((i != props.index) && (str === props.text[i].name) && (props.text[i].name != "")) {
-
                 return true
                 break
             }
         }
-
     }
 
     // useEffect(() => {
@@ -568,6 +557,7 @@ export default function AttributeBox(props: MyComponentProps) {
                         type="text"
                         // value={props.Value}
                         onChange={(e) => {
+                            console.log(props.State)
                             if(props.State===4){
                                 handleChange(e,"default_mint_value.float_attribute_value.value")
                             }

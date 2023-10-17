@@ -43,6 +43,12 @@ import {
   setLoading,
 } from "./store/slices/walletcounterSlice.ts";
 import { StargateClient } from '@cosmjs/stargate';
+import NewIntregationThen from './Pages/NewIntregationThen.tsx';
+import NewIntregationThenAttribute from './Pages/NewIntregationThenAttribute.tsx';
+import NewIntregationThenTransfer from './Pages/NewIntregationThenTransfer.tsx';
+import NewIntregationThenTransform from './Pages/NewintregationThenTransform.tsx';
+import NewIntregationThenTransformStatic from './Pages/NewIntregationThenTransformStatic.tsx';
+import NewIntregationThenTransformDynamic from './Pages/NewIntregationThenTransformDynamic.tsx';
 
 
 
@@ -135,6 +141,30 @@ const router = createBrowserRouter([
   {
     path: "testflow",
     element: <Newintregationb2copy></Newintregationb2copy>
+  },
+  {
+    path: "/newintregation/beginer/then",
+    element: <NewIntregationThen></NewIntregationThen>
+  },
+  {
+    path: "/newintregation/beginer/then/attribute",
+    element: <NewIntregationThenAttribute></NewIntregationThenAttribute>
+  },
+  {
+    path: "/newintregation/beginer/then/transfer",
+    element: <NewIntregationThenTransfer></NewIntregationThenTransfer>
+  },
+  {
+    path: "/newintregation/beginer/then/transform",
+    element: <NewIntregationThenTransform></NewIntregationThenTransform>
+  },
+  {
+    path: "/newintregation/beginer/then/transform/static",
+    element: <NewIntregationThenTransformStatic></NewIntregationThenTransformStatic>
+  },
+  {
+    path: "/newintregation/beginer/then/transform/dynamic",
+    element: <NewIntregationThenTransformDynamic></NewIntregationThenTransformDynamic>
   },
 ]);
 

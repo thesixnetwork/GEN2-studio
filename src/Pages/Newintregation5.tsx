@@ -245,12 +245,12 @@ const NewIntregation5 =  () => {
     }
     
 
-    useEffect(() => {
-        console.log("SCHEMACODE:",getSCHEMA_CODE())
-        if(getSCHEMA_CODE()){
-            GethistoryFormSchemaCode();
-        }
-    },[]);
+    // useEffect(() => {
+    //     console.log("SCHEMACODE:",getSCHEMA_CODE())
+    //     if(getSCHEMA_CODE()){
+    //         GethistoryFormSchemaCode();
+    //     }
+    // },[]);
 
 
     const handleNext = () => {

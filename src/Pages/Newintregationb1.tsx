@@ -10,12 +10,17 @@ import NormalButton from '../component/NormalButton';
 import Help from '../component/Alert/Help';
 import EnterBox from '../component/EnterBox';
 import GobackButton from '../component/GobackButton';
+import axios from 'axios';
+import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 
 
 export default function Newintregation9() {
     const [isShow, setIsShow] = React.useState(false);
-    const [isSave,setIsSave]=React.useState(false);
+    const [isSave, setIsSave] = React.useState(false);
     const navigate = useNavigate();
+
+
+    
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
@@ -29,7 +34,7 @@ export default function Newintregation9() {
                             <div className=' mt-[30px] mb-[30px] z-[50] '>
                                 <EnterBox setIsSave={setIsSave} isSave={isSave} Height={300} Width={500} detailsText={'Enter your “Action” name'} ML={0} MT={0}></EnterBox>
                             </div>
-                            <div className='mt-[0] z-[50]' onClick={() => { setIsSave(true) ; }} >
+                            <div className='mt-[0] z-[50]' onClick={() => { setIsSave(true); }} >
                                 <NormalButton TextTitle="SAVE" BorderRadius={0} FontSize={24}></NormalButton>
                             </div>
                         </div>

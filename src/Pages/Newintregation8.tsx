@@ -101,16 +101,11 @@ export default function Newintregation8() {
     }
 
     const checkALLError = () => {
-        console.log("before", text)
-        text.filter((item) => console.log("=item=", item.Error))
-        const allErrorsAreT = text.every((item) => item.Error === 'T');
-        console.log("after", text)
-        console.log(allErrorsAreT)
+        text.filter((item) => console.log("item=", item.Error))
         if (text.every((item) => item.Error === 'T')) {
             navigate('/newintregation/9')
             console.log('All errors are T. Do something...');
         } else {
-            // Not all Error properties are 'T'
             console.log('Not all errors are T.');
         }
     }
@@ -177,10 +172,10 @@ export default function Newintregation8() {
     const handleSave = () => {
         saveOnchainCollectionAttributes()
         setSave(true);
-        searchError()
+        // searchError()
         setTimeout(() => {
             checkALLError()
-            setMessage('Delayed message');
+            navigate('/newintregation/9')
         }, 500);
         LoadingCheckErro()
     };
@@ -277,6 +272,7 @@ export default function Newintregation8() {
                             <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
                                 {text.map((item, index) => (
                                     <AttributeBox2
+                                        State={4}
                                         Title={["abc", "123", "Y/N"]}
                                         Name={item.name}
                                         DataType={item.data_type}
