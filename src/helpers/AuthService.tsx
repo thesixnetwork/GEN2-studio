@@ -41,6 +41,7 @@ const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 const ORIGIN_CONTRACT_ADDRESS='origin_contract_address';
 const SCHEMA_CODE ="SCHEMA_CODE";
+const ACTION_THEN: string[] =[];
 
 export const saveTokensToLocalStorage = (accessToken: string, refreshToken: string) => {
   const encryptedAccessToken = encryptWithAES(accessToken);
@@ -48,6 +49,15 @@ export const saveTokensToLocalStorage = (accessToken: string, refreshToken: stri
   console.log("EncryptedAccessToken:",encryptedAccessToken)
   localStorage.setItem(ACCESS_TOKEN_KEY, encryptedAccessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, encryptedRefreshToken);
+};
+
+export const saveActionThen = (Then :string) => {
+  ACTION_THEN.push(Then);
+  localStorage.setItem('ACTION_THEN', JSON.stringify(ACTION_THEN));
+};
+
+export const getActionThen = () => {
+  return JSON.parse(localStorage.getItem('ACTION_THEN'));
 };
 
 export const saveOriginContractAddressToLocalStorage =(OriginContractAddress :string)=>{

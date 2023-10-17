@@ -25,7 +25,7 @@ export default function Newintregation9() {
                         </div>
                         <div className='w-full h-[500px] flex flex-col justify-between items-center mt-[30px]'>
                             <div className=''>
-                                <EnterBoxII Height={280} Width={931} detailsText={'Enter your “Action” name'} ML={0} MT={0}></EnterBoxII>
+                                <EnterBoxII Height={380} Width={931} detailsText={'Enter your “Action” name'} ML={0} MT={0}></EnterBoxII>
                             </div>
                             <div className='mt-[0]'>
                                 <NormalButton TextTitle="SAVE" BorderRadius={0} FontSize={24}></NormalButton>
@@ -34,7 +34,7 @@ export default function Newintregation9() {
                     </div>
                     <div className='w-2/6 h-[full] flex flex-col items-center justify-between  '>
                         <Conectwalet></Conectwalet>
-                        <WhiteBox Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it' Height={0} Width={0} TitleSize={0} DetailSize={0}></WhiteBox>
+                        <WhiteBox Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it' Height={180} Width={320} TitleSize={0} DetailSize={10}></WhiteBox>
                         <WhiteBox Title='Description' DeTail='To clarify what is the action mean'></WhiteBox>
                         <WhiteBox Title='Parameters' DeTail='Some action might require parameter to perform it'></WhiteBox>
                         <WhiteBox Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></WhiteBox>
