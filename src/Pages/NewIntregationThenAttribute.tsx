@@ -38,8 +38,9 @@ import {
   generateTreeFromReactFlow,
 } from "../function/auto-layout";
 import NormalButton from "../component/NormalButton";
-import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from "../helpers/AuthService";
+import { getAccessTokenFromLocalStorage, getActionThen, getSCHEMA_CODE, saveActionThen } from "../helpers/AuthService";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const initialNodes: Node[] = [
   {
@@ -426,14 +427,14 @@ const BasicFlow = () => {
           }
         }
 
-        if(nodes[i].data.showType === "valueNode"){
+        if (nodes[i].data.showType === "valueNode") {
           nodes[i].data.dataType = nodes[0].data.dataType
-          console.log("1",nodes[i].data.dataType);
+          console.log("1", nodes[i].data.dataType);
         }
 
-        if(nodes[i].data.showType === "paramNode"){
+        if (nodes[i].data.showType === "paramNode") {
           nodes[i].data.dataType = nodes[0].data.dataType
-          console.log("1",nodes[i].data.dataType);
+          console.log("1", nodes[i].data.dataType);
         }
 
         if (nodes[i].data.showType === "selectAttributeNode") {
@@ -443,10 +444,10 @@ const BasicFlow = () => {
             nodes[i].data.dataType === "float"
               ? "SetFloat"
               : nodes[i].data.dataType === "number"
-              ? "SetNumber"
-              : nodes[i].data.dataType === "boolean"
-              ? "SetBoolean"
-              : "SetString";
+                ? "SetNumber"
+                : nodes[i].data.dataType === "boolean"
+                  ? "SetBoolean"
+                  : "SetString";
           result.attributeName = {
             type: "constant",
             dataType: "string",
@@ -466,18 +467,18 @@ const BasicFlow = () => {
               nodes[i].data.showType === "increaseNode"
                 ? "+"
                 : nodes[i].data.showType === "decreaseNode"
-                ? "-"
-                : "=",
+                  ? "-"
+                  : "=",
             left: {
               type: "meta_function",
               functionName:
                 result.functionName === "SetFloat"
                   ? "GetFloat"
                   : result.functionName === "SetNumber"
-                  ? "GetNumber"
-                  : result.functionName === "SetBoolean"
-                  ? "GetBoolean"
-                  : "GetString",
+                    ? "GetNumber"
+                    : result.functionName === "SetBoolean"
+                      ? "GetBoolean"
+                      : "GetString",
               attributeName: {
                 type: "constant",
                 dataType: "string",
@@ -504,7 +505,7 @@ const BasicFlow = () => {
             dataType: nodes[i].data.dataType,
             value: nodes[i].data.value,
           };
-        }else if (nodes[i].data.showType === "paramNode") {
+        } else if (nodes[i].data.showType === "paramNode") {
           result.value1 = {
             type: "param_function",
             functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
@@ -513,9 +514,9 @@ const BasicFlow = () => {
               dataType: nodes[i].data.dataType,
               value: nodes[i].data.value,
             }
-            
+
           };
-        }else if (nodes[i].data.showType === "attributeNode") {
+        } else if (nodes[i].data.showType === "attributeNode") {
           result.value1 = {
             type: "meta_function",
             functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
@@ -524,8 +525,8 @@ const BasicFlow = () => {
               dataType: nodes[i].data.dataType,
               value: nodes[i].data.value,
             }
+          }
         }
-      }
       }
 
       console.log("----result", result);
@@ -550,106 +551,118 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
+
+  const [actionName, setactionName] = useState("")
   const FindSchemaCode = async () => {
     const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
     const params = {
     };
     const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
     }
     // Make a GET request with parameters
     await axios.get(apiUrl, {
-        params: params, // Pass parameters as an object
-        headers: headers, // Pass headers as an object
+      params: params, // Pass parameters as an object
+      headers: headers, // Pass headers as an object
     })
-        .then((response) => {
-            // Handle successful response here
-            console.log('Response:', response.data);
-            setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name)
-            console.log("actionName:",actionName)
-        })
-        .catch((error) => {
-            // Handle errors here
-            console.error('Error:', error);
-        });
-}
+      .then((response) => {
+        // Handle successful response here
+        console.log('Response:', response.data);
+        setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name)
+
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error('Error:', error);
+      });
+  }
+
+  const SaveActionTolocal = () => {
+    saveActionThen(metaData);
+  }
 
   const saveAction = async () => {
     const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
     const requestData = {
-        "payload": {
-            "schema_code": getSCHEMA_CODE(),
-            "name":actionName,
-            "then": metaData,
-        }
+      "payload": {
+        "schema_code": getSCHEMA_CODE(),
+        "name": actionName,
+        "then": metaData,
+      }
     };
 
     await axios.post(apiUrl, requestData, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-            // Add any other headers your API requires
-        },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+        // Add any other headers your API requires
+      },
     })
-        .then(response => {
-            console.log('API Response saveOnchainCollectionAttributes :', response.data);
-            console.log("Request :", requestData)
-            // You can handle the API response here
-        })
-        .catch(error => {
-            console.error('API Error:', error);
-            // Handle errors here
-        });
+      .then(response => {
+        console.log('API Response saveOnchainCollectionAttributes :', response.data);
+        console.log("Request :", requestData)
+        // You can handle the API response here
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+      });
 
-}
+  }
+
+  useEffect(() => {
+    FindSchemaCode()
+  }, [])
+
+  const navigate = useNavigate();
 
   return (
     <div className="flex justify-between w-full">
-    <div>
-      <div className="w-[885px] h-16 overflow-scroll	">
-        <SyntaxHighlighter
-          language="go"
-          wrapLongLines={true}
-          codeTagProps={{
-            style: {
-              fontSize: "16px",
-              lineHeight: "1",
-            },
-          }}
-        >
-          {metaData}
-        </SyntaxHighlighter>
-      </div>
-      <div style={{ height: 536, width: 900 }}>
-        <div ref={reactFlowWrapper} className="h-full">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onEdgesChange={handleEdgesChange}
-            onNodesChange={handleNodesChange}
-            onConnect={onConnect}
-            onInit={onInit}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            fitView
-            nodeOrigin={nodeOrigin}
-          >
-            <Controls position="top-left" />
-            <MiniMap position="top-right"></MiniMap>
-          </ReactFlow>
-        </div>
-      </div>
-
       <div>
-        <div className="flex justify-center" onClick={()=>{}}>
-          <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
+        <div className="w-[885px] h-16 overflow-scroll	">
+          <SyntaxHighlighter
+            language="go"
+            wrapLongLines={true}
+            codeTagProps={{
+              style: {
+                fontSize: "16px",
+                lineHeight: "1",
+              },
+            }}
+          >
+            {metaData}
+          </SyntaxHighlighter>
+        </div>
+        <div style={{ height: 536, width: 900 }}>
+          <div ref={reactFlowWrapper} className="h-full">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              onEdgesChange={handleEdgesChange}
+              onNodesChange={handleNodesChange}
+              onConnect={onConnect}
+              onInit={onInit}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              fitView
+              nodeOrigin={nodeOrigin}
+            >
+              <Controls position="top-left" />
+              <MiniMap position="top-right"></MiniMap>
+            </ReactFlow>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex justify-center" onClick={async () => { await SaveActionTolocal() ; console.log("ACTIONLOCAL :",getActionThen()) ; navigate("/newintregation/beginer/3") }}>
+            <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
+          </div>
         </div>
       </div>
+      <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
     </div>
-    <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
-  </div>
   );
 };
 

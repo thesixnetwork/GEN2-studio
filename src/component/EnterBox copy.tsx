@@ -6,7 +6,7 @@ import EastIcon from '@mui/icons-material/East';
 import NormalButton from './NormalButton';
 import { styled } from '@mui/material';
 import ClearIcon from "@mui/icons-material/Clear";
-import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
+import { getAccessTokenFromLocalStorage, getActionThen, getSCHEMA_CODE } from '../helpers/AuthService';
 import axios from 'axios';
 import logo from '../pic/Group 348.png'
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +44,7 @@ export default function EnterBox(props: MyComponentProps) {
     const [actionName, setactionName] = useState("")
     const [actionDes, setactionDes] = useState("")
     const [actionWhen, setactionWhen] = useState("")
+    const [actionThen, setactionThen] = useState("")
 
     const FindSchemaCode = async () => {
         const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
@@ -64,6 +65,7 @@ export default function EnterBox(props: MyComponentProps) {
                 setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name);
                 setactionDes(response.data.data.schema_info.schema_info.onchain_data.actions[0].desc);
                 setactionWhen(response.data.data.schema_info.schema_info.onchain_data.actions[0].when);
+                setactionThen(response.data.data.schema_info.schema_info.onchain_data.actions[0].then);
             })
             .catch((error) => {
                 // Handle errors here
@@ -86,9 +88,18 @@ export default function EnterBox(props: MyComponentProps) {
                 <p>Description : {actionDes}</p>
                 <p>Parameters : { }</p>
                 <p>When : {actionWhen}</p>
-                <div className=' flex justify-start items-center '>
-                    <p>Then : { }</p>
-                    <div className=' hover:scale-75 duration-500 scale-50 cursor-pointer' onClick={()=>{navigate("/newintregation/beginer/then")} }>
+                <div className=' flex flex-col justify-start items-start '>
+                    {/* <p>Then : {actionThen }</p> */}
+                    <div>
+                        <p>Then : </p>
+                        <ul className="ml-8">
+                            {getActionThen().map((item,index) => (
+                                <li key={index} className="list-disc">{item}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className=' hover:scale-75 duration-500 scale-50 cursor-pointer' onClick={() => { navigate("/newintregation/beginer/then") }}>
                         <img src={logo}></img>
                     </div>
                 </div>
