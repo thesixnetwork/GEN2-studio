@@ -14,14 +14,20 @@ const NewIntregationThenTransformDynamic = () => {
   const [showImg, setShowImg] = useState(false);
   const [imgSource, setImgSource] = useState("");
   const [postfix, setPostfix] = useState("");
-
+  const [isNext, setIsNext] = useState(false);
+  const [imgFormat, setImgFormat] = useState("");
+  const [tokenId, setTokenId] = useState("1");
   const onChange = (e: any) => {
     setImgSource(e.target.value);
     setShowImg(false);
   };
 
-  const handleShowImg = () => {
-    setShowImg(true);
+  const handleTokenId = (tokenId: string) => {
+    if (tokenId === "") {
+      setTokenId("1");
+    } else {
+      setTokenId(tokenId);
+    }
   };
 
   const checkBackslash = (str: string) => {
@@ -30,9 +36,16 @@ const NewIntregationThenTransformDynamic = () => {
     } else {
       return str + "/";
     }
-  }
-  
+  };
 
+  const handleNext = () => {
+    setIsNext(true);
+    setShowImg(true);
+  };
+
+  const convertMetaData = (imgFormat: string, postfix: string) => {
+    return `meta.SetImage(meta.ReplaceAllString(meta.GetImage(),'${imgFormat}','${imgFormat}${postfix}'))`;
+  };
 
   return (
     <div className="w-full flex justify-center ">
@@ -46,85 +59,129 @@ const NewIntregationThenTransformDynamic = () => {
               </div>
               <Conectwalet></Conectwalet>
             </div>
-            <div className="w-full h-full flex justify-center gap-x-20	items-center">
-              <div className="border-2 border-white rounded-lg h-[600px] w-[450px] flex  justify-center">
-                <div>
-                  <h2>Enter dynamic image path</h2>
-                  <div>
+            <div className="w-full min-h-[89.1%] flex justify-center gap-x-20	items-center ">
+              <div className="border-2 border-white rounded-lg h-[600px] flex justify-center p-12">
+                <div className="w-96">
+                  <div className="mb-4">
+                    <h2>Enter dynamic image path</h2>
                     <EastIcon></EastIcon>
                     <input
                       id=""
                       type="text"
                       autoFocus
                       className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
-                      placeholder={""}
-                      onChange={ (e) => {
+                      placeholder="example: https://techsauce-nft.sixprotocol.com/techsauce/"
+                      onChange={(e) => {
                         onChange(e);
                       }}
                     />
                   </div>
-                  <h2>Enter origin image format</h2>
-                  <div>
+                  <div className="mb-4">
+                    <h2>Enter origin image format</h2>
                     <EastIcon></EastIcon>
                     <select
-                      name=""
-                      id=""
-                      className="bg-[#A2A3AA] border-2 border-white rounded-full  px-4 hover:bg-opacity-60"
+                      onChange={(e) => {
+                        setImgFormat(e.target.value);
+                      }}
+                      className="ml-2 my-2 bg-[#A2A3AA] border-2 border-white rounded-full  px-4 hover:bg-opacity-60 text-xs"
                     >
-                      <option value="jpeg">jpeg</option>
-                      <option value="png">png</option>
+                      <option value="" disabled selected hidden>
+                        -- select --
+                      </option>
+                      <option value=".jpeg">jpeg</option>
+                      <option value=".jpg">jpg</option>
+                      <option value=".png">png</option>
+                      <option value=".gif">gif</option>
                     </select>
                   </div>
-                  <h2>Enter dynamic image postfix</h2>
-                  <div>
+                  <div className="mb-4">
+                    <h2>Enter dynamic image postfix</h2>
                     <EastIcon></EastIcon>
                     <input
                       id=""
                       type="text"
                       autoFocus
                       className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
-                      placeholder={""}
-                      onChange={(e) => setPostfix(e.target.value)}                    />
+                      placeholder="example: -t"
+                      onChange={(e) => setPostfix(e.target.value)}
+                    />
                   </div>
-                  <div className="flex flex-col justify-center items-center">
-                    <button
-                      onClick={handleShowImg}
-                      className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60"
-                    >
+                  <div className="flex flex-col justify-center items-center mb-4">
+                    <div className="bg-[#A2A3AA] border-2 border-white py-1 px-2">
                       Preview
-                    </button>
-                    <div className="h-20 w-80 overflow-scroll">
-                      <span>{checkBackslash(imgSource)}</span>
-                      <span className="text-red-600">&#123;&#123;token_id&#125;&#125;</span>
-                      <span>{postfix}</span>
                     </div>
-                    <button className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 ">
+                    <div className="h-12 w-96 my-4 overflow-scroll">
+                      {imgSource !== "" && (
+                        <>
+                          <span>{checkBackslash(imgSource)}</span>
+                          <span className="text-red-600">
+                            &#123;&#123;token_id&#125;&#125;
+                          </span>
+                          <span>
+                            {postfix}
+                            {imgFormat}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <button
+                      className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 "
+                      onClick={handleNext}
+                    >
                       Next
                     </button>
                   </div>
                 </div>
               </div>
-
-              <div className="border-2 border-white rounded-lg h-[600px] w-[450px] flex  justify-center">
-                <div>
-                  <h2>Preview transformed token</h2>
-                  <p></p>
-                  <div className=" w-60 object-contain my-8">
-                    {showImg && (
-                      <img
-                        src={imgSource}
-                        alt="preview-image"
-                        className="w-full h-full"
-                      />
-                    )}
+              {isNext && (
+                <div className="border-2 border-white rounded-lg h-[600px] flex  justify-center p-12">
+                  <div className="w-96 flex flex-col justify-between items-center">
+                    <div className=" flex flex-col justify-center items-center">
+                      <h2 className="w-96 px-4 py-2 bg-[#A2A3AA] border-2 border-white text-center ">
+                        Preview transformed token
+                      </h2>
+                      <div className="my-4">
+                        <h2>Token Id</h2>
+                        <EastIcon></EastIcon>
+                        <input
+                          id=""
+                          type="text"
+                          autoFocus
+                          className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
+                          placeholder="example: 1"
+                          onChange={(e) => {
+                            handleTokenId(e.target.value);
+                          }}
+                        />
+                      </div>
+                      <div className="h-12 w-96 overflow-scroll">
+                        <p>
+                          {imgSource !== "" &&
+                            `${checkBackslash(
+                              imgSource
+                            )}${tokenId}${postfix}${imgFormat}`}
+                        </p>
+                      </div>
+                      <div className=" h-60 object-contain my-8">
+                        {imgSource !== "" && (
+                          <img
+                            src={`${checkBackslash(
+                              imgSource
+                            )}${tokenId}${postfix}${imgFormat}`}
+                            alt="preview-image"
+                            className="w-full h-full"
+                          />
+                        )}
+                      </div>
+                    </div>
+                      <Link to="/newintregation/beginer/3">
+                        <button className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 flex ">
+                          Next
+                        </button>
+                      </Link>
                   </div>
-                  <Link to="/newintregation/beginer/3">
-                    <button className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 ">
-                      Next
-                    </button>
-                  </Link>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

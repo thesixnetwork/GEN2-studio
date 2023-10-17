@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 
 const NewIntregationThenTransformStatic = () => {
   const [isShow, setIsShow] = useState(false);
-  const [showImg, setShowImg] = useState(false);
   const [imgSource, setImgSource] = useState("");
 
   const onChange = (e: any) => {
@@ -19,9 +18,13 @@ const NewIntregationThenTransformStatic = () => {
     setShowImg(false);
   };
 
-  const handleShowImg = () => {
-    setShowImg(true);
-  };
+
+
+  const convertMetaData = (imagePath: string) => {
+    return `meta.SetImage('${imagePath}')`;
+  }
+
+  
 
   return (
     <div className="w-full flex justify-center ">
@@ -35,8 +38,8 @@ const NewIntregationThenTransformStatic = () => {
               </div>
               <Conectwalet></Conectwalet>
             </div>
-            <div className="w-full h-full flex items-center justify-center gap-20">
-              <div className="border-2 border-white rounded-lg p-14">
+            <div className="w-full  flex items-center justify-center min-h-[89.1%]">
+              <div className="h-[600px] border-2 border-white rounded-lg p-14">
                 <h2>Enter static image path</h2>
                 <div>
                   <EastIcon></EastIcon>
@@ -52,14 +55,13 @@ const NewIntregationThenTransformStatic = () => {
                   />
                 </div>
                 <div className="flex flex-col justify-center items-center">
-                  <button
-                    onClick={handleShowImg}
-                    className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60"
+                  <div
+                    className="bg-[#A2A3AA] border-2 border-white py-1 px-2"
                   >
                     Preview
-                  </button>
-                  <div className=" w-60 object-contain my-8">
-                    {showImg && (
+                  </div>
+                  <div className="my-4 h-60">
+                    { imgSource !== "" && (
                       <img
                         src={imgSource}
                         alt="preview-image"

@@ -24,7 +24,7 @@ const NewIntregationThenTransform = () => {
               </div>
               <Conectwalet></Conectwalet>
             </div>
-            <div className="w-full h-full flex items-center justify-center gap-20">
+            <div className="w-full flex items-center justify-center gap-x-20 min-h-[89.1%]">
               <ActionTransformCard type="static"></ActionTransformCard>
               <ActionTransformCard type="dynamic"></ActionTransformCard>
             </div>
