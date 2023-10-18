@@ -707,8 +707,9 @@ const BasicFlow = () => {
             .then((response) => {
                 // Handle successful response here
                 console.log('Response:', response.data);
-                setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name)
-                console.log("actionName:",actionName)
+                const Actions =response.data.data.schema_info.schema_info.onchain_data.actions;
+                setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[Actions.length-1].name)
+                console.log("actionName:",response.data.data.schema_info.schema_info.onchain_data.actions[0].name)
             })
             .catch((error) => {
                 // Handle errors here
@@ -718,6 +719,7 @@ const BasicFlow = () => {
 
     useEffect(() => {
         FindSchemaCode()
+     
     }, [])
 
     const SaveActionTolocal = () => {
@@ -730,7 +732,7 @@ const BasicFlow = () => {
             "payload": {
                 "schema_code": getSCHEMA_CODE(),
                 "name":actionName,
-                "when": metaData,
+                "when": metaData,     
             }
         };
 
@@ -779,7 +781,7 @@ const BasicFlow = () => {
                 {/* <SyntaxHighlighter language="javascript">{metaData}</SyntaxHighlighter> */}
                 <div>
                     <div className="flex justify-center">
-                        <div onClick={async () => { await getDataFromNode(); await saveAction(); navigate("/newintregation/beginer/3") }}>
+                        <div onClick={async () => { await getDataFromNode(); await saveAction(); navigate("/newintregation/beginer/") }}>
                             <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
                         </div>
                     </div>
