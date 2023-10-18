@@ -8,7 +8,9 @@ import Darkbg from "../component/Alert/Darkbg";
 import EastIcon from "@mui/icons-material/East";
 import { Link, useNavigate } from "react-router-dom";
 import NormalButton from "../component/NormalButton";
-import { getActionThen, saveActionThen } from "../helpers/AuthService";
+import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
+import axios from "axios";
+
 
 
 const NewIntregationThenTransformStatic = () => {
@@ -25,9 +27,35 @@ const NewIntregationThenTransformStatic = () => {
   const convertMetaData = (imagePath: string) => {
     return `meta.SetImage('${imagePath}')`;
   }
+  
+  const saveAction = async () => {
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
+    const requestData = {
+      "payload": {
+        "schema_code": getSCHEMA_CODE(),
+        "update_then": true,
+        "name": getActionName(),
+        "then": [convertMetaData(imgSource)],
+      }
+    };
 
-  const SaveActionTolocal = () => {
-    saveActionThen(convertMetaData(imgSource));
+    await axios.post(apiUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+        // Add any other headers your API requires
+      },
+    })
+      .then(response => {
+        console.log('API Response saveOnchainCollectionAttributes :', response.data);
+        console.log("Request :", requestData)
+        // You can handle the API response here
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+      });
+
   }
   const navigate = useNavigate();
 
@@ -76,7 +104,7 @@ const NewIntregationThenTransformStatic = () => {
                       />
                     )}
                   </div>
-                  <div className="flex justify-center" onClick={async () => { await SaveActionTolocal(); console.log("ACTIONLOCAL :", getActionThen()); navigate("/newintregation/beginer/3") }}>
+                  <div className="flex justify-center" onClick={async () => { await saveAction() ; navigate("/newintregation/beginer") }}>
                     <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
                   </div>
                 </div>

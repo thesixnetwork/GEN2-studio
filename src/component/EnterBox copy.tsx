@@ -6,7 +6,7 @@ import EastIcon from '@mui/icons-material/East';
 import NormalButton from './NormalButton';
 import { styled } from '@mui/material';
 import ClearIcon from "@mui/icons-material/Clear";
-import { getAccessTokenFromLocalStorage, getActionThen, getSCHEMA_CODE } from '../helpers/AuthService';
+import { getAccessTokenFromLocalStorage, getSCHEMA_CODE, saveActionName } from '../helpers/AuthService';
 import axios from 'axios';
 import logo from '../pic/Group 348.png'
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ interface MyComponentProps {
     actionName:string;
     actionDes:string;
     actionWhen:string;
+    actionThen:string[];
     params:string;
 }
 
@@ -71,31 +72,33 @@ export default function EnterBox(props: MyComponentProps) {
     //         });
     // }
 
-    // const getParams = () => {
-    //     const findParams = (string: string) => {
-    //         const regex = /params\['([^']+)'\]/g;
-    //         let matches = [];
-    //         let match;
+    const getParams = () => {
+        if(props.actionWhen !== undefined && props.actionWhen !== undefined){
 
-    //         while (match = regex.exec(string)) {
-    //             matches.push(match[1]);
-    //         }
+            const findParams = (string: string) => {
+                const regex = /params\['([^']+)'\]/g;
+                let matches = [];
+                let match;
+                
+                while (match = regex.exec(string)) {
+                    matches.push(match[1]);
+                }
+                
+                return matches.length > 0 ? matches : null;
+            }
+            
+            
+            const myString = `${props.actionWhen}, ${props.actionThen.join(', ')}`
+            const result = findParams(myString);
+            setParams(result)
+        }
+    }
 
-    //         return matches.length > 0 ? matches : null;
-    //     }
-
-    //     if (getActionThen()) {
-    //         const myString = getActionThen().join(', ');
-    //         const result = findParams(myString);
-    //         setParams(result)
-    //     }
-    // }
 
 
-
-    // useEffect(() => {
-    //     getParams()
-    // }, [])
+    useEffect(() => {
+        getParams()
+    }, [])
 
     const saveAction = async () => {
         const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
@@ -103,7 +106,7 @@ export default function EnterBox(props: MyComponentProps) {
             "payload": {
                 "schema_code": getSCHEMA_CODE(),
                 "name": actionName,
-                "then": getActionThen(),
+                "then": "",
                 "params": [],
             }
         };
@@ -130,8 +133,7 @@ export default function EnterBox(props: MyComponentProps) {
     const navigate = useNavigate();
 
     return (
-        <div style={{ width: `${props.Width}px`, height: `${props.Height}px`, marginLeft: `${props.ML}px`, marginTop: `${props.MT}px` }}
-            className='flex-col p-3 border border-white bg-transparent  rounded-xl  flex  justify-start items-start  shadow-md '>
+        <div className=' w-[900px] flex-col p-3 border border-white bg-transparent  rounded-xl  flex  justify-start items-start  shadow-md '>
             <div className='w-full flex justify-end items-end'>
                 <Delete
                     className=" hover:border-red-600 hover:text-red-600"
@@ -140,15 +142,15 @@ export default function EnterBox(props: MyComponentProps) {
             <div>
                 <p>Name : {props.actionName}</p>
                 <p>Description : {props.actionDes}</p>
-                {/* <p>Parameters : {props.params !== null && props.params.join(', ')}</p> */}
+                <p>Parameters : {params !== null && params !== undefined && params.join(', ')}</p>
                 <p>When : {props.actionWhen}</p>
                 <div className=' flex flex-col justify-start items-start '>
                     {/* <p>Then : {actionThen }</p> */}
                     <div>
                         <p>Then : </p>
-                        {getActionThen() && getActionThen().length > 0 ? (
+                        { props.actionThen && props.actionThen.length > 0 ? (
                             <ul className="ml-8">
-                                {getActionThen().map((item, index) => (
+                                {props.actionThen.map((item, index) => (
                                     <li key={index} className="list-disc">
                                         {item}
                                     </li>
@@ -160,7 +162,7 @@ export default function EnterBox(props: MyComponentProps) {
 
                     </div>
 
-                    <div className=' ml-10 hover:scale-75 duration-500 scale-50 cursor-pointer' onClick={() => { navigate("/newintregation/beginer/then") }}>
+                    <div className=' ml-10 hover:scale-75 duration-500 scale-50 cursor-pointer' onClick={() => { saveActionName(props.actionName) ; navigate("/newintregation/beginer/then") }}>
                         <img src={logo}></img>
                     </div>
                 </div>

@@ -15,7 +15,7 @@ const NewIntregation3 = () => {
             <div className='w-full h-full fixed  flex justify-center  items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex flex-col  items-center  p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='flex justify-between w-full'>
-                        <h1 className='text-white text-[78px] ml-[100px] '>Before we go</h1>
+                        <h1 className='text-white text-[78px] '>Before we go</h1>
                         <Conectwalet ></Conectwalet>
                     </div>
                     <div className='w-[80%] h-full flex justify-between  pt-[200px]   '>

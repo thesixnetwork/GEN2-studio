@@ -38,7 +38,7 @@ import {
   generateTreeFromReactFlow,
 } from "../function/auto-layout";
 import NormalButton from "../component/NormalButton";
-import { getAccessTokenFromLocalStorage, getActionThen, getSCHEMA_CODE, saveActionThen } from "../helpers/AuthService";
+import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -578,9 +578,6 @@ const BasicFlow = () => {
       });
   }
 
-  const SaveActionTolocal = () => {
-    saveActionThen(metaData);
-  }
 
   const saveAction = async () => {
     const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
@@ -588,8 +585,8 @@ const BasicFlow = () => {
       "payload": {
         "schema_code": getSCHEMA_CODE(),
         "update_then": true,
-        "name": actionName,
-        "then": metaData,
+        "name": getActionName(),
+        "then": [metaData],
       }
     };
 
@@ -657,7 +654,7 @@ const BasicFlow = () => {
         </div>
 
         <div>
-          <div className="flex justify-center" onClick={async () => { await SaveActionTolocal() ; console.log("ACTIONLOCAL :",getActionThen()) ; navigate("/newintregation/beginer/3") }}>
+          <div className="flex justify-center" onClick={async () => { await saveAction()  ; console.log(metaData) ;navigate("/newintregation/beginer") }}>
             <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
           </div>
         </div>

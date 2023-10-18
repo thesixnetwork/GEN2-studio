@@ -61,16 +61,16 @@ export default function Newintregation9() {
                             <Stepper2 ActiveStep={6}></Stepper2>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
-                        <div className='w-full h-full'>
+                        <div className='w-full h-5/6 overflow-scroll py-6 gap-y-6 flex  items-center flex-col'>
                             {action.map((item, index) => (
                                 <div className=''>
-                                    <EnterBoxII actionName={item.name} actionDes={item.desc} actionWhen={item.when} params={''} ></EnterBoxII>
+                                    <EnterBoxII actionName={item.name} actionDes={item.desc} actionWhen={item.when} params={''} actionThen={item.then} ></EnterBoxII>
                                 </div>
                             ))}
                             <div
                                 id="plus"
                                 onClick={() => navigate('/newintregation/beginer/1')}
-                                className="mt-[20px] w-full h-[127px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-[102%] cursor-pointer duration-300  "
+                                className="mt-[20px] w-[900px] h-[127px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-[102%] cursor-pointer duration-300  "
                             >
                                 <img src={Add}></img>
 
@@ -88,7 +88,7 @@ export default function Newintregation9() {
                             <div  >
                                 <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={24}></NormalButton>
                             </div>
-                            <div  >
+                            <div onClick={()=>{navigate("/")}} >
                                 <NormalButton TextTitle="NEXT" BorderRadius={0} FontSize={24}></NormalButton>
                             </div>
                             <div onClick={() => { setIsShow(!isShow) }}>
