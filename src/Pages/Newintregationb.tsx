@@ -63,7 +63,7 @@ export default function Newintregation9() {
                         </div>
                         <div className='w-full h-5/6 overflow-scroll py-6 gap-y-6 flex  items-center flex-col'>
                             {action.map((item, index) => (
-                                <div className=''>
+                                <div className='' key={index}>
                                     <EnterBoxII actionName={item.name} actionDes={item.desc} actionWhen={item.when} params={''} actionThen={item.then} ></EnterBoxII>
                                 </div>
                             ))}

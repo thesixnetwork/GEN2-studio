@@ -239,9 +239,12 @@ const NewIntregation7 = () => {
         //   Error: "",
         // }));
 
-        setText(response.data.data.origin_attributes);
-        console.log("Text :", response.data.data.origin_attributes)
-
+        if(response.data.data.origin_attributes === undefined){
+          setText([])
+        }else{
+          setText(response.data.data.origin_attributes);
+          console.log("Text :", response.data.data.origin_attributes)
+        }
       })
       .catch((error) => {
         // Handle errors here
@@ -295,7 +298,7 @@ const NewIntregation7 = () => {
             </div>
             <div className="w-full h-[80%] overflow-scroll flex  justify-start relative">
               <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-3   absolute ">
-                { text.map((item, index) => (
+                {text !==undefined && text.map((item, index) => (
                   <AttributeBox
                     Title={["abc", "123", "Y/N"]}
                     Name={item.name}
