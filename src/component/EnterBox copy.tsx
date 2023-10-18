@@ -12,14 +12,11 @@ import logo from '../pic/Group 348.png'
 import { useNavigate } from 'react-router-dom';
 
 interface MyComponentProps {
-    Height: number;
-    Width: number;
-    detailsText: string;
-    ML: number;
-    MT: number;
-
+    actionName:string;
+    actionDes:string;
+    actionWhen:string;
+    params:string;
 }
-
 
 export default function EnterBox(props: MyComponentProps) {
 
@@ -39,66 +36,66 @@ export default function EnterBox(props: MyComponentProps) {
         cursor: "pointer",
     });
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setshowI(true)
-        }, 2300);
+    // useEffect(() => {
+    //     const timeoutId = setTimeout(() => {
+    //         setshowI(true)
+    //     }, 2300);
 
-        FindSchemaCode()
-    }, [])
+    //     FindSchemaCode()
+    // }, [])
 
-    const FindSchemaCode = async () => {
-        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
-        const params = {
-        };
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-        }
-        // Make a GET request with parameters
-        await axios.get(apiUrl, {
-            params: params, // Pass parameters as an object
-            headers: headers, // Pass headers as an object
-        })
-            .then((response) => {
-                // Handle successful response here
-                console.log('Response:', response.data);
-                setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name);
-                setactionDes(response.data.data.schema_info.schema_info.onchain_data.actions[0].desc);
-                setactionWhen(response.data.data.schema_info.schema_info.onchain_data.actions[0].when);
-                setactionThen(response.data.data.schema_info.schema_info.onchain_data.actions[0].then);
-            })
-            .catch((error) => {
-                // Handle errors here
-                console.error('Error:', error);
-            });
-    }
+    // const FindSchemaCode = async () => {
+    //     const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    //     const params = {
+    //     };
+    //     const headers = {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+    //     }
+    //     // Make a GET request with parameters
+    //     await axios.get(apiUrl, {
+    //         params: params, // Pass parameters as an object
+    //         headers: headers, // Pass headers as an object
+    //     })
+    //         .then((response) => {
+    //             // Handle successful response here
+    //             console.log('Response:', response.data);
+    //             setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name);
+    //             setactionDes(response.data.data.schema_info.schema_info.onchain_data.actions[0].desc);
+    //             setactionWhen(response.data.data.schema_info.schema_info.onchain_data.actions[0].when);
+    //             setactionThen(response.data.data.schema_info.schema_info.onchain_data.actions[0].then);
+    //         })
+    //         .catch((error) => {
+    //             // Handle errors here
+    //             console.error('Error:', error);
+    //         });
+    // }
 
-    const getParams = () => {
-        const findParams = (string: string) => {
-            const regex = /params\['([^']+)'\]/g;
-            let matches = [];
-            let match;
+    // const getParams = () => {
+    //     const findParams = (string: string) => {
+    //         const regex = /params\['([^']+)'\]/g;
+    //         let matches = [];
+    //         let match;
 
-            while (match = regex.exec(string)) {
-                matches.push(match[1]);
-            }
+    //         while (match = regex.exec(string)) {
+    //             matches.push(match[1]);
+    //         }
 
-            return matches.length > 0 ? matches : null;
-        }
+    //         return matches.length > 0 ? matches : null;
+    //     }
 
-        if (getActionThen()) {
-            const myString = getActionThen().join(', ');
-            const result = findParams(myString);
-            setParams(result)
-        }
-    }
+    //     if (getActionThen()) {
+    //         const myString = getActionThen().join(', ');
+    //         const result = findParams(myString);
+    //         setParams(result)
+    //     }
+    // }
 
 
 
-    useEffect(() => {
-        getParams()
-    }, [])
+    // useEffect(() => {
+    //     getParams()
+    // }, [])
 
     const saveAction = async () => {
         const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
@@ -141,10 +138,10 @@ export default function EnterBox(props: MyComponentProps) {
                 />
             </div>
             <div>
-                <p>Name : {actionName}</p>
-                <p>Description : {actionDes}</p>
-                <p>Parameters : {params !== null && params.join(', ')}</p>
-                <p>When : {actionWhen}</p>
+                <p>Name : {props.actionName}</p>
+                <p>Description : {props.actionDes}</p>
+                {/* <p>Parameters : {props.params !== null && props.params.join(', ')}</p> */}
+                <p>When : {props.actionWhen}</p>
                 <div className=' flex flex-col justify-start items-start '>
                     {/* <p>Then : {actionThen }</p> */}
                     <div>
@@ -167,9 +164,9 @@ export default function EnterBox(props: MyComponentProps) {
                         <img src={logo}></img>
                     </div>
                 </div>
-                <div className='mt-[0]' onClick={saveAction}>
+                {/* <div className='mt-[0]' onClick={saveAction}>
                     <NormalButton TextTitle="SAVE" BorderRadius={0} FontSize={24}></NormalButton>
-                </div>
+                </div> */}
             </div>
             {/* <TypeAnimation
                 className='  text-white font-bold'

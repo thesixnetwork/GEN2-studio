@@ -587,6 +587,7 @@ const BasicFlow = () => {
     const requestData = {
       "payload": {
         "schema_code": getSCHEMA_CODE(),
+        "update_then": true,
         "name": actionName,
         "then": metaData,
       }
