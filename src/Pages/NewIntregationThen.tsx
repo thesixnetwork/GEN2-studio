@@ -32,7 +32,7 @@ const NewIntregationThen = () => {
               </div>
               <Conectwalet></Conectwalet>
             </div>
-            <div className="h-full w-full flex flex-col items-center justify-center gap-20">
+            <div className=" w-full flex flex-col items-center justify-center gap-20 min-h-[89.1%]">
               <div className="flex gap-x-20">
                 <ActionTypeCard type="update" />
                 <ActionTypeCard type="transfer" />

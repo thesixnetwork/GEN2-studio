@@ -26,6 +26,12 @@ export default function EnterBox(props: MyComponentProps) {
     const [showI, setshowI] = React.useState(false)
     const [showII, setshowII] = React.useState(false)
 
+    const [actionName, setactionName] = useState("")
+    const [actionDes, setactionDes] = useState("")
+    const [actionWhen, setactionWhen] = useState("")
+    const [actionThen, setactionThen] = useState("")
+    const [params, setParams] = useState([])
+
     const Delete = styled(ClearIcon)({
         borderRadius: "16px",
         transition: "color 0.3s, border 0.3s",
@@ -40,11 +46,6 @@ export default function EnterBox(props: MyComponentProps) {
 
         FindSchemaCode()
     }, [])
-
-    const [actionName, setactionName] = useState("")
-    const [actionDes, setactionDes] = useState("")
-    const [actionWhen, setactionWhen] = useState("")
-    const [actionThen, setactionThen] = useState("")
 
     const FindSchemaCode = async () => {
         const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
@@ -73,6 +74,62 @@ export default function EnterBox(props: MyComponentProps) {
             });
     }
 
+    const getParams = () => {
+        const findParams = (string: string) => {
+            const regex = /params\['([^']+)'\]/g;
+            let matches = [];
+            let match;
+
+            while (match = regex.exec(string)) {
+                matches.push(match[1]);
+            }
+
+            return matches.length > 0 ? matches : null;
+        }
+
+        if (getActionThen()) {
+            const myString = getActionThen().join(', ');
+            const result = findParams(myString);
+            setParams(result)
+        }
+    }
+
+
+
+    useEffect(() => {
+        getParams()
+    }, [])
+
+    const saveAction = async () => {
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
+        const requestData = {
+            "payload": {
+                "schema_code": getSCHEMA_CODE(),
+                "name": actionName,
+                "then": getActionThen(),
+                "params": [],
+            }
+        };
+
+        await axios.post(apiUrl, requestData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+                // Add any other headers your API requires
+            },
+        })
+            .then(response => {
+                console.log('API Response saveOnchainCollectionAttributes :', response.data);
+                console.log("Request :", requestData)
+                // You can handle the API response here
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // Handle errors here
+            });
+
+    }
+
     const navigate = useNavigate();
 
     return (
@@ -86,24 +143,33 @@ export default function EnterBox(props: MyComponentProps) {
             <div>
                 <p>Name : {actionName}</p>
                 <p>Description : {actionDes}</p>
-                <p>Parameters : { }</p>
+                <p>Parameters : {params !== null && params.join(', ')}</p>
                 <p>When : {actionWhen}</p>
                 <div className=' flex flex-col justify-start items-start '>
                     {/* <p>Then : {actionThen }</p> */}
                     <div>
                         <p>Then : </p>
-                        <ul className="ml-8">
-                            {getActionThen().map((item,index) => (
-                                <li key={index} className="list-disc">{item}</li>
-                            ))}
-                        </ul>
+                        {getActionThen() && getActionThen().length > 0 ? (
+                            <ul className="ml-8">
+                                {getActionThen().map((item, index) => (
+                                    <li key={index} className="list-disc">
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            null
+                        )}
+
                     </div>
 
-                    <div className=' hover:scale-75 duration-500 scale-50 cursor-pointer' onClick={() => { navigate("/newintregation/beginer/then") }}>
+                    <div className=' ml-10 hover:scale-75 duration-500 scale-50 cursor-pointer' onClick={() => { navigate("/newintregation/beginer/then") }}>
                         <img src={logo}></img>
                     </div>
                 </div>
-
+                <div className='mt-[0]' onClick={saveAction}>
+                    <NormalButton TextTitle="SAVE" BorderRadius={0} FontSize={24}></NormalButton>
+                </div>
             </div>
             {/* <TypeAnimation
                 className='  text-white font-bold'

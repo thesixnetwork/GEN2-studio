@@ -8,6 +8,7 @@ import Add from "../pic/Group 40.png";
 import { useNavigate } from 'react-router-dom';
 import NormalButton from '../component/NormalButton';
 import Help from '../component/Alert/Help';
+import EnterBoxII from '../component/EnterBox copy';
 
 
 export default function Newintregation9() {
@@ -23,10 +24,13 @@ export default function Newintregation9() {
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
                         <div className='w-full h-full'>
+                            <div className=''>
+                                <EnterBoxII Height={380} Width={931} detailsText={''} ML={0} MT={0}></EnterBoxII>
+                            </div>
                             <div
                                 id="plus"
                                 onClick={() => navigate('/newintregation/beginer/1')}
-                                className="mt-[20px] w-[267px] h-[187px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
+                                className="mt-[20px] w-full h-[127px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-[102%] cursor-pointer duration-300  "
                             >
                                 <img src={Add}></img>
 

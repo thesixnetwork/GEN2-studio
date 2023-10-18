@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
+import {
+  getAccessTokenFromLocalStorage,
+  getSCHEMA_CODE,
+} from "../../../../helpers/AuthService";
+import axios from "axios";
 
 interface CircleNodeProps {
   data: {
@@ -21,7 +26,10 @@ const DynamicNode = (props: CircleNodeProps) => {
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
 
+  const [isSelected, setIsSelected] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [attributeOption, setAttributeOption] = useState([]);
+  const [attributesObj, setAttributesObj] = useState();
 
   const handleDragEnter = () => {
     setHovered(true);
@@ -33,6 +41,44 @@ const DynamicNode = (props: CircleNodeProps) => {
 
   const handleDrop = () => {
     setHovered(false);
+  };
+
+  const getAttributeOption = (arr1, arr2) => {
+    const tempArr = [];
+
+    arr1.forEach((item) => {
+      tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
+    });
+
+    arr2.forEach((item) => {
+      tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
+    });
+
+    setAttributeOption(tempArr);
+  };
+
+  const fetchData = async () => {
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const params = {};
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
+    await axios
+      .get(apiUrl, {
+        params: params,
+        headers: headers,
+      })
+      .then((response) => {
+        console.log("Response:", response.data);
+        setAttributesObj(
+          response.data.data.schema_info.schema_info.onchain_data
+        );
+        console.log("actionName:", attributesObj);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const onChange = (e: EventProps) => {
@@ -63,6 +109,39 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   };
 
+  const handleSelectParamNode = (e: EventProps) => {
+    setIsSelected(true);
+    const selectedOption = JSON.parse(e.target.value);
+    // props.data.value = selectedOption.name
+    // props.data.dataType = selectedOption.dataType
+    const { nodeInternals } = store.getState();
+    setNodes(
+      Array.from(nodeInternals.values()).map((node) => {
+        console.log("props.data.id", props.data);
+        if (node.id === props.data.id) {
+          props.data.value = selectedOption.name;
+          props.data.dataType = selectedOption.dataType;
+        }
+        return node;
+      })
+    );
+  };
+
+  useEffect(() => {
+    const asyncFetchData = async () => {
+      await fetchData();
+    };
+    asyncFetchData();
+  }, []);
+
+  useEffect(() => {
+    if (attributesObj !== undefined) {
+      const tokenAttributes = attributesObj.token_attributes;
+      const nftAttributes = attributesObj.nft_attributes;
+      getAttributeOption(tokenAttributes, nftAttributes);
+    }
+  }, [attributesObj]);
+
   return props.data.showType === "selectAttributeNode" ? (
     <div
       className={`w-full py-2 px-6 rounded-full flex items-center justify-center border-2 bg-[#ff0072]
@@ -83,6 +162,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           Select Your Attribute
         </p>
         <select
+          defaultValue=""
           id=""
           name=""
           form=""
@@ -92,43 +172,17 @@ const DynamicNode = (props: CircleNodeProps) => {
           <option value="" disabled selected hidden>
             -- select here --
           </option>
-          <option value={JSON.stringify({ name: "point", dataType: "number" })}>
-            point
-          </option>
-          <option
-            value={JSON.stringify({ name: "check_in", dataType: "boolean" })}
-          >
-            check_in
-          </option>
-          <option value={JSON.stringify({ name: "score", dataType: "number" })}>
-            score
-          </option>
-          <option value={JSON.stringify({ name: "tier", dataType: "string" })}>
-            tier
-          </option>
-          <option
-            value={JSON.stringify({ name: "caption", dataType: "string" })}
-          >
-            caption
-          </option>
-          <option
-            value={JSON.stringify({
-              name: "after_party_claim",
-              dataType: "boolean",
-            })}
-          >
-            after_party_claim
-          </option>
-          <option
-            value={JSON.stringify({ name: "stage_count", dataType: "number" })}
-          >
-            stage_count
-          </option>
-          <option
-            value={JSON.stringify({ name: "minor_count", dataType: "number" })}
-          >
-            minor_count
-          </option>
+          {attributeOption.map((item, index) => (
+            <option
+              key={index}
+              value={JSON.stringify({
+                name: item.name,
+                dataType: item.dataType,
+              })}
+            >
+              {item.name}
+            </option>
+          ))}
         </select>
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />
@@ -228,11 +282,7 @@ const DynamicNode = (props: CircleNodeProps) => {
   ) : props.data.showType === "attributeNode" ? (
     <div
       className={`w-full p-2 rounded-full flex items-center justify-center border-2 border-black	
-        ${
-          props.data.showType === "attributeNode"
-            ? "bg-[#9ca8b3]"
-            : "bg-white"
-        }
+        ${props.data.showType === "attributeNode" ? "bg-[#9ca8b3]" : "bg-white"}
         ${hovered ? "border-indigo-600 opacity-80" : "border-gray-600"}`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -241,96 +291,86 @@ const DynamicNode = (props: CircleNodeProps) => {
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
         <p className={`${hovered ? "text-indigo-600 " : "text-gray-600"}`}>
-        @: &nbsp;{" "}
+          @: &nbsp;{" "}
         </p>
         <select
+          defaultValue=""
           id=""
           name=""
           form=""
           className="rounded-full text-black"
           onChange={handleSelect}
         >
-          <option value="" disabled selected hidden>
+          <option value="" disabled selected hidden           defaultValue="">
             -- select here --
           </option>
-          <option value={JSON.stringify({ name: "point", dataType: "number" })}>
-            point
-          </option>
-          <option
-            value={JSON.stringify({ name: "check_in", dataType: "boolean" })}
-          >
-            check_in
-          </option>
-          <option value={JSON.stringify({ name: "score", dataType: "number" })}>
-            score
-          </option>
-          <option value={JSON.stringify({ name: "tier", dataType: "string" })}>
-            tier
-          </option>
-          <option
-            value={JSON.stringify({ name: "caption", dataType: "string" })}
-          >
-            caption
-          </option>
-          <option
-            value={JSON.stringify({
-              name: "after_party_claim",
-              dataType: "boolean",
-            })}
-          >
-            after_party_claim
-          </option>
-          <option
-            value={JSON.stringify({ name: "stage_count", dataType: "number" })}
-          >
-            stage_count
-          </option>
-          <option
-            value={JSON.stringify({ name: "minor_count", dataType: "number" })}
-          >
-            minor_count
-          </option>
+          {attributeOption.map((item, index) => (
+            <option
+              key={index}
+              value={JSON.stringify({
+                name: item.name,
+                dataType: item.dataType,
+              })}
+            >
+              {item.name}
+            </option>
+          ))}
         </select>
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />
     </div>
   ) : props.data.showType === "paramNode" ? (
-  <div
-    className={`w-full p-2 rounded-full flex items-center justify-center border-2 border-black	
-      ${
-          props.data.showType === "paramNode"
-          ? "bg-[#FF99C3]"
-          : "bg-white"
-      }
+    <>
+      <Handle type="target" position={Position.Top} />
+      <div
+        className={`w-full p-2 rounded-lg flex flex-col items-center justify-between border-2 bg-[#FFCE74]
+
       ${hovered ? "border-indigo-600 opacity-80" : "border-gray-600"}`}
-    onDragOver={handleDragEnter}
-    onDragLeave={handleDragLeave}
-    onDrop={handleDrop}
-  >
-    <Handle type="target" position={Position.Top} />
-    <div className="flex items-center justify-center">
-      <p className={`${hovered ? "text-indigo-600 " : "text-gray-600"}`}>
-        {" "}
-        {props.data.showType === "paramNode"
-          ? "P"
-          : props.data.showType === "attributeNode"
-          ? "@"
-          : null}
-        :&nbsp;{" "}
-      </p>
-      <input
-          type="text"
-          name=""
-          id=""
-          className="w-16 rounded-full text-black"
-          onChange={(e) => {
-            onChange(e);
-          }}
-        />
-    </div>
-    <Handle type="source" position={Position.Bottom} id="a" />
-  </div>
-) : (
+        onDragOver={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <div className="flex h-full w-32 items-center justify-between flex-col">
+          <p className={`${hovered ? "text-indigo-600 " : "text-gray-600"} `}>
+            Param:
+          </p>
+          <select
+            className="text-black rounded-full w-32 my-2"
+            onChange={handleSelectParamNode}
+          >
+            <option value="" disabled selected hidden>
+              - select type -
+            </option>
+            <option
+              value={JSON.stringify({ name: "number", dataType: "number" })}
+            >
+              number
+            </option>
+            <option
+              value={JSON.stringify({ name: "string", dataType: "string" })}
+            >
+              string
+            </option>
+          </select>
+          {isSelected ? (
+            <div className="flex items-center justify-center">
+              <input
+                type="text"
+                name=""
+                id=""
+                className="w-32 rounded-full text-black"
+                onChange={onChange}
+                placeholder="  Input Param Name"
+              />
+            </div>
+          ) : (
+            <div></div>
+          )}
+        </div>
+      </div>
+      <Handle type="source" position={Position.Bottom} id="a" />
+    </>
+  ) : (
     <div
       className={`w-10 h-10 rounded-full flex items-center justify-center border-2 bg-[#ffc800]
                 ${

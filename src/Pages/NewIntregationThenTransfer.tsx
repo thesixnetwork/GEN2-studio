@@ -37,6 +37,9 @@ import {
   drawTree,
   generateTreeFromReactFlow,
 } from "../function/auto-layout";
+import NormalButton from "../component/NormalButton";
+import { getActionThen, saveActionThen } from "../helpers/AuthService";
+import { useNavigate } from "react-router-dom";
 
 const initialNodes: Node[] = [
   {
@@ -579,6 +582,12 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
+  const SaveActionTolocal = () => {
+    saveActionThen(metaData);
+  }
+
+  const navigate = useNavigate();
+
   return (
     <div className="flex justify-between w-full">
       <div>
@@ -618,13 +627,8 @@ const BasicFlow = () => {
         </div>
 
         <div>
-          <div className="flex justify-center">
-            <NextPageButton
-              TextTitle="SAVE"
-              BorderRadius={0}
-              NextPage="/newintregation/beginer/3"
-              FontSize={32}
-            ></NextPageButton>
+          <div className="flex justify-center" onClick={async () => { await SaveActionTolocal() ; console.log("ACTIONLOCAL :",getActionThen()) ; navigate("/newintregation/beginer/3") }}>
+            <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
           </div>
         </div>
       </div>
