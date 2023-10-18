@@ -34,7 +34,7 @@ import {
 } from "../function/auto-layout/";
 import { update } from "lodash";
 import NormalButton from "../component/NormalButton";
-import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from "../helpers/AuthService";
+import { getAccessTokenFromLocalStorage, getSCHEMA_CODE, saveActionThen } from "../helpers/AuthService";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -719,6 +719,10 @@ const BasicFlow = () => {
     useEffect(() => {
         FindSchemaCode()
     }, [])
+
+    const SaveActionTolocal = () => {
+        saveActionThen(metaData);
+    }
 
     const saveAction = async () => {
         const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint

@@ -25,10 +25,15 @@ export default function Newintregation9() {
                         </div>
                         <div className='w-full h-[500px] flex flex-col justify-between items-center mt-[30px]'>
                             <div className=''>
-                                <EnterBoxII Height={380} Width={931} detailsText={'Enter your “Action” name'} ML={0} MT={0}></EnterBoxII>
+                                <EnterBoxII Height={380} Width={931} detailsText={''} ML={0} MT={0}></EnterBoxII>
                             </div>
-                            <div className='mt-[0]'>
-                                <NormalButton TextTitle="SAVE" BorderRadius={0} FontSize={24}></NormalButton>
+                            <div
+                                id="plus"
+                                onClick={() => navigate('/newintregation/beginer/1')}
+                                className="mt-[20px] w-full h-[127px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-[102%] cursor-pointer duration-300  "
+                            >
+                                <img src={Add}></img>
+
                             </div>
                         </div>
                     </div>

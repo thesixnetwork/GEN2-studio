@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Handle, Position, useStoreApi } from "reactflow";
 import { useReactFlow } from "reactflow";
+import axios from "axios";
+import {
+  getAccessTokenFromLocalStorage,
+  getSCHEMA_CODE,
+} from "../../../../helpers/AuthService";
 
 interface CircleNodeProps {
   data: {
@@ -22,6 +27,24 @@ const DynamicNode = (props: CircleNodeProps) => {
   const store = useStoreApi();
 
   const [hovered, setHovered] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  const [attributeOption, setAttributeOption] = useState([]);
+  const [attributesObj, setAttributesObj] = useState();
+
+
+  const combineArrays = (arr1, arr2) => {
+    const tempArr = [];
+
+    arr1.forEach((item) => {
+      tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
+    });
+
+    arr2.forEach((item) => {
+      tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
+    });
+
+    setAttributeOption(tempArr)
+  }
 
   const handleDragEnter = () => {
     setHovered(true);
@@ -35,7 +58,29 @@ const DynamicNode = (props: CircleNodeProps) => {
     setHovered(false);
   };
 
-  const [isSelected, setIsSelected] = useState(false);
+  const fetchData = async () => {
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const params = {};
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
+    await axios
+      .get(apiUrl, {
+        params: params,
+        headers: headers,
+      })
+      .then((response) => {
+        console.log("Response:", response.data);
+          setAttributesObj(
+          response.data.data.schema_info.schema_info.onchain_data
+        );
+        console.log("actionName:", attributesObj);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   const onChange = (e: EventProps) => {
     const { nodeInternals } = store.getState();
@@ -67,6 +112,21 @@ const DynamicNode = (props: CircleNodeProps) => {
       })
     );
   };
+
+  useEffect( () => {
+    const asyncFetchData = async () => {
+      await fetchData() 
+    }
+    asyncFetchData()
+  },[])
+
+  useEffect(() => {
+    if(attributesObj !== undefined){
+      const tokenAttributes = attributesObj.token_attributes;
+      const nftAttributes = attributesObj.nft_attributes;
+      combineArrays(tokenAttributes, nftAttributes)
+    }
+  },[attributesObj])
 
   return props.data.showType === "valueNode" ? (
     <div
@@ -125,6 +185,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           :&nbsp;{" "}
         </p>
         <select
+          defaultValue=""
           id=""
           name=""
           form=""
@@ -134,43 +195,17 @@ const DynamicNode = (props: CircleNodeProps) => {
           <option value="" disabled selected hidden>
             -- select here --
           </option>
-          <option value={JSON.stringify({ name: "point", dataType: "number" })}>
-            point
-          </option>
-          <option
-            value={JSON.stringify({ name: "check_in", dataType: "boolean" })}
-          >
-            check_in
-          </option>
-          <option value={JSON.stringify({ name: "score", dataType: "number" })}>
-            score
-          </option>
-          <option value={JSON.stringify({ name: "tier", dataType: "string" })}>
-            tier
-          </option>
-          <option
-            value={JSON.stringify({ name: "caption", dataType: "string" })}
-          >
-            caption
-          </option>
-          <option
-            value={JSON.stringify({
-              name: "after_party_claim",
-              dataType: "boolean",
-            })}
-          >
-            after_party_claim
-          </option>
-          <option
-            value={JSON.stringify({ name: "stage_count", dataType: "number" })}
-          >
-            stage_count
-          </option>
-          <option
-            value={JSON.stringify({ name: "minor_count", dataType: "number" })}
-          >
-            minor_count
-          </option>
+          {attributeOption.map((item, index) => (
+            <option
+              key={index}
+              value={JSON.stringify({
+                name: item.name,
+                dataType: item.dataType,
+              })}
+            >
+              {item.name}
+            </option>
+          ))}
         </select>
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />

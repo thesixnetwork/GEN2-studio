@@ -198,7 +198,7 @@ export default function Newintregation8() {
                 }
             },
             "default_mint_value": {
-                "float_attribute_value": {
+                "string_attribute_value": {
                     "value": 0
                 }
             },

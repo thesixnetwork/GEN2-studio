@@ -6,7 +6,9 @@ import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
 import EastIcon from "@mui/icons-material/East";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import NormalButton from "../component/NormalButton";
+import { getActionThen, saveActionThen } from "../helpers/AuthService";
 
 
 const NewIntregationThenTransformStatic = () => {
@@ -24,7 +26,12 @@ const NewIntregationThenTransformStatic = () => {
     return `meta.SetImage('${imagePath}')`;
   }
 
-  
+  const SaveActionTolocal = () => {
+    saveActionThen(convertMetaData(imgSource));
+  }
+  const navigate = useNavigate();
+
+
 
   return (
     <div className="w-full flex justify-center ">
@@ -61,7 +68,7 @@ const NewIntregationThenTransformStatic = () => {
                     Preview
                   </div>
                   <div className="my-4 h-60">
-                    { imgSource !== "" && (
+                    {imgSource !== "" && (
                       <img
                         src={imgSource}
                         alt="preview-image"
@@ -69,11 +76,9 @@ const NewIntregationThenTransformStatic = () => {
                       />
                     )}
                   </div>
-                  <Link to="/newintregation/beginer/3">
-                    <button className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 ">
-                      Next
-                    </button>
-                  </Link>
+                  <div className="flex justify-center" onClick={async () => { await SaveActionTolocal(); console.log("ACTIONLOCAL :", getActionThen()); navigate("/newintregation/beginer/3") }}>
+                    <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
+                  </div>
                 </div>
               </div>
             </div>

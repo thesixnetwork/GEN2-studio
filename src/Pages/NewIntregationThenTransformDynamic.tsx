@@ -7,7 +7,9 @@ import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
 import EastIcon from "@mui/icons-material/East";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import NormalButton from "../component/NormalButton";
+import { getActionThen, saveActionThen } from "../helpers/AuthService";
 
 const NewIntregationThenTransformDynamic = () => {
   const [isShow, setIsShow] = useState(false);
@@ -47,6 +49,11 @@ const NewIntregationThenTransformDynamic = () => {
     return `meta.SetImage(meta.ReplaceAllString(meta.GetImage(),'${imgFormat}','${imgFormat}${postfix}'))`;
   };
 
+  const SaveActionTolocal = () => {
+    saveActionThen(convertMetaData(imgFormat, postfix));
+  }
+  const navigate = useNavigate();
+
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
@@ -61,7 +68,7 @@ const NewIntregationThenTransformDynamic = () => {
             </div>
             <div className="w-full min-h-[89.1%] flex justify-center gap-x-20	items-center ">
               <div className="border-2 border-white rounded-lg h-[600px] flex justify-center p-12">
-                <div className="w-96">
+                <div className="w-96 flex flex-col justify-between items-center">
                   <div className="mb-4">
                     <h2>Enter dynamic image path</h2>
                     <EastIcon></EastIcon>
@@ -124,13 +131,13 @@ const NewIntregationThenTransformDynamic = () => {
                         </>
                       )}
                     </div>
+                  </div>
                     <button
                       className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 "
                       onClick={handleNext}
                     >
                       Next
                     </button>
-                  </div>
                 </div>
               </div>
               {isNext && (
@@ -174,11 +181,9 @@ const NewIntregationThenTransformDynamic = () => {
                         )}
                       </div>
                     </div>
-                      <Link to="/newintregation/beginer/3">
-                        <button className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 flex ">
-                          Next
-                        </button>
-                      </Link>
+                    <div className="flex justify-center" onClick={async () => { await SaveActionTolocal(); console.log("ACTIONLOCAL :", getActionThen()); navigate("/newintregation/beginer/3") }}>
+                      <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
+                    </div>
                   </div>
                 </div>
               )}
