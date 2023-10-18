@@ -25,7 +25,7 @@ const NewIntregation2 = () => {
                                 <img src={logo1} className='absolute mt-[120px] mr-[80px] scale-75'></img>
                             </div>
                         </div>
-                        <div className='w-[770px] h-[223px] border-[1px] border-white rounded-xl mt-[100px] flex flex-col justify-center items-center p-[10px] text-white mb-[40px]  '>
+                        <div className='w-[770px]  border-[1px] border-white rounded-xl mt-[100px] flex flex-col  items-center  p-[20px] text-white mb-[40px]  '>
                             <p className='font-light text-[18px]'><span className=' font-bold text-[21px]'>Data Layer - NFT Gen 2</span> is designed to empower existing NFTs for various business applications. Its dynamic attributes can be modified on the blockchain with permission, bridging real-world businesses and blockchain technology. It allows for the creation of NFTs that can serve as membership cards, event tickets, health tags for hospitality, and much more. If you want to explore further, please visit NFT Gen 2 for additional information.</p>
                         </div>
                         <div className=' absolute bottom-0 left-0'>

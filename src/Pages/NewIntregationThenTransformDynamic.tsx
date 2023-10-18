@@ -9,7 +9,8 @@ import Darkbg from "../component/Alert/Darkbg";
 import EastIcon from "@mui/icons-material/East";
 import { Link, useNavigate } from "react-router-dom";
 import NormalButton from "../component/NormalButton";
-import { getActionThen, saveActionThen } from "../helpers/AuthService";
+import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
+import axios from "axios";
 
 const NewIntregationThenTransformDynamic = () => {
   const [isShow, setIsShow] = useState(false);
@@ -49,8 +50,34 @@ const NewIntregationThenTransformDynamic = () => {
     return `meta.SetImage(meta.ReplaceAllString(meta.GetImage(),'${imgFormat}','${imgFormat}${postfix}'))`;
   };
 
-  const SaveActionTolocal = () => {
-    saveActionThen(convertMetaData(imgFormat, postfix));
+  const saveAction = async () => {
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
+    const requestData = {
+      "payload": {
+        "schema_code": getSCHEMA_CODE(),
+        "update_then": true,
+        "name": getActionName(),
+        "then": [convertMetaData(imgFormat, postfix)],
+      }
+    };
+
+    await axios.post(apiUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+        // Add any other headers your API requires
+      },
+    })
+      .then(response => {
+        console.log('API Response saveOnchainCollectionAttributes :', response.data);
+        console.log("Request :", requestData)
+        // You can handle the API response here
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+      });
+
   }
   const navigate = useNavigate();
 
@@ -67,8 +94,8 @@ const NewIntregationThenTransformDynamic = () => {
               <Conectwalet></Conectwalet>
             </div>
             <div className="w-full min-h-[89.1%] flex justify-center gap-x-20	items-center ">
-              <div className="border-2 border-white rounded-lg h-[600px] flex justify-center p-12">
-                <div className="w-96 flex flex-col justify-between items-center">
+              <div className="border-2 border-white rounded-lg h-[600px] flex justify-center p-8">
+                <div className="w-96 flex flex-col justify-between ">
                   <div className="mb-4">
                     <h2>Enter dynamic image path</h2>
                     <EastIcon></EastIcon>
@@ -132,12 +159,12 @@ const NewIntregationThenTransformDynamic = () => {
                       )}
                     </div>
                   </div>
-                    <button
-                      className="bg-[#A2A3AA] border-2 border-white rounded-lg py-1 px-2 hover:bg-opacity-60 "
-                      onClick={handleNext}
-                    >
-                      Next
-                    </button>
+                  <div className={`flex justify-center ${isNext ? "hidden" : "block"}`}>
+                    <div onClick={handleNext}>
+                      <NormalButton BorderRadius={0} FontSize={32} TextTitle={"NEXT"}>
+                      </NormalButton>
+                    </div>
+                  </div>
                 </div>
               </div>
               {isNext && (
@@ -181,7 +208,7 @@ const NewIntregationThenTransformDynamic = () => {
                         )}
                       </div>
                     </div>
-                    <div className="flex justify-center" onClick={async () => { await SaveActionTolocal(); console.log("ACTIONLOCAL :", getActionThen()); navigate("/newintregation/beginer/3") }}>
+                    <div className="flex justify-center" onClick={async () => { await saveAction(); navigate("/newintregation/beginer") }}>
                       <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
                     </div>
                   </div>

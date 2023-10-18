@@ -16,9 +16,13 @@ import { useNavigate } from "react-router-dom";
 import whiteArrow from "../pic/action-white-arrow.png";
 import blackArrow from "../pic/action-back-arrow.png";
 import ActionTypeCard from "../component/ActionTypeCard";
+import { getActionName } from "../helpers/AuthService";
 
 const NewIntregationThen = () => {
   const [isShow, setIsShow] = useState(false);
+  useEffect(()=>{
+    console.log("ActionName:",getActionName())
+  },[])
 
   return (
     <div className="w-full flex justify-center ">
