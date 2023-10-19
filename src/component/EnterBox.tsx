@@ -20,11 +20,11 @@ interface MyComponentProps {
 }
 
 
-export default function 
+export default function
 
 
 
-EnterBox(props: MyComponentProps) {
+    EnterBox(props: MyComponentProps) {
     const navigate = useNavigate();
     const [showI, setshowI] = React.useState(false)
     const [showII, setshowII] = React.useState(false)
@@ -33,7 +33,7 @@ EnterBox(props: MyComponentProps) {
     const [errorMessageII, setErrorMessageII] = React.useState("Not avaliabe")
     const [errorMessageI, setErrorMessageI] = React.useState("Not avaliabe")
     const [iser, setIser] = React.useState(false)
-    const [isLoadingPos,setisLoadingPos] = React.useState(false)
+    const [isLoadingPos, setisLoadingPos] = React.useState(false)
     const [iserII, setIserII] = React.useState(false)
     const [text, setText] = React.useState(
         [{
@@ -109,7 +109,7 @@ EnterBox(props: MyComponentProps) {
             setIser(true)
         }
         else if (containsSpecialChars(str)) {
-            setErrorMessageI("Sp Chars")
+            setErrorMessageI("Special Characters")
             setIser(true)
         }
         else if (containsSpace(str)) {
@@ -241,9 +241,11 @@ EnterBox(props: MyComponentProps) {
                                 }}
                             />
                         </div>
-                        <div className='ml-[15px]' onClick={() => { if (partI) { setshowII(true) }; saveCheckErrorI(text[0].name) }}>
-                            <NormalButton BorderRadius={0} FontSize={0} TextTitle={'Next'}></NormalButton>
-                        </div>
+                        {!showII &&
+                            <div className='ml-[15px]' onClick={() => { if (partI) { setshowII(true) }; saveCheckErrorI(text[0].name) }}>
+                                <NormalButton BorderRadius={0} FontSize={0} TextTitle={'Next'}></NormalButton>
+                            </div>
+                        }
                     </div>
                     {iser &&
                         <RedAleart

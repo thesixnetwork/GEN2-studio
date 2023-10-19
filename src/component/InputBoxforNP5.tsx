@@ -73,7 +73,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (containsSpecialChars(str)) {
-                setErrorMessage("Speail Chars")
+                setErrorMessage("Special Characters")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
@@ -103,25 +103,11 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                 document.getElementById(`box${props.index}`).style.zIndex = "0";
             }
         }
-        else if (containsSpecialChars(str)) {
+        else if (containsSpecialChars(str) && (props.index !== 2)) {
             setErrorMessage("Speail Chars")
             setIser(true)
             updatedText[props.index].Error = false;
             document.getElementById(`box${props.index}`).style.zIndex = "50";
-        }
-        else if (containsUppercase(str)) {
-            setErrorMessage("Uppercase")
-            setIser(true)
-            updatedText[props.index].Error = false;
-            document.getElementById(`box${props.index}`).style.zIndex = "50";
-        }
-        else if (props.text[props.index].Name !== "Description") {
-            if (containsSpace(str)) {
-                setErrorMessage("Space")
-                setIser(true)
-                updatedText[props.index].Error = false;
-                document.getElementById(`box${props.index}`).style.zIndex = "50";
-            }
         }
         else {
             setIser(false)

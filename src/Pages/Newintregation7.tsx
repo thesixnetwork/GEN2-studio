@@ -125,7 +125,7 @@ const NewIntregation7 = () => {
   }
 
   const handleSave = async () => {
-    await saveOriginTokenAttributes()
+   
     setSave(true);
     searchError()
     setTimeout(() => {
@@ -133,6 +133,7 @@ const NewIntregation7 = () => {
       navigate('/newintregation/8')
     }, 500);
     LoadingCheckErro()
+    await saveOriginTokenAttributes()
   };
 
 
