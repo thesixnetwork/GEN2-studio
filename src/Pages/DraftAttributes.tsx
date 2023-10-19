@@ -24,39 +24,53 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { getSCHEMA_CODE } from "../helpers/AuthService";
 import { set } from "lodash";
 
+import { CircularProgress } from "@mui/material";
+
 const DraftAttributes = () => {
-  const [originAttributes,setOriginAttributes] = useState([])
-  const [collectionAttributes,setCollectionAttributes] = useState([])
-  const [tokenAttributes,setTokenAttributes] = useState([])
-  
+  const [originAttributes, setOriginAttributes] = useState([]);
+  const [collectionAttributes, setCollectionAttributes] = useState([]);
+  const [tokenAttributes, setTokenAttributes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const FindSchemaCode = async () => {
     const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`;
-    const params = {
-    };
+    const params = {};
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-    }
-    await axios.get(apiUrl, {
-      params: params, 
-      headers: headers, 
-    })
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
+    await axios
+      .get(apiUrl, {
+        params: params,
+        headers: headers,
+      })
       .then((response) => {
         // console.log('Response:', response.data.data.schema_info.schema_info.origin_data.origin_attributes);
-        setOriginAttributes(response.data.data.schema_info.schema_info.origin_data.origin_attributes)
+        setOriginAttributes(
+          response.data.data.schema_info.schema_info.origin_data
+            .origin_attributes
+        );
         // console.log('Response:', response.data.data.schema_info.schema_info.onchain_data.nft_attributes);
-        setCollectionAttributes(response.data.data.schema_info.schema_info.onchain_data.nft_attributes)
-        console.log(response.data.data.schema_info.schema_info.onchain_data.token_attributes)
-        setTokenAttributes(response.data.data.schema_info.schema_info.onchain_data.token_attributes)
+        setCollectionAttributes(
+          response.data.data.schema_info.schema_info.onchain_data.nft_attributes
+        );
+        // console.log(
+        //   response.data.data.schema_info.schema_info.onchain_data
+        //     .token_attributes
+        // );
+        setTokenAttributes(
+          response.data.data.schema_info.schema_info.onchain_data
+            .token_attributes
+        );
       })
+      setLoading(false)
       .catch((error) => {
         // Handle errors here
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
-  }
+  };
 
   useEffect(() => {
-    FindSchemaCode()
+    FindSchemaCode();
   }, []);
   return (
     <div className="w-full flex justify-center ">
@@ -67,13 +81,34 @@ const DraftAttributes = () => {
               <DraftMenu menu="attributes"></DraftMenu>
             </div>
             <div className="h-[83%] overflow-scroll">
-              <div className=" flex flex-col gap-8 m-6 justify-center items-center ">
-                <div className="flex w-full justify-center gap-8 ">
-                  <DraftAttributeTabel type="originAttributes" data={originAttributes} />
-                  <DraftAttributeTabel type="collectionAttributes" data={collectionAttributes}/>
+              {loading === false ? (
+                <div className=" flex flex-col gap-8 m-6 justify-center items-center ">
+                  <div className="flex w-full justify-center gap-8 ">
+                    <DraftAttributeTabel
+                      type="originAttributes"
+                      data={originAttributes}
+                    />
+                    <DraftAttributeTabel
+                      type="collectionAttributes"
+                      data={collectionAttributes}
+                    />
+                  </div>
+                  <DraftAttributeTabel
+                    type="tokenAttributes"
+                    data={tokenAttributes}
+                  />
                 </div>
-                <DraftAttributeTabel type="tokenAttributes" data={tokenAttributes}/>
-              </div>
+              ) : (
+                <div className="h-full w-full flex items-center justify-center">
+                  <CircularProgress
+                    className=" text-white"
+                    sx={{
+                      width: 300,
+                      color: "white",
+                    }}
+                  ></CircularProgress>
+                </div>
+              )}
             </div>
             <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
               <div className="w-32">
