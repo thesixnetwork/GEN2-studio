@@ -420,7 +420,7 @@ const BasicFlow = () => {
           } else if (
             nodes[i].id === nodes[j].data.parentNode &&
             (nodes[i].data.showType === "increaseNode" ||
-              nodes[i].data.showType === "increaseNode") &&
+              nodes[i].data.showType === "decreaseNode") &&
             nodes[j].data.showType === "valueNode"
           ) {
             nodes[j].data.isSet = false;
