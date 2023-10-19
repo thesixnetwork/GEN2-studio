@@ -49,7 +49,7 @@ import NewIntregationThenTransfer from './Pages/NewIntregationThenTransfer.tsx';
 import NewIntregationThenTransform from './Pages/NewintregationThenTransform.tsx';
 import NewIntregationThenTransformStatic from './Pages/NewIntregationThenTransformStatic.tsx';
 import NewIntregationThenTransformDynamic from './Pages/NewIntregationThenTransformDynamic.tsx';
-
+import DraftAttributes from './Pages/DraftAttributes.tsx';
 
 
 export const ABCDE = () => {
@@ -165,6 +165,10 @@ const router = createBrowserRouter([
   {
     path: "/newintregation/beginer/then/transform/dynamic",
     element: <NewIntregationThenTransformDynamic></NewIntregationThenTransformDynamic>
+  },
+  {
+    path: "/draft",
+    element: <DraftAttributes></DraftAttributes>
   },
 ]);
 
