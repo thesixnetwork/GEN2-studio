@@ -19,10 +19,10 @@ const DraftAttributeTabel = ({type,data}) => {
     <div className="w-[560px] h-96 border-2 border-white rounded-xl">
       <div className="flex w-full justify-between p-3">
         <p className="text-xl">{type === "originAttributes" ? "Origin Attributes" : type === "collectionAttributes" ? "Collection Attributes" : type === "tokenAttributes" ? "Token Attributes" : null}</p>
-        <img src={menuIcon} alt="expand-menu" className="w-4 h-4" />
+        <img src={menuIcon} alt="expand-menu" className="w-4 h-4 cursor-pointer hover:scale-125 duration-300" />
       </div>
-      <div className="w-full max-h-[320px] flex justify-center overflow-scroll">
-        <table className=" text-left border border-white text-black bg-[#C8C9CD] w-[540px]">
+      <div className="w-full max-h-[320px] flex justify-center overflow-scroll px-3">
+        <table className=" text-left border border-white text-black bg-[#C8C9CD] w-full">
           <thead>
             <tr className="border border-white">
               <th className="border border-white">Name</th>
@@ -39,28 +39,28 @@ const DraftAttributeTabel = ({type,data}) => {
                   editableRow === index ? "bg-blue-200" : ""
                 }`}
               >
-                <td className="border border-white p-1.5 " contentEditable={editableRow === index}>
+                <td className="border border-white w-52" contentEditable={editableRow === index}>
                   {data.name}
                 </td>
-                <td className="border border-white p-1.5" contentEditable={editableRow === index}>
+                <td className="border border-white w-24" contentEditable={editableRow === index}>
                   {data.data_type}
                 </td>
-                <td className="border border-white p-1.5 w-14" contentEditable={editableRow === index}>
+                <td className="border border-white w-36" contentEditable={editableRow === index}>
                   {data.display_option.opensea.trait_type}
                 </td>
-                <th className="border border-white">
+                <th className="border border-white w-12 ">
                   {editableRow === index ? (
                     <img
                       src={saveIcon}
                       alt="save"
-                      className="w-4 h-4 cursor-pointer"
+                      className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
                       onClick={handleSaveClick}
                     />
                   ) : (
                     <img
                       src={editIcon}
                       alt="edit"
-                      className="w-4 h-4 cursor-pointer"
+                      className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
                       onClick={() => handleEditClick(index)}
                     />
                   )}
