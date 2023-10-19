@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import RedAleart from './Alert/RedAleart';
 
 interface MyComponentProps {
-   
+
     Name: string;
     DataType: string;
     TraitType: string;
@@ -28,7 +28,7 @@ interface MyComponentProps {
     FindSchemaCode: any;
     isDuplicateShemaCode: boolean;
     setisDuplicateShemaCode: React.Dispatch<React.SetStateAction<boolean>>;
-    InitialData:string[];
+    InitialData: string[];
 }
 
 export default function InputBoxforNP5(props: MyComponentProps) {
@@ -101,7 +101,6 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                 setIser(false)
                 updatedText[props.index].Error = true;
                 document.getElementById(`box${props.index}`).style.zIndex = "0";
-
             }
         }
         else if (containsSpecialChars(str)) {
@@ -129,17 +128,12 @@ export default function InputBoxforNP5(props: MyComponentProps) {
             document.getElementById(`box${props.index}`).style.zIndex = "0";
             updatedText[props.index].Error = true;
         }
-
     }
-
-
 
     useEffect(() => {
         if (props.Next) {
             saveCheckErrorI(props.text[props.index].value)
         }
-
-
     }, [props.Next])
 
     return (
@@ -166,14 +160,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
             </div>
             {iser &&
                 <div className='mt-[8%] mr-[9%] absolute '>
-                    <RedAleart
-                        Height={20}
-                        Width={260}
-                        Rotate={0}
-                        ML={0}
-                        MT={2}
-                        detailsText={errorMessage}
-                    />
+                    <RedAleart Height={20} Width={260} Rotate={0} ML={0} MT={2} detailsText={errorMessage} />
                 </div>
             }
         </div>

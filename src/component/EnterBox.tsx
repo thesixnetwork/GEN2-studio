@@ -20,7 +20,11 @@ interface MyComponentProps {
 }
 
 
-export default function EnterBox(props: MyComponentProps) {
+export default function 
+
+
+
+EnterBox(props: MyComponentProps) {
     const navigate = useNavigate();
     const [showI, setshowI] = React.useState(false)
     const [showII, setshowII] = React.useState(false)
