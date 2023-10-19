@@ -49,6 +49,7 @@ import NewIntregationThenTransfer from './Pages/NewIntregationThenTransfer.tsx';
 import NewIntregationThenTransform from './Pages/NewintregationThenTransform.tsx';
 import NewIntregationThenTransformStatic from './Pages/NewIntregationThenTransformStatic.tsx';
 import NewIntregationThenTransformDynamic from './Pages/NewIntregationThenTransformDynamic.tsx';
+import Deployment from './Pages/Deployment.tsx';
 import DraftAttributes from './Pages/DraftAttributes.tsx';
 
 
@@ -169,6 +170,10 @@ const router = createBrowserRouter([
   {
     path: "/draft",
     element: <DraftAttributes></DraftAttributes>
+  },
+  {
+    path: "/deployment/:ORG_NAME/:SCHEMA_NAME",
+    element: <Deployment/>
   },
 ]);
 
