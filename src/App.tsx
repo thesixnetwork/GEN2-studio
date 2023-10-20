@@ -51,6 +51,8 @@ import NewIntregationThenTransformStatic from './Pages/NewIntregationThenTransfo
 import NewIntregationThenTransformDynamic from './Pages/NewIntregationThenTransformDynamic.tsx';
 import DraftAttributes from './Pages/DraftAttributes.tsx';
 import DraftActions from './Pages/DraftActions.tsx';
+import Deployment from './Pages/DraftDeployment.tsx';
+
 
 export const ABCDE = () => {
   console.log("ABC")
@@ -167,12 +169,16 @@ const router = createBrowserRouter([
     element: <NewIntregationThenTransformDynamic></NewIntregationThenTransformDynamic>
   },
   {
-    path: "/draft/attributes/:sfdf",
+    path: "/draft/attributes/:schema_revision",
     element: <DraftAttributes></DraftAttributes>
   },
   {
-    path: "/draft/actions/:id",
+    path: "/draft/actions/:schema_revision",
     element: <DraftActions></DraftActions>
+  },
+  {
+    path: "/draft/deployment/:schema_revision",
+    element: <Deployment/>
   },
 ]);
 
