@@ -24,6 +24,9 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { getSCHEMA_CODE } from "../helpers/AuthService";
 import { set } from "lodash";
 
+import { useParams } from 'react-router-dom';
+
+
 import { CircularProgress } from "@mui/material";
 
 const DraftAttributes = () => {
@@ -31,8 +34,12 @@ const DraftAttributes = () => {
   const [collectionAttributes, setCollectionAttributes] = useState([]);
   const [tokenAttributes, setTokenAttributes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState()
+
+  const { schema_revision } = useParams();
+
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -61,13 +68,48 @@ const DraftAttributes = () => {
           response.data.data.schema_info.schema_info.onchain_data
             .token_attributes
         );
+          setLoading(false)
       })
-      setLoading(false)
       .catch((error) => {
-        // Handle errors here
         console.error("Error:", error);
+        setLoading(false)
       });
   };
+
+  // const saveOriginTokenAttributes = async () => {
+  //   const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
+  //   const requestData = {
+  //     "payload": {
+  //       "schema_info": {
+  //         "origin_data": {
+  //           "origin_attributes": text     
+  //         }
+  //       },
+  //       "schema_code":getSCHEMA_CODE() ,
+  //       "status": "Draft",
+  //       "current_state": "3"
+  //     }
+  //   }
+  //     ;
+
+  //   await axios.post(apiUrl, requestData, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+  //       // Add any other headers your API requires
+  //     },
+  //   })
+  //     .then(response => {
+  //       console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
+  //       console.log("Request :",requestData)
+  //       // You can handle the API response here
+  //     })
+  //     .catch(error => {
+  //       console.error('API Error:', error);
+  //       // Handle errors here
+  //     });
+
+  // }
 
   useEffect(() => {
     FindSchemaCode();
@@ -78,7 +120,7 @@ const DraftAttributes = () => {
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full">
             <div className="flex justify-between">
-              <DraftMenu menu="attributes"></DraftMenu>
+              <DraftMenu menu="attributes" schemaCode={schema_revision}></DraftMenu>
             </div>
             <div className="h-[83%] overflow-scroll">
               {loading === false ? (
@@ -111,7 +153,7 @@ const DraftAttributes = () => {
               )}
             </div>
             <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
-              <div className="w-32">
+              <div className="w-32" onClick={()=>console.log(schema_revision)}>
                 <NormalButton
                   TextTitle="SAVE"
                   BorderRadius={0}
