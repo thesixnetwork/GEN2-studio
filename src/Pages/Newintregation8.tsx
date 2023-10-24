@@ -197,11 +197,13 @@ export default function Newintregation8() {
                     "max_value": "0"
                 }
             },
-            "default_mint_value": {
-                "string_attribute_value": {
-                    "value": 0
-                }
-            },
+            "default_mint_value": ""
+            // {
+                // "string_attribute_value": {
+                //     "value": 0
+                // }
+            // }
+            ,
             "hidden_overide": false,
             "hidden_to_marketplace": false
         };

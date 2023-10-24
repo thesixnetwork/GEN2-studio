@@ -65,9 +65,10 @@ const DraftAttributes = () => {
         //     .token_attributes
         // );
         setTokenAttributes(
-          response.data.data.schema_info.schema_info.onchain_data
-            .token_attributes
+          response.data.data.schema_info.schema_info.onchain_data.token_attributes
         );
+
+        setData(response)
           setLoading(false)
       })
       .catch((error) => {
@@ -110,7 +111,7 @@ const DraftAttributes = () => {
   //     });
 
   // }
-
+  
   useEffect(() => {
     FindSchemaCode();
   }, []);
@@ -129,6 +130,8 @@ const DraftAttributes = () => {
                     <DraftAttributeTabel
                       type="originAttributes"
                       data={originAttributes}
+                      setOriginAttributes={setOriginAttributes}
+                      setData={setData}
                     />
                     <DraftAttributeTabel
                       type="collectionAttributes"
@@ -153,14 +156,14 @@ const DraftAttributes = () => {
               )}
             </div>
             <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
-              <div className="w-32" onClick={()=>console.log(schema_revision)}>
+              <div className="w-32" onClick={()=>console.log(data.data.data)}>
                 <NormalButton
                   TextTitle="SAVE"
                   BorderRadius={0}
                   FontSize={24}
                 ></NormalButton>
               </div>
-              <div className="w-32">
+              <div className="w-32" onClick={()=>console.log(originAttributes)} >
                 <NormalButton
                   TextTitle="DISCARD"
                   BorderRadius={0}

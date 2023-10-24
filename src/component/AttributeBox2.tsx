@@ -453,15 +453,48 @@ export default function AttributeBox(props: MyComponentProps) {
         // //(typeof e.target.id)
         if (e.target.id == "Icon0") {
             updatedText[props.index]["data_type"] = "string";
+            updatedText[props.index]["default_mint_value"] = {string_attribute_value: {value: ""}}
         }
         else if (e.target.id == "Icon1") {
             updatedText[props.index]["data_type"] = "Number";
+            updatedText[props.index]["default_mint_value"] = {number_attribute_value: {value: 0}}
         }
         else if (e.target.id == "Icon2") {
             updatedText[props.index]["data_type"] = "Boolean";
+            updatedText[props.index]["default_mint_value"] = {boolean_attribute_value: {value: false}}
         }
         props.setText(updatedText);
     };
+
+    const handleChangValue = (e) => {
+        const updatedText = [...props.text];
+        const dataType = props.text[props.index].data_type.toLowerCase();
+        console.log("type",dataType)
+        if(props.text[props.index].data_type.toLowerCase() === "number"){
+            updatedText[props.index]["default_mint_value"] = {
+                [`${dataType}_attribute_value`]: {
+                    value: parseInt(e.target.value)
+                }
+            };
+        }else if (props.text[props.index].data_type.toLowerCase() === "boolean"){
+            updatedText[props.index]["default_mint_value"] = {
+                [`${dataType}_attribute_value`]: {
+                    value: e.target.value === "true"
+                }
+            };
+        }
+        else{
+            updatedText[props.index]["default_mint_value"] = {
+                [`${dataType}_attribute_value`]: {
+                    value: e.target.value
+                }
+            };
+        }
+    
+        console.log(updatedText[props.index]); // Changed from props.text to updatedText
+        props.setText(updatedText);
+    }
+    
 
     return (
         <div id={`${props.index}`} className="w-[267px] h-[227px] bg-transparent border-solid border border-white-600 rounded-xl px-3 pt-5 pb-5">
@@ -509,7 +542,7 @@ export default function AttributeBox(props: MyComponentProps) {
                     Data type :&ensp;{" "}
                     <div className="flex w-[160px] justify-between">
                         <div
-                            onClick={(e) => { changeBgColorButton(e); checkErrorIII(); }}
+                            onClick={(e) => { changeBgColorButton(e); checkErrorIII(); console.log(props.text) }}
                             // onMouseLeave={() => fetchError()}
                             id="Icon0"
                             className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${selectedItem === 'Icon0' ? 'bg-[#D9D9D975]' : 'bg-transparent'}`}
@@ -558,12 +591,14 @@ export default function AttributeBox(props: MyComponentProps) {
                         // value={props.Value}
                         onChange={(e) => {
                             console.log(props.State)
-                            if(props.State===4){
-                                handleChange(e,"default_mint_value.float_attribute_value.value")
-                            }
-                            else if(props.State===5){
-                                handleChange(e,"default_mint_value.string_attribute_value.value")
-                            }
+                            handleChangValue(e);
+
+                            // if(props.State===4){
+                            //     handleChange(e,"default_mint_value.float_attribute_value.value")
+                            // }
+                            // else if(props.State===5){
+                            //     handleChange(e,"default_mint_value.string_attribute_value.value")
+                            // }
                             SavecheckErrorII(props.text[props.index].value)
                         }}
                         // onBlur={fetchError}
