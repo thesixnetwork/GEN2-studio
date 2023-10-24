@@ -52,7 +52,7 @@ import NewIntregationThenTransformDynamic from './Pages/NewIntregationThenTransf
 import DraftAttributes from './Pages/DraftAttributes.tsx';
 import DraftActions from './Pages/DraftActions.tsx';
 import Deployment from './Pages/DraftDeployment.tsx';
-
+import Testto from './Pages/Testto.tsx';
 
 export const ABCDE = () => {
   console.log("ABC")
@@ -179,6 +179,10 @@ const router = createBrowserRouter([
   {
     path: "/draft/deployment/:schema_revision",
     element: <Deployment/>
+  },
+  {
+    path: "/testto",
+    element: <Testto/>
   },
 ]);
 

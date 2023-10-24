@@ -3,7 +3,7 @@ import menuIcon from "../pic/draft-expand-menu.png";
 import editIcon from "../pic/draft-edit.png";
 import saveIcon from "../pic/draft-save.png";
 
-const DraftAttributeTabel = ({type,data}) => {
+const DraftAttributeTabel = ({type,data, setOriginAttributes,setData}) => {
   const [editableRow, setEditableRow] = useState(null);
 
 
@@ -13,6 +13,13 @@ const DraftAttributeTabel = ({type,data}) => {
 
   const handleSaveClick = () => {
     setEditableRow(null);
+    setOriginAttributes([...data])
+  };
+
+  const handleCellChange = (index, field, value) => {
+    const newData = [...data];
+    newData[index][field] = value;
+    setData(newData);
   };
 
   return (
@@ -20,6 +27,7 @@ const DraftAttributeTabel = ({type,data}) => {
       <div className="flex w-full justify-between p-3">
         <p className="text-xl">{type === "originAttributes" ? "Origin Attributes" : type === "collectionAttributes" ? "Collection Attributes" : type === "tokenAttributes" ? "Token Attributes" : null}</p>
         <img src={menuIcon} alt="expand-menu" className="w-4 h-4 cursor-pointer hover:scale-125 duration-300" />
+        <button onClick={()=>console.log(data)}>log</button>
       </div>
       <div className="w-full max-h-[320px] flex justify-center overflow-scroll px-3">
         <table className=" text-left border border-white text-black bg-[#C8C9CD] w-full">
@@ -39,13 +47,23 @@ const DraftAttributeTabel = ({type,data}) => {
                   editableRow === index ? "bg-blue-200" : ""
                 }`}
               >
-                <td className="border border-white w-52" contentEditable={editableRow === index}>
+                <td className="border border-white w-52" contentEditable={editableRow === index}
+                onBlur={(e) =>
+                  handleCellChange(index, "name", e.target.innerText)
+                }
+                >
                   {data.name}
                 </td>
-                <td className="border border-white w-24" contentEditable={editableRow === index}>
+                <td className="border border-white w-24" contentEditable={editableRow === index}
+                     onBlur={(e) =>
+                      handleCellChange(index, "name", e.target.innerText)
+                    }>
                   {data.data_type}
                 </td>
-                <td className="border border-white w-36" contentEditable={editableRow === index}>
+                <td className="border border-white w-36" contentEditable={editableRow === index}
+                     onBlur={(e) =>
+                      handleCellChange(index, "name", e.target.innerText)
+                    }>
                   {data.display_option.opensea.trait_type}
                 </td>
                 <th className="border border-white w-12 ">
