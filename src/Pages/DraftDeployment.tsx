@@ -41,7 +41,7 @@ import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const Deploy = () => {
+const DraftDeployment = () => {
   const { schema_revision } = useParams();
   const navigate = useNavigate();
   const getOriginAttributFromContract = async () => {
@@ -78,6 +78,7 @@ const Deploy = () => {
   const [offlineSigner, setOfflineSigner] = useState();
   const [isFalse, setIsFalse] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [deployLoading, setDeployLoading] = useState(false);
   // const isAccount = useRef({});
   // console.log("isAccount", isAccount)
   // let isAccounts:Account
@@ -112,6 +113,7 @@ const Deploy = () => {
   };
 
   const HandlerDeploySchemaCode = async () => {
+    setDeployLoading(true);
     let msgArray: Array<EncodeObject> = [];
 
     let encodeBase64Schema = Buffer.from(JSON.stringify(schemaInfo)).toString(
@@ -164,6 +166,7 @@ const Deploy = () => {
           ``
         );
         console.log("tx-----", txResponse);
+        setDeployLoading(false);
         await Swal.fire({
           position: "center",
           icon: "success",
@@ -174,6 +177,7 @@ const Deploy = () => {
         navigate("/");
       } catch (error) {
         console.error(error);
+        setDeployLoading(false);
         await Swal.fire({
           position: "center",
           icon: "error",
@@ -262,53 +266,66 @@ const Deploy = () => {
                   ></CircularProgress>
                 </div>
               ) : schemaInfo ? (
-                <Box>
-                  <Flex gap={"120px"}>
-                    <Flex
-                      onClick={() => HandlerDeploySchemaCode()}
-                      flexWrap={"wrap"}
-                      height={"350px"}
-                      maxW={"350px"}
-                      className=" border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer"
-                    >
+                deployLoading ? (
+                  <div className="h-full w-full flex flex-col items-center justify-center">
+                    <CircularProgress
+                      className=" text-white"
+                      sx={{
+                        width: 300,
+                        color: "white",
+                      }}
+                    ></CircularProgress>
+                    <Text padding={"10px"}>Schema Deploying...</Text>
+                  </div>
+                ) : (
+                  <Box>
+                    <Flex gap={"120px"}>
                       <Flex
-                        padding={"30px"}
-                        w={"200px"}
-                        justifyContent={"center"}
+                        onClick={() => HandlerDeploySchemaCode()}
+                        flexWrap={"wrap"}
+                        height={"350px"}
+                        maxW={"350px"}
+                        className=" border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer"
                       >
-                        <img src={imgMainnet}></img>
-                        <p className="absolute border border-white rounded-lg py-0.5 px-2 mt-[50px] ml-[80px]">
-                          Testnet
-                        </p>
+                        <Flex
+                          padding={"30px"}
+                          w={"200px"}
+                          justifyContent={"center"}
+                        >
+                          <img src={imgMainnet}></img>
+                          <p className="absolute border border-white rounded-lg py-0.5 px-2 mt-[50px] ml-[80px]">
+                            Testnet
+                          </p>
+                        </Flex>
+                        <Flex w={"100%"} justifyContent={"center"}>
+                          <p className="text-white text-2xl hover:text-[#d2d3d7] duration-500 ">
+                            Deploy to Testnet
+                          </p>
+                        </Flex>
                       </Flex>
-                      <Flex w={"100%"} justifyContent={"center"}>
-                        <p className="text-white text-2xl hover:text-[#d2d3d7] duration-500 ">
-                          Deploy to Testnet
-                        </p>
+                      <Flex
+                        onClick={() => HandlerDeploySchemaCode()}
+                        flexWrap={"wrap"}
+                        height={"350px"}
+                        maxW={"350px"}
+                        className=" border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer"
+                      >
+                        <Flex
+                          padding={"30px"}
+                          w={"200px"}
+                          justifyContent={"center"}
+                        >
+                          <img src={imgMainnet}></img>
+                        </Flex>
+                        <Flex w={"100%"} justifyContent={"center"}>
+                          <p className="text-white text-2xl hover:text-[#d2d3d7] duration-500 ">
+                            Deploy To Mainnet
+                          </p>
+                        </Flex>
                       </Flex>
                     </Flex>
-                    <Flex
-                      onClick={() => HandlerDeploySchemaCode()}
-                      flexWrap={"wrap"}
-                      height={"350px"}
-                      maxW={"350px"}
-                      className=" border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer"
-                    >
-                      <Flex
-                        padding={"30px"}
-                        w={"200px"}
-                        justifyContent={"center"}
-                      >
-                        <img src={imgMainnet}></img>
-                      </Flex>
-                      <Flex w={"100%"} justifyContent={"center"}>
-                        <p className="text-white text-2xl hover:text-[#d2d3d7] duration-500 ">
-                          Deploy To Mainnet
-                        </p>
-                      </Flex>
-                    </Flex>
-                  </Flex>
-                </Box>
+                  </Box>
+                )
               ) : (
                 <Flex>
                   <Text color="error" style={{ fontSize: "78px" }}>
@@ -335,4 +352,4 @@ const Deploy = () => {
   );
 };
 
-export default Deploy;
+export default DraftDeployment;

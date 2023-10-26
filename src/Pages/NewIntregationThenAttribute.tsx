@@ -23,7 +23,7 @@ import ReactFlow, {
   NodeOrigin
 } from "reactflow";
 import "reactflow/dist/base.css";
-import { Factory } from "../function/ConvertMetadata/Factory";
+import { Factory } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
 import Customnode from "../component/node/Customnode";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";

@@ -445,22 +445,22 @@ export default function AttributeBox(props: MyComponentProps) {
         await setSelectedItem(itemId);
         await handleChangeIcon(e)
         props.setIsShow(false)
-
     };
 
     const handleChangeIcon = (e) => {
         const updatedText = [...props.text];
         // //(typeof e.target.id)
+        console.log("==>", updatedText)
         if (e.target.id == "Icon0") {
             updatedText[props.index]["data_type"] = "string";
             updatedText[props.index]["default_mint_value"] = {string_attribute_value: {value: ""}}
         }
         else if (e.target.id == "Icon1") {
-            updatedText[props.index]["data_type"] = "Number";
+            updatedText[props.index]["data_type"] = "number";
             updatedText[props.index]["default_mint_value"] = {number_attribute_value: {value: 0}}
         }
         else if (e.target.id == "Icon2") {
-            updatedText[props.index]["data_type"] = "Boolean";
+            updatedText[props.index]["data_type"] = "boolean";
             updatedText[props.index]["default_mint_value"] = {boolean_attribute_value: {value: false}}
         }
         props.setText(updatedText);
@@ -468,15 +468,15 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const handleChangValue = (e) => {
         const updatedText = [...props.text];
-        const dataType = props.text[props.index].data_type.toLowerCase();
+        const dataType = props.text[props.index].data_type;
         console.log("type",dataType)
-        if(props.text[props.index].data_type.toLowerCase() === "number"){
+        if(props.text[props.index].data_type === "number"){
             updatedText[props.index]["default_mint_value"] = {
                 [`${dataType}_attribute_value`]: {
                     value: parseInt(e.target.value)
                 }
             };
-        }else if (props.text[props.index].data_type.toLowerCase() === "boolean"){
+        }else if (props.text[props.index].data_type === "boolean"){
             updatedText[props.index]["default_mint_value"] = {
                 [`${dataType}_attribute_value`]: {
                     value: e.target.value === "true"
