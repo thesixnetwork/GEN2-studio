@@ -133,7 +133,7 @@ export default function AttributeBox(props: MyComponentProps) {
         const lastField = fieldPathArray[fieldPathArray.length - 1];
         target[lastField] = e.target.value;
 
-        console.log(updatedText[props.index]);
+        console.log("TEXT:",updatedText[props.index]);
         props.setText(updatedText);
         props.setIsShow(false);
     };
@@ -196,8 +196,6 @@ export default function AttributeBox(props: MyComponentProps) {
     //     setIser(true)
     // }, [SAME]);
 
-
-
     const CheckErrorI = async (e) => {
         setPartI(false)
         if (!e.target.value) {
@@ -221,23 +219,20 @@ export default function AttributeBox(props: MyComponentProps) {
             setErrorMessage("Uppercase")
             setIser(true)
         }
-
         else {
             setIser(false)
             setPartI(true)
         }
-
     }
+
     const checkErrorII = (e) => {
         if (!e.target.value) {
-
             setErrorMessage("Not Availible")
             setIser(true)
         }
         else {
             setIser(false)
         }
-
     }
 
     const checkErrorIII = async () => {
@@ -249,7 +244,6 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(false)
             setPartII(true)
         }
-
     }
 
     const SavecheckErrorIII = async () => {
@@ -263,9 +257,7 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(false)
             setPartII(true)
             // //("partII",partII)
-
         }
-
     }
 
     const SavecheckErrorII = (str) => {
@@ -279,7 +271,6 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(false)
             return (true)
         }
-
     }
 
     const handleDeleteAttribute = () => {
@@ -474,6 +465,7 @@ export default function AttributeBox(props: MyComponentProps) {
         await setSelectedItem(itemId);
         await handleChangeIcon(e)
         props.setIsShow(false)
+        console.log(props.text[props.index])
 
     };
 
@@ -540,7 +532,7 @@ export default function AttributeBox(props: MyComponentProps) {
                     Data type :&ensp;{" "}
                     <div className="flex w-[160px] justify-between">
                         <div
-                            onClick={(e) => { changeBgColorButton(e); checkErrorIII(); }}
+                            onClick={(e) => { changeBgColorButton(e); checkErrorIII();  }}
                             // onMouseLeave={() => fetchError()}
                             id="string"
                             className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${props.text[props.index].data_type === 'string' ? 'bg-[#D9D9D975]' : 'bg-transparent'}`}

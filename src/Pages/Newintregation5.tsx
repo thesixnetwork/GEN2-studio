@@ -27,7 +27,7 @@ import { ABCDE } from '../App'
 //Redux
 
 
-const NewIntregation5 =  () => {
+const NewIntregation5 = () => {
     //Redux
     const dispatch = useAppDispatch();
     const walletcounterReducer = useSelector(walletcounterSelector);
@@ -61,11 +61,8 @@ const NewIntregation5 =  () => {
 
     const [isLoading, setisLoading] = useState(false)
     const [isValidate, setisValidate] = useState(false)
-
     const [Next, setNext] = useState(false)
-
     const navigate = useNavigate();
-
     const [isError, setisError] = useState(false)
     const [isError1, setisError1] = useState(false)
     const [isError2, setisError2] = useState(false)
@@ -74,17 +71,17 @@ const NewIntregation5 =  () => {
     const [isSpace1, setisSpace1] = useState(false)
     const [isSpace2, setisSpace2] = useState(false)
     const [isDuplicateShemaCode, setisDuplicateShemaCode] = useState(false);
-    const [isDuplicate, setisDuplicate] = useState(true)
+
+
+
 
     const handleInputschemaCode = (e) => {
         setschemaCode(e.target.value);
-        console.log(e.target.value)
         handleReset()
 
     };
     const handleInputcollectionName = (e) => {
         setcollectionName(e.target.value);
-        console.log(e.target.value)
         handleReset()
     };
 
@@ -109,7 +106,6 @@ const NewIntregation5 =  () => {
         e.preventDefault();
         if ((schemaCode.length > 0 && !schemaCode.includes(' ')) && (collectionName.length > 0 && !collectionName.includes(' '))) {
             navigate('/newintregation/6');
-            console.log('1')
         }
         // if(schemaCode.includes(' ') || collectionName.includes(' ')  ){
         //     console.log('SPACEBARrrrrrrrrrrrrrrrrrr')
@@ -118,14 +114,12 @@ const NewIntregation5 =  () => {
             setisError1(true)
             setisError(true)
             setplaceHolderColor1("red")
-            console.log('2')
             document.getElementById("img2").style.zIndex = "0";
         }
         else if (((collectionName.length == 0 || collectionName.includes(' ')) && (schemaCode.length > 0 && !schemaCode.includes(' ')))) {
             setisError2(true)
             setisError(true)
             setplaceHolderColor2("red")
-            console.log('3')
             document.getElementById("img1").style.zIndex = "0";
         }
         else {
@@ -134,7 +128,6 @@ const NewIntregation5 =  () => {
             setisError(true)
             setplaceHolderColor1("red")
             setplaceHolderColor2("red")
-            console.log('4')
         }
         console.log('submit success')
         if (schemaCode.includes(' ')) {
@@ -233,6 +226,7 @@ const NewIntregation5 =  () => {
         })
             .then((response) => {
                 console.log('Response:', response.data);
+                console.log(text)
                 const updatedText = [...text];
                 updatedText[0].value = response.data.data.schema_info.schema_name;
                 updatedText[1].value = response.data.data.schema_info.schema_info.name;
@@ -243,20 +237,59 @@ const NewIntregation5 =  () => {
             });
         setisLoading(false)
     }
-    
 
-    // useEffect(() => {
-    //     console.log("SCHEMACODE:",getSCHEMA_CODE())
-    //     if(getSCHEMA_CODE()){
-    //         GethistoryFormSchemaCode();
-    //     }
-    // },[]);
 
+    useEffect(() => {
+        console.log("SCHEMACODE:", getSCHEMA_CODE())
+        if (getSCHEMA_CODE()) {
+            GethistoryFormSchemaCode();
+        }
+    }, []);
+
+    const UpdateSchemaInfo = () => {
+
+        const apiUrl = 'https://six-gen2-studio-backend-traffic-workers-oxdveggapq-as.a.run.app/schema/set_schema_info'; // Replace with your API endpoint
+        const requestData = {
+            "payload": {
+                "schema_info": {
+                    "name": `${text[1].value}`,
+                    "code": "schema_code + version = schema_code_v2", //`${text[0].value}`,//
+                    "description": `${text[2].value}`,
+                    "owner": "0xNFT......."
+                },
+                "schema_code": `${text[0].value}`,
+                "status": "Draft",
+                "current_state": "1" 
+            }
+        };
+
+        axios.post(apiUrl, requestData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+                // Add any other headers your API requires
+            },
+        })
+            .then(response => {
+                console.log('API Response:', response.data);
+                saveSCHEMA_CODE(response.data.data.schema_code);
+                // console.log(requestData)
+                // You can handle the API response here
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // Handle errors here
+            });
+    }
 
     const handleNext = () => {
         setNext(true);
+        console.log("DUPLICATE :", text[0].duplicate)
         if (text[0].duplicate) {
             handleFormsubmit();
+        }
+        else if (!text[0].duplicate && getSCHEMA_CODE() === text[0].value) {
+            UpdateSchemaInfo();
         }
 
         const allErrorsTrue = text.every(item => item.Error === true);
@@ -264,8 +297,6 @@ const NewIntregation5 =  () => {
         if (allErrorsTrue) {
             navigate('/newintregation/6')
             console.log("All errors are true.");
-
-
         } else {
             console.log("Not all errors are true.");
             setisError(true)
@@ -278,7 +309,6 @@ const NewIntregation5 =  () => {
         updatedText[0].duplicate = true;
         setisLoading(true)
         const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/validate_schema_code'; // Replace with your API endpoint
-        console.log(text[0].value)
         const params = {
             schema_code: `${text[0].value}`,
         };
@@ -299,13 +329,10 @@ const NewIntregation5 =  () => {
                 if (!response.data.data.status) {
                     const updatedText = [...text];
                     updatedText[0].duplicate = response.data.data.status;
-                    console.log(text)
                 }
                 setisValidate(true)
-
             })
             .catch((error) => {
-                // Handle errors here
                 console.error('Error:', error);
             });
         setisLoading(false)
@@ -332,7 +359,7 @@ const NewIntregation5 =  () => {
                                     isDuplicateShemaCode={isDuplicateShemaCode}
                                     setisDuplicateShemaCode={setisDuplicateShemaCode}
                                     FindSchemaCode={FindSchemaCode}
-                                    InitialData={[text[0].value,text[1].value,text[2].value]}
+                                    InitialData={[text[0].value, text[1].value, text[2].value]}
                                 >
                                 </InputBoxforNP5>
                             ))}
@@ -354,7 +381,7 @@ const NewIntregation5 =  () => {
                             </div>
                         </div>
                     </div>
-                    <div className='h-5/6 flex flex-col items-end h-full   '>
+                    <div className='h-5/6 flex flex-col items-end h-full'>
                         <Conectwalet></Conectwalet>
                         <WhiteBox
                             Title={'Schema Code'}
