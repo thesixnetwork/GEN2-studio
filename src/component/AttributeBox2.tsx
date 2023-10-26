@@ -7,12 +7,13 @@ import ReactDOM from "react-dom";
 import { set, useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import AlertCard from "./Alert/AlertCard";
+import { border } from "@chakra-ui/react";
 
 
 
 
 interface MyComponentProps {
-    State:number;
+    State: number;
     Title: string[];
     Name: string;
     DataType: string;
@@ -82,14 +83,19 @@ interface MyComponentProps {
 // }
 
 export default function AttributeBox(props: MyComponentProps) {
-    const [error, setError] = useState(false);
+
     const [errorMessage, setErrorMessage] = useState("");
     const [iser, setIser] = useState(false);
-    const [textInputI, settextInputI] = useState("")
     const [partI, setPartI] = useState(false);
     var [partII, setPartII] = useState(false);
-    const [SAME, setSAME] = useState(false);
-    const [partIII, setPartIII] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+    const [isInputDisabled, setInputDisabled] = useState(true);
+
+
+
+    const handleClick = () => {
+        // Update the input value here
+    };
 
 
     const Delete = styled(ClearIcon)({
@@ -238,7 +244,7 @@ export default function AttributeBox(props: MyComponentProps) {
     const checkErrorIII = async () => {
         await setPartII(false)
         if (props.text[props.index].data_type === "") {
-            setErrorMessage("Need datatype")
+            setErrorMessage("Need data type")
             setIser(true)
         } else {
             setIser(false)
@@ -251,7 +257,7 @@ export default function AttributeBox(props: MyComponentProps) {
         // console.log(props.text[props.index].dataType)
         // console.log(props.text[props.index].dataType === "")
         if (props.text[props.index].data_type === "") {
-            setErrorMessage("Need datatype")
+            setErrorMessage("Need data type")
             setIser(true)
         } else {
             setIser(false)
@@ -264,10 +270,6 @@ export default function AttributeBox(props: MyComponentProps) {
         setIser(false)
         if (!str) {
             setErrorMessage("Not Availible")
-            setIser(true)
-        }
-        else if (containsSpace(str)) {
-            setErrorMessage("Space")
             setIser(true)
         }
         else {
@@ -441,10 +443,13 @@ export default function AttributeBox(props: MyComponentProps) {
     const [selectedItem, setSelectedItem] = useState("");
 
     const changeBgColorButton = async (e) => {
+        setInputDisabled(false)
+        setInputValue("")
         const itemId = e.target.id;
         await setSelectedItem(itemId);
         await handleChangeIcon(e)
         props.setIsShow(false)
+        console.log(props.text)
 
     };
 
@@ -453,48 +458,51 @@ export default function AttributeBox(props: MyComponentProps) {
         // //(typeof e.target.id)
         if (e.target.id == "Icon0") {
             updatedText[props.index]["data_type"] = "string";
-            updatedText[props.index]["default_mint_value"] = {string_attribute_value: {value: ""}}
+            updatedText[props.index]["default_mint_value"] = { string_attribute_value: { value: "" } }
         }
         else if (e.target.id == "Icon1") {
             updatedText[props.index]["data_type"] = "Number";
-            updatedText[props.index]["default_mint_value"] = {number_attribute_value: {value: 0}}
+            updatedText[props.index]["default_mint_value"] = { number_attribute_value: { value: 0 } }
         }
         else if (e.target.id == "Icon2") {
             updatedText[props.index]["data_type"] = "Boolean";
-            updatedText[props.index]["default_mint_value"] = {boolean_attribute_value: {value: false}}
+            updatedText[props.index]["default_mint_value"] = { boolean_attribute_value: { value: false } }
         }
         props.setText(updatedText);
     };
 
-    const handleChangValue = (e) => {
+    const handleChangeValue = (e) => {
+        setInputValue(e.target.value);
         const updatedText = [...props.text];
         const dataType = props.text[props.index].data_type.toLowerCase();
-        console.log("type",dataType)
-        if(props.text[props.index].data_type.toLowerCase() === "number"){
+        console.log("type", dataType)
+        if (props.text[props.index].data_type.toLowerCase() === "number") {
             updatedText[props.index]["default_mint_value"] = {
                 [`${dataType}_attribute_value`]: {
-                    value: parseInt(e.target.value)
+                    value: e.target.value
                 }
             };
-        }else if (props.text[props.index].data_type.toLowerCase() === "boolean"){
+        } else if (props.text[props.index].data_type.toLowerCase() === "boolean") {
             updatedText[props.index]["default_mint_value"] = {
                 [`${dataType}_attribute_value`]: {
                     value: e.target.value === "true"
                 }
             };
         }
-        else{
+        else {
             updatedText[props.index]["default_mint_value"] = {
                 [`${dataType}_attribute_value`]: {
                     value: e.target.value
                 }
             };
         }
-    
+
         console.log(updatedText[props.index]); // Changed from props.text to updatedText
         props.setText(updatedText);
     }
+
     
+
 
     return (
         <div id={`${props.index}`} className="w-[267px] h-[227px] bg-transparent border-solid border border-white-600 rounded-xl px-3 pt-5 pb-5">
@@ -527,7 +535,6 @@ export default function AttributeBox(props: MyComponentProps) {
                     Name :&ensp;{" "}
                     <input
                         type="text"
-                        value={props.Name}
                         onChange={async (e) => {
                             await handleChange(e, "name");
                             await CheckErrorI(e);
@@ -542,7 +549,7 @@ export default function AttributeBox(props: MyComponentProps) {
                     Data type :&ensp;{" "}
                     <div className="flex w-[160px] justify-between">
                         <div
-                            onClick={(e) => { changeBgColorButton(e); checkErrorIII(); console.log(props.text) }}
+                            onClick={(e) => { changeBgColorButton(e); checkErrorIII(); }}
                             // onMouseLeave={() => fetchError()}
                             id="Icon0"
                             className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${selectedItem === 'Icon0' ? 'bg-[#D9D9D975]' : 'bg-transparent'}`}
@@ -575,7 +582,7 @@ export default function AttributeBox(props: MyComponentProps) {
                         type="text"
                         value={props.TraitType}
                         onChange={(e) => {
-                            handleChange(e,"display_option.opensea.trait_type");
+                            handleChange(e, "display_option.opensea.trait_type");
                             // handleChangetrait_type(e);
                             SavecheckErrorII(props.text[props.index].display_option.opensea.trait_type)
                         }}
@@ -587,12 +594,14 @@ export default function AttributeBox(props: MyComponentProps) {
                 <div className="flex text-[14px] items-center">
                     Value :&ensp;{" "}
                     <input
+                      
+                        disabled={isInputDisabled}
+                        value={inputValue}
+                        id="Value"
                         type="text"
                         // value={props.Value}
                         onChange={(e) => {
-                            console.log(props.State)
-                            handleChangValue(e);
-
+                            handleChangeValue(e);
                             // if(props.State===4){
                             //     handleChange(e,"default_mint_value.float_attribute_value.value")
                             // }
@@ -602,8 +611,8 @@ export default function AttributeBox(props: MyComponentProps) {
                             SavecheckErrorII(props.text[props.index].value)
                         }}
                         // onBlur={fetchError}
-                        className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
-                        placeholder="Add trait type here"
+                        className={`bg-transparent text-[14px] border-[1px] ${props.text[props.index].data_type === "" ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]`}
+                        placeholder={props.text[props.index].data_type ==="" ?  "Need data type" : "Add trait type here" }
                     />
                 </div>
 

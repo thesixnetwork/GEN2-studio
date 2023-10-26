@@ -125,13 +125,13 @@ const NewIntregation7 = () => {
   }
 
   const handleSave = async () => {
-    await saveOriginTokenAttributes()
+    
     setSave(true);
     searchError()
     setTimeout(() => {
       checkALLError()
-      navigate('/newintregation/8')
     }, 500);
+    await saveOriginTokenAttributes()
     LoadingCheckErro()
   };
 
@@ -397,7 +397,6 @@ const NewIntregation7 = () => {
             }}
           >
             <Darkbg></Darkbg>
-
           </div>
         )}
       </div>
