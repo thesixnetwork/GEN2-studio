@@ -3,15 +3,21 @@ import updateValueImg from "../pic/action-update-value.png";
 import dynamicImg from "../pic/action-dynamic.png";
 import staticImg from "../pic/action-static.png";
 import { Link } from "react-router-dom";
-
-const ActionTransformCard = ({ type }) => {
+import { useParams } from "react-router-dom";
+const ActionTransformCard = ({ type,draft }) => {
+  const param = useParams();
   console.log("here", type);
+
   return (
     <Link
       to={
-        type === "static"
+        type === "static" && draft
+          ? `/draft/actions/edit/then/transform/static/${param.action_name}/${param.meta_function}/${param.schema_revision}`
+          : type === "dynamic" && draft
+          ? `/draft/actions/edit/then/transform/dynamic/${param.action_name}/${param.meta_function}/${param.schema_revision}`
+          :type === "static" && !draft
           ? "static"
-          : type === "dynamic"
+          : type === "dynamic" && !draft
           ? "dynamic"
           : "/"
       }

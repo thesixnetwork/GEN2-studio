@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 const DraftActionPreviewCard = ({ data, param }) => {
-  console.log("----p",param)
+  console.log("----p", param);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -19,6 +19,18 @@ const DraftActionPreviewCard = ({ data, param }) => {
   };
 
   console.log("===>", data);
+
+  // write code to convert string to base64
+  const convertToBase64 = (str) => {
+    return btoa(str);
+  };
+  console.log(
+    "--->",
+    convertToBase64(
+      "meta.SetImage('https://i.seadn.io/s/raw/files/6fbfa229d21de3a8a59f0c72f8c273b8.png?auto=format&dpr=1&w=3840')"
+    )
+  );
+
   return (
     <div className="border border-white w-[520px]">
       <div className="ml-[484px] absolute ">
@@ -62,22 +74,30 @@ const DraftActionPreviewCard = ({ data, param }) => {
         <div className="flex">
           <p>When:&nbsp;</p>
           <span>{data.when}</span>
-          <Link to={`/draft/actions/edit/when/${data.name}/${data.when}/${param}`}>
-                  <button>
-                    <img src={editIcon} alt="edit" className="w-4 h-4" />
-                  </button>
-                </Link>
+          <Link
+            to={`/draft/actions/edit/when/${data.name}/${data.when}/${param}`}
+          >
+            <button>
+              <img src={editIcon} alt="edit" className="w-4 h-4" />
+            </button>
+          </Link>
         </div>
         <div className="">
           <p>Then:&nbsp;</p>
           <ul className="ml-8">
             {data.then.map((item, index) => (
               <li key={index} className="list-disc w-96 flex items-center">
-                {item}
-                <Link to={`/draft/actions/edit/then/${data.name}/${data.then[index]}/${param}`}>
-                  <button>
-                    <img src={editIcon} alt="edit" className="w-4 h-4" />
-                  </button>
+                <Link
+                  to={
+                    data.then[index].startsWith("meta.SetImage")
+                      ? `/draft/actions/edit/then/${
+                          data.name
+                        }/${convertToBase64(data.then[index])}/${param}`
+                      : `/draft/actions/edit/then/${data.name}/${data.then[index]}/${param}`
+                  }
+                >
+                  <img src={editIcon} alt="edit" className="w-4 h-4" />
+                  {item}
                 </Link>
               </li>
             ))}

@@ -20,13 +20,16 @@ import ReactFlow, {
   MiniMap,
   useReactFlow,
   NodeChange,
-  NodeOrigin
+  NodeOrigin,
 } from "reactflow";
 import "reactflow/dist/base.css";
 import { Factory } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
 import Customnode from "../component/node/Customnode";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
+
+import { useParams } from "react-router-dom";
+import parser_then from "../function/ConvertMetadataToObject/action_then";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 
@@ -38,24 +41,30 @@ import {
   generateTreeFromReactFlow,
 } from "../function/auto-layout";
 import NormalButton from "../component/NormalButton";
-import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
+import {
+  getAccessTokenFromLocalStorage,
+  getActionName,
+  getSCHEMA_CODE,
+  saveSCHEMA_CODE
+} from "../helpers/AuthService";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { set } from "lodash";
 
 const initialNodes: Node[] = [
-  {
-    id: "1",
-    type: "customInputNode",
-    position: { x: 0, y: 0 },
-    draggable: false,
-    data: {
-      showType: "selectAttributeNode",
-      id: "1",
-      parentNode: "root",
-      label: { x: 0, y: 0 },
-    },
-  },
-];
+    {
+        id: "1",
+        type: "customInputNode",
+        position: { x: 0, y: 0 },
+        draggable: false,
+        data: {
+          showType: "selectAttributeNode",
+          id: "1",
+          parentNode: "root",
+          label: { x: 0, y: 0 },
+        },
+      },
+]
 
 let id = 2;
 
@@ -63,12 +72,12 @@ const getId = () => `${id++}`;
 
 const nodeOrigin: NodeOrigin = [0.5, 0.5];
 
-
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
 const BasicFlow = () => {
+    const param = useParams();
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -105,6 +114,89 @@ const BasicFlow = () => {
     event.dataTransfer.dropEffect = "move";
   };
 
+  const convertObject = (obj) => {
+    let nodeIdCounter = 1;
+    const outputArray = [];
+    const edgesArr = [];
+
+    const processNode = (
+        node,
+        parentNodeId = null,
+        parentPositionY = 0
+    ) => {
+        const nodeId = `${nodeIdCounter++}`;
+        const outputNode = {
+            width: 150,
+            height: 57,
+            id: nodeId,
+            type: "customInputNode",
+            position: { x: 0, y: parentPositionY },
+            draggable: false,
+            data: {
+                showType: "",
+                id: nodeId,
+                parentNode: parentNodeId,
+                label: { x: 0, y: parentPositionY },
+                value: "",
+                dataType: "",
+            },
+            positionAbsolute: { x: 0, y: parentPositionY },
+        };
+
+        console.log("node==>",node)
+
+        if (node.type === "meta_function" && node.functionName === "SetNumber") {
+            outputNode.data.showType = "selectAttributeNode";
+            outputNode.data.value = node.attributeName.value;
+            outputNode.data.dataType = node.attributeName.dataType;
+            setSelectedAttribute(node.attributeName.dataType);
+        } else if (node.type === "constant") {
+            outputNode.data.showType = "valueNode";
+            outputNode.data.value = node.value;
+        } else if (node.type === "math_operation" && node.value === "+") {
+            outputNode.data.showType = "increaseNode";
+            outputNode.data.value = node.value;
+        } else if (node.type === "math_operation" && node.value === "-") {
+            outputNode.data.showType = "decreaseNode";
+            outputNode.data.value = node.value;
+        }
+
+        outputArray.push(outputNode);
+
+        if (node.value1) {
+            const edgeId = `e${nodeId}-${parseInt(nodeId)+1}`;
+            edgesArr.push({
+                id: edgeId,
+                source: nodeId,
+                target: processNode(node.value1, nodeId, parentPositionY + 150).id,
+                animated: true,
+                style: { stroke: "#FFAA9A" },
+                type: "smoothstep",
+            });
+        }
+
+        if (node.value1 && node.value1.right) {
+            const edgeId = `e${nodeId}-${parseInt(nodeId)+1}`;
+            edgesArr.push({
+                id: edgeId,
+                source: nodeId,
+                target: processNode(node.value1.right, nodeId, parentPositionY + 300).id,
+                animated: true,
+                style: { stroke: "#FFAA9A" },
+                type: "smoothstep",
+            });
+        }
+
+        return outputNode;
+    };
+
+    processNode(obj);
+    setEdges(edgesArr)
+    setNodes(outputArray);
+};
+
+  
+
   const onDrop = async (event: DragEvent) => {
     event.preventDefault();
     if (reactFlowInstance) {
@@ -132,141 +224,6 @@ const BasicFlow = () => {
         );
       };
 
-      const convertObject = (obj) => {
-        console.log("starting convert..");
-        const outputArray = [];
-        const edgesArr = [];
-        let nodeIdCounter = 1;
-    
-        const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
-          const nodeId = `${nodeIdCounter++}`;
-          console.log("---node>", node);
-          const outputNode = {
-            id: nodeId,
-            type: "customInputNode",
-            position: { x: 0, y: parentPositionY },
-            draggable: false,
-            data: {
-              showType: "",
-              id: nodeId,
-              parentNode: parentNodeId,
-              label: { x: 0, y: parentPositionY },
-              width: 150,
-              height: 57,
-              value: "",
-              dataType: "",
-            },
-          };
-    
-          if (node.type === "condition_oper" && node.value === "AND") {
-            outputNode.data.showType = "andNode";
-            outputNode.data.value = "and";
-          } else if (node.type === "condition_oper" && node.value === "OR") {
-            outputNode.data.showType = "orNode";
-            outputNode.data.value = "or";
-          } else if (
-            (node.type === "string_compare_oper" ||
-              node.type === "boolean_compare_oper" ||
-              node.type === "number_compare_oper" ||
-              node.type === "float_compare_oper") &&
-            node.value === "=="
-          ) {
-            outputNode.data.showType = "equalNode";
-            outputNode.data.value = "equal";
-          } else if (
-            (node.type === "string_compare_oper" ||
-              node.type === "boolean_compare_oper" ||
-              node.type === "number_compare_oper" ||
-              node.type === "float_compare_oper") &&
-            node.value === "!="
-          ) {
-            outputNode.data.showType = "notEqualNode";
-            outputNode.data.value = "notEqual";
-          } else if (
-            (node.type === "string_compare_oper" ||
-              node.type === "boolean_compare_oper" ||
-              node.type === "number_compare_oper" ||
-              node.type === "float_compare_oper") &&
-            node.value === ">"
-          ) {
-            outputNode.data.showType = "moreThanNode";
-            outputNode.data.value = "moreThan";
-          } else if (
-            (node.type === "string_compare_oper" ||
-              node.type === "boolean_compare_oper" ||
-              node.type === "number_compare_oper" ||
-              node.type === "float_compare_oper") &&
-            node.value === ">="
-          ) {
-            outputNode.data.showType = "moreThanAndEqualNode";
-            outputNode.data.value = "moreThanAndEqual";
-          } else if (
-            (node.type === "string_compare_oper" ||
-              node.type === "boolean_compare_oper" ||
-              node.type === "number_compare_oper" ||
-              node.type === "float_compare_oper") &&
-            node.value === "<"
-          ) {
-            outputNode.data.showType = "lessThanNode";
-            outputNode.data.value = "lessThan";
-          } else if (
-            (node.type === "string_compare_oper" ||
-              node.type === "boolean_compare_oper" ||
-              node.type === "number_compare_oper" ||
-              node.type === "float_compare_oper") &&
-            node.value === "<="
-          ) {
-            outputNode.data.showType = "lessThanAndEqualNode";
-            outputNode.data.value = "lessThanAndEqual";
-          } else if (
-            node.type === "meta_function" &&
-            node.attributeName.type === "param_function"
-          ) {
-            outputNode.data.showType = "paramNode";
-            outputNode.data.value = node.value;
-          } else if (node.type === "meta_function") {
-            outputNode.data.dataType = node.attributeName.dataType;
-            outputNode.data.showType = "attributeNode";
-            outputNode.data.value = node.attributeName.value;
-          } else if (node.type === "constant") {
-            outputNode.data.showType = "valueNode";
-            outputNode.data.value = node.value;
-          }
-    
-          outputArray.push(outputNode);
-    
-          if (node.left) {
-            const edgeId = `e${nodeId}-${node.left.type}`;
-            edgesArr.push({
-              id: edgeId,
-              source: nodeId,
-              target: processNode(node.left, nodeId, parentPositionY + 150).id,
-              animated: true,
-              style: { stroke: "#FFAA9A" },
-              type: "smoothstep",
-            });
-          }
-    
-          if (node.right) {
-            const edgeId = `e${nodeId}-${node.right.type}`;
-            edgesArr.push({
-              id: edgeId,
-              source: nodeId,
-              target: processNode(node.right, nodeId, parentPositionY + 150).id,
-              animated: true,
-              style: { stroke: "#FFAA9A" },
-              type: "smoothstep",
-            });
-          }
-    
-          return outputNode;
-        };
-    
-        processNode(obj);
-        setNodes(outputArray);
-        setEdges(edgesArr);
-      };
-      
       const updateNode = (node: object, type: string) => {
         let updatedNode;
         if (type === "increaseNode") {
@@ -370,7 +327,11 @@ const BasicFlow = () => {
           console.log("f**k");
           updatedNodes.push(node);
         } else {
-          if (type !== "valueNode" && type !== "paramNode" && type !== "attributeNode") {
+          if (
+            type !== "valueNode" &&
+            type !== "paramNode" &&
+            type !== "attributeNode"
+          ) {
             const onAddNodeId = getId();
 
             const onAddNodePosition = {
@@ -502,38 +463,55 @@ const BasicFlow = () => {
   }, [nodes, setNodes]);
 
   useEffect(() => {
-    setSelectedAttribute(nodes[0].data.dataType);
-    if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
-      setCreateFirstNode(false);
-      const onAddId = getId();
-      const nodeOnAdd = {
-        id: onAddId,
-        position: { x: 0, y: 150 },
-        type: "customInputNode",
-        data: {
-          showType: "addNode",
-          label: { x: 0, y: 100 },
-          id: onAddId,
-          parentNode: 1,
-        },
-        draggable: false,
-      };
+    if(nodes.length > 1){
 
-      const edgesOnAdd = [
-        {
-          id: `e1-${onAddId}`,
-          source: "1",
-          target: onAddId,
-          animated: true,
-          style: { stroke: "#FFAA9A" },
-          type: "smoothstep",
-        },
-      ];
-
-      setNodes([...nodes, nodeOnAdd]);
-      setEdges([...edges, ...edgesOnAdd]);
+        setSelectedAttribute(nodes[0].data.dataType);
     }
+    // if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
+    //   setCreateFirstNode(false);
+    //   const onAddId = getId();
+    //   const nodeOnAdd = {
+    //     id: onAddId,
+    //     position: { x: 0, y: 150 },
+    //     type: "customInputNode",
+    //     data: {
+    //       showType: "addNode",
+    //       label: { x: 0, y: 100 },
+    //       id: onAddId,
+    //       parentNode: 1,
+    //     },
+    //     draggable: false,
+    //   };
+
+    //   const edgesOnAdd = [
+    //     {
+    //       id: `e1-${onAddId}`,
+    //       source: "1",
+    //       target: onAddId,
+    //       animated: true,
+    //       style: { stroke: "#FFAA9A" },
+    //       type: "smoothstep",
+    //     },
+    //   ];
+
+    //   setNodes([...nodes, nodeOnAdd]);
+    //   setEdges([...edges, ...edgesOnAdd]);
+    // }
   }, [nodes[0].data.value]);
+
+  useEffect(() => {
+    // console.log("setRedraw=>");
+    // setRedraw(true);
+
+    saveSCHEMA_CODE(param.schema_revision);
+
+    const firstMetaData = param.meta_function;
+    console.log("-->",param.meta_function)
+    convertObject(parser_then.parse(firstMetaData));
+
+    setMetaData(param.meta_function);
+
+  }, []);
 
   useEffect(() => {
     if (createFirstNode) {
@@ -564,12 +542,12 @@ const BasicFlow = () => {
         }
 
         if (nodes[i].data.showType === "valueNode") {
-          nodes[i].data.dataType = nodes[0].data.dataType
+          nodes[i].data.dataType = nodes[0].data.dataType;
           console.log("1", nodes[i].data.dataType);
         }
 
         if (nodes[i].data.showType === "paramNode") {
-          nodes[i].data.dataType = nodes[0].data.dataType
+          nodes[i].data.dataType = nodes[0].data.dataType;
           console.log("1", nodes[i].data.dataType);
         }
 
@@ -580,10 +558,10 @@ const BasicFlow = () => {
             nodes[i].data.dataType === "float"
               ? "SetFloat"
               : nodes[i].data.dataType === "number"
-                ? "SetNumber"
-                : nodes[i].data.dataType === "boolean"
-                  ? "SetBoolean"
-                  : "SetString";
+              ? "SetNumber"
+              : nodes[i].data.dataType === "boolean"
+              ? "SetBoolean"
+              : "SetString";
           result.attributeName = {
             type: "constant",
             dataType: "string",
@@ -603,18 +581,18 @@ const BasicFlow = () => {
               nodes[i].data.showType === "increaseNode"
                 ? "+"
                 : nodes[i].data.showType === "decreaseNode"
-                  ? "-"
-                  : "=",
+                ? "-"
+                : "=",
             left: {
               type: "meta_function",
               functionName:
                 result.functionName === "SetFloat"
                   ? "GetFloat"
                   : result.functionName === "SetNumber"
-                    ? "GetNumber"
-                    : result.functionName === "SetBoolean"
-                      ? "GetBoolean"
-                      : "GetString",
+                  ? "GetNumber"
+                  : result.functionName === "SetBoolean"
+                  ? "GetBoolean"
+                  : "GetString",
               attributeName: {
                 type: "constant",
                 dataType: "string",
@@ -644,24 +622,37 @@ const BasicFlow = () => {
         } else if (nodes[i].data.showType === "paramNode") {
           result.value1 = {
             type: "param_function",
-            functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
+            functionName:
+              nodes[i].data.dataType === "float"
+                ? "GetFloat"
+                : nodes[i].data.dataType === "number"
+                ? "GetNumber"
+                : nodes[i].data.dataType === "boolean"
+                ? "GetBoolean"
+                : "GetString",
             attributeName: {
               type: "constant",
               dataType: nodes[i].data.dataType,
               value: nodes[i].data.value,
-            }
-
+            },
           };
         } else if (nodes[i].data.showType === "attributeNode") {
           result.value1 = {
             type: "meta_function",
-            functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
+            functionName:
+              nodes[i].data.dataType === "float"
+                ? "GetFloat"
+                : nodes[i].data.dataType === "number"
+                ? "GetNumber"
+                : nodes[i].data.dataType === "boolean"
+                ? "GetBoolean"
+                : "GetString",
             attributeName: {
               type: "constant",
               dataType: nodes[i].data.dataType,
               value: nodes[i].data.value,
-            }
-          }
+            },
+          };
         }
       }
 
@@ -669,9 +660,9 @@ const BasicFlow = () => {
       return result;
     };
 
-    const object = Factory.createObject(transformData(nodes)).toString();
-    setMetaData(object);
-    return object;
+    // const object = Factory.createObject(transformData(nodes)).toString();
+    // setMetaData(object);
+    // return object;
   };
 
   const sortNode = (nodes) => {
@@ -687,67 +678,71 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
-
-  const [actionName, setactionName] = useState("")
+  const [actionName, setactionName] = useState("");
   const FindSchemaCode = async () => {
     const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
-    const params = {
-    };
+    const params = {};
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-    }
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
     // Make a GET request with parameters
-    await axios.get(apiUrl, {
-      params: params, // Pass parameters as an object
-      headers: headers, // Pass headers as an object
-    })
+    await axios
+      .get(apiUrl, {
+        params: params, // Pass parameters as an object
+        headers: headers, // Pass headers as an object
+      })
       .then((response) => {
         // Handle successful response here
-        console.log('Response:', response.data);
-        setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name)
-
+        console.log("Response:", response.data);
+        setactionName(
+          response.data.data.schema_info.schema_info.onchain_data.actions[0]
+            .name
+        );
       })
       .catch((error) => {
         // Handle errors here
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
-  }
-
+  };
 
   const saveAction = async () => {
-    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
+    const apiUrl =
+      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
     const requestData = {
-      "payload": {
-        "schema_code": getSCHEMA_CODE(),
-        "update_then": true,
-        "name": getActionName(),
-        "then": [metaData],
-      }
+      payload: {
+        schema_code: getSCHEMA_CODE(),
+        update_then: true,
+        name: getActionName(),
+        then: [metaData],
+      },
     };
 
-    await axios.post(apiUrl, requestData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-        // Add any other headers your API requires
-      },
-    })
-      .then(response => {
-        console.log('API Response saveOnchainCollectionAttributes :', response.data);
-        console.log("Request :", requestData)
+    await axios
+      .post(apiUrl, requestData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, // Set the content type to JSON
+          // Add any other headers your API requires
+        },
+      })
+      .then((response) => {
+        console.log(
+          "API Response saveOnchainCollectionAttributes :",
+          response.data
+        );
+        console.log("Request :", requestData);
         // You can handle the API response here
       })
-      .catch(error => {
-        console.error('API Error:', error);
+      .catch((error) => {
+        console.error("API Error:", error);
         // Handle errors here
       });
-
-  }
+  };
 
   useEffect(() => {
-    FindSchemaCode()
-  }, [])
+    FindSchemaCode();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -790,10 +785,23 @@ const BasicFlow = () => {
         </div>
 
         <div>
-          <div className="flex justify-center" onClick={async () => { await saveAction()  ; console.log(metaData) ;navigate("/newintregation/beginer") }}>
-            <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
+          <div
+            className="flex justify-center"
+            onClick={async () => {
+              await saveAction();
+              console.log(metaData);
+              navigate(`/draft/actions/${param.schema_revision}`);
+            }}
+          >
+            <NormalButton
+              BorderRadius={0}
+              FontSize={32}
+              TextTitle={"SAVE"}
+            ></NormalButton>
           </div>
         </div>
+            <button onClick={()=>console.log(nodes)}>log</button>
+            <button onClick={()=>console.log(edges)}>log edges</button>
       </div>
       <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
     </div>
@@ -801,50 +809,21 @@ const BasicFlow = () => {
 };
 
 const DraftEditActionsAttribute = () => {
-  const [isShow, setIsShow] = React.useState(false);
-
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div className="flex justify-between">
-              <div>
-                <Stepper2 ActiveStep={6}></Stepper2>
-                <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
-              </div>
-              <Conectwalet></Conectwalet>
-            </div>
-            <div className="mt-[20px] flex flex-col items-center justify-center">
+            <div className="h-full flex flex-col items-center justify-center">
               <ReactFlowProvider>
                 <BasicFlow />
               </ReactFlowProvider>
             </div>
           </div>
-          <Tooltip title={"help"}>
-            <div
-              onClick={() => {
-                setIsShow(true);
-              }}
-              className=" z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[750px] ml-[1180px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
-            >
-              ?
-            </div>
-          </Tooltip>
         </div>
-        {isShow && (
-          <div
-            className="absolute duration-500"
-            onClick={() => {
-              setIsShow(!isShow);
-            }}
-          >
-            <Darkbg></Darkbg>
-          </div>
-        )}
       </div>
     </div>
   );
-}
+};
 
-export default DraftEditActionsAttribute
+export default DraftEditActionsAttribute;
