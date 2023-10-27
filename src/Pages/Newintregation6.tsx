@@ -50,6 +50,8 @@ const NewIntregation6 = () => {
 
     ]);
 
+    
+
     const navigate = useNavigate();
     const [ml, setml] = useState(0)
     const [isSelection, setisSelection] = useState(false)
