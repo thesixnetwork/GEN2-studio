@@ -118,7 +118,7 @@ const DraftActions = () => {
                 </div>
               </div>
             </div>
-            <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
+            {/* <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
               <div className="w-32">
                 <NormalButton
                   TextTitle="SAVE"
@@ -133,7 +133,7 @@ const DraftActions = () => {
                   FontSize={24}
                 ></NormalButton>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

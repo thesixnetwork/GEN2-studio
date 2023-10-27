@@ -140,7 +140,6 @@ const DraftAttributes = () => {
                     <DraftAttributeTable
                       type="originAttributes"
                       data={data.origin_data.origin_attributes}
-                      setOriginAttributes={setOriginAttributes}
                     />
                     <DraftAttributeTable
                       type="collectionAttributes"
