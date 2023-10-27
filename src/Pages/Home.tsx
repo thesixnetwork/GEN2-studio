@@ -304,7 +304,7 @@ const Home = () => {
 
                                 {loadingTestnet && listTestnet &&
                                     <Box overflow={"auto"} pt={60} >
-                                        <Flex className="w-[732px] h-[323px] overflow-scroll " pt={30}>
+                                        <Flex className="w-[732px] h-[332px] overflow-scroll " pt={30}>
                                             {listTestnet.map((item, index) => (
                                                 <Flex direction={"column"} alignItems={"center"}>
 
