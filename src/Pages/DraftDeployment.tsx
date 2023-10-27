@@ -164,6 +164,34 @@ const Deploy = () => {
           ``
         );
         console.log("tx-----", txResponse);
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
+        const requestData = {
+          "payload": {
+            "schema_code": schema_revision,
+            "status": "Testnet",
+            "current_state": "7"
+          }
+        }
+          ;
+
+        await axios.post(apiUrl, requestData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+            // Add any other headers your API requires
+          },
+        })
+          .then(response => {
+            console.log('API Response Deploy :', response.data);
+            console.log(requestData)
+            // You can handle the API response here
+          })
+          .catch(error => {
+            console.error('API Error:', error);
+            // Handle errors here
+          });
+
+
         await Swal.fire({
           position: "center",
           icon: "success",
