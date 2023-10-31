@@ -10,26 +10,25 @@ import {
   getSCHEMA_CODE,
 } from "../helpers/AuthService";
 import axios from "axios";
-import { result } from "lodash";
 
 const DraftEditActionsThenTranformStatic = () => {
-  const [isShow, setIsShow] = useState(false);
+  const navigate = useNavigate();
   const [imgSource, setImgSource] = useState("");
   const param = useParams();
   const [metaFunction, setMetaFunction] = useState("");
-  const [valuInput, setValueInput] = useState("");
+  const [valueInput, setValueInput] = useState("");
   const [actionData, setActionData] = useState();
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
-
-  const convertFromBase64 = (str) => {
-    return atob(str);
-  };
 
   const convertToBase64 = (str) => {
     return btoa(str);
   };
 
+  const convertFromBase64 = (str) => {
+    console.log("str: ", str);
+    return atob(str);
+  };
   const FindSchemaCode = async () => {
     const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
     const params = {};
@@ -56,13 +55,13 @@ const DraftEditActionsThenTranformStatic = () => {
       });
   };
 
-
   const onChange = (e: any) => {
     setImgSource(e.target.value);
     setValueInput(e.target.value);
   };
 
   const getImgFromParam = (string) => {
+    console.log("input: ", string);
     const firstQuoteIndex = string.indexOf("'");
     if (firstQuoteIndex === -1) {
       return null;
@@ -77,51 +76,64 @@ const DraftEditActionsThenTranformStatic = () => {
     return url;
   };
 
+  const isBase64 = (str) => {
+    try {
+      return btoa(atob(str)) === str;
+    } catch (error) {
+      return false;
+    }
+  };
+
   useEffect(() => {
     FindSchemaCode();
   }, []);
 
   useEffect(() => {
-    setMetaFunction(convertFromBase64(convertToBase64(param.meta_function)));
-    console.log("---metaFunction",convertFromBase64(metaFunction))
-    if (metaFunction.startsWith("meta.SetImage")) {
-      setImgSource(getImgFromParam(metaFunction));
-      setValueInput(getImgFromParam(metaFunction));
-      console.log("working")
+    if (isBase64(param.meta_function)) {
+      setMetaFunction(convertFromBase64(param.meta_function));
+      console.log("imgSource", metaFunction);
+      if (
+        getImgFromParam(metaFunction) !== ".png" &&
+        getImgFromParam(metaFunction) !== ".jpg" &&
+        getImgFromParam(metaFunction) !== ".jpeg" &&
+        getImgFromParam(metaFunction) !== ".gif"
+      ) {
+        setValueInput(getImgFromParam(metaFunction));
+        setImgSource(getImgFromParam(metaFunction));
+      }
+
+    } else {
+      setMetaFunction(param.meta_function);
     }
-  }, [metaFunction]);
+  }, [param.meta_function, metaFunction]);
 
-  // useEffect(() => {
-  //   if (actionData !== undefined) {
-  //     const getDataByName = (data, name) => {
-  //       return data.find((item) => item.name === name);
-  //     };
-  //     const result = getDataByName(actionData, param.action_name);
-  //     setActionThenArr(result.then);
-  //   }
+  useEffect(() => {
+    if (actionData !== undefined) {
+      const getDataByName = (data, name) => {
+        return data.find((item) => item.name === name);
+      };
+      const result = getDataByName(actionData, param.action_name);
+      setActionThenArr(result.then);
+    }
 
-  //   const index = actionThenArr.indexOf(
-  //     `${convertFromBase64(param.meta_function)}`
-  //   );
-  //   setActionThenIndex(index);
-  //   console.log("123", `${convertFromBase64(param.meta_function)}`);
-  //   console.log("actionThenArr: ", actionThenArr);
-  // }, [actionData]);
+    const index = actionThenArr.indexOf(metaFunction);
+    setActionThenIndex(index);
+    console.log("actionThenArr: ", actionThenArr);
+  }, [actionData]);
 
-  // const convertMetaData = (imagePath: string) => {
-  //   return `meta.SetImage('${imagePath}')`;
-  // };
+  const convertMetaData = (imagePath: string) => {
+    return `meta.SetImage('${imagePath}')`;
+  };
 
   const saveAction = async () => {
-
-    actionThenArr[actionThenIndex] = convertMetaData(imgSource)
-    console.log(actionThenArr)
+    actionThenArr[actionThenIndex] = convertMetaData(imgSource);
+    console.log(actionThenArr);
     const apiUrl =
       "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
     const requestData = {
       payload: {
         schema_code: param.schema_revision,
-        update_then: true,
+        update_then: false,
         name: param.action_name,
         then: actionThenArr,
       },
@@ -148,7 +160,6 @@ const DraftEditActionsThenTranformStatic = () => {
         // Handle errors here
       });
   };
-  const navigate = useNavigate();
 
   return (
     <div className="w-full flex justify-center ">
@@ -166,7 +177,7 @@ const DraftEditActionsThenTranformStatic = () => {
                     autoFocus
                     className="ml-2 my-2 bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[20px]"
                     placeholder={"Input your image url"}
-                    value={valuInput}
+                    value={valueInput}
                     onChange={async (e) => {
                       onChange(e);
                     }}
@@ -177,7 +188,7 @@ const DraftEditActionsThenTranformStatic = () => {
                     Preview
                   </div>
                   <div className="my-4 h-60">
-                    {imgSource !== "" && (
+                    {imgSource !== "" && imgSource !== null && (
                       <img
                         src={imgSource}
                         alt="preview-image"

@@ -45,26 +45,26 @@ import {
   getAccessTokenFromLocalStorage,
   getActionName,
   getSCHEMA_CODE,
-  saveSCHEMA_CODE
+  saveSCHEMA_CODE,
 } from "../helpers/AuthService";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { set } from "lodash";
 
 const initialNodes: Node[] = [
-    {
-        id: "1",
-        type: "customInputNode",
-        position: { x: 0, y: 0 },
-        draggable: false,
-        data: {
-          showType: "selectAttributeNode",
-          id: "1",
-          parentNode: "root",
-          label: { x: 0, y: 0 },
-        },
-      },
-]
+  {
+    id: "1",
+    type: "customInputNode",
+    position: { x: 0, y: 0 },
+    draggable: false,
+    data: {
+      showType: "selectAttributeNode",
+      id: "1",
+      parentNode: "root",
+      label: { x: 0, y: 0 },
+    },
+  },
+];
 
 let id = 2;
 
@@ -77,7 +77,7 @@ const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
 const BasicFlow = () => {
-    const param = useParams();
+  const param = useParams();
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -119,83 +119,145 @@ const BasicFlow = () => {
     const outputArray = [];
     const edgesArr = [];
 
-    const processNode = (
-        node,
-        parentNodeId = null,
-        parentPositionY = 0
-    ) => {
-        const nodeId = `${nodeIdCounter++}`;
-        const outputNode = {
-            width: 150,
-            height: 57,
-            id: nodeId,
-            type: "customInputNode",
-            position: { x: 0, y: parentPositionY },
-            draggable: false,
-            data: {
-                showType: "",
-                id: nodeId,
-                parentNode: parentNodeId,
-                label: { x: 0, y: parentPositionY },
-                value: "",
-                dataType: "",
-            },
-            positionAbsolute: { x: 0, y: parentPositionY },
-        };
+    const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
+      const nodeId = `${nodeIdCounter++}`;
+      const outputNode = {
+        width: 150,
+        height: 57,
+        id: nodeId,
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY },
+        draggable: false,
+        data: {
+          showType: "",
+          id: nodeId,
+          parentNode: parentNodeId,
+          label: { x: 0, y: parentPositionY },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
 
-        console.log("node==>",node)
+      const outputNode2 = {
+        width: 150,
+        height: 57,
+        id: `${parseInt(nodeId) + 1}`,
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY + 150 },
+        draggable: false,
+        data: {
+          showType: "",
+          id: `${parseInt(nodeId) + 1}`,
+          parentNode: parentNodeId,
+          label: { x: 0, y: parentPositionY + 150 },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
 
-        if (node.type === "meta_function" && node.functionName === "SetNumber") {
-            outputNode.data.showType = "selectAttributeNode";
-            outputNode.data.value = node.attributeName.value;
-            outputNode.data.dataType = node.attributeName.dataType;
-            setSelectedAttribute(node.attributeName.dataType);
-        } else if (node.type === "constant") {
-            outputNode.data.showType = "valueNode";
-            outputNode.data.value = node.value;
-        } else if (node.type === "math_operation" && node.value === "+") {
-            outputNode.data.showType = "increaseNode";
-            outputNode.data.value = node.value;
-        } else if (node.type === "math_operation" && node.value === "-") {
-            outputNode.data.showType = "decreaseNode";
-            outputNode.data.value = node.value;
-        }
+      console.log("node==>", node);
 
-        outputArray.push(outputNode);
+      console.log("value", node.value);
 
-        if (node.value1) {
-            const edgeId = `e${nodeId}-${parseInt(nodeId)+1}`;
-            edgesArr.push({
-                id: edgeId,
-                source: nodeId,
-                target: processNode(node.value1, nodeId, parentPositionY + 150).id,
-                animated: true,
-                style: { stroke: "#FFAA9A" },
-                type: "smoothstep",
-            });
-        }
+      if (
+        node.type === "meta_function" &&
+        (node.functionName === "SetNumber" ||
+          node.functionName === "SetString" ||
+          node.functionName === "SetBoolean" ||
+          node.functionName === "SetFloat")
+      ) {
+        outputNode.data.showType = "selectAttributeNode";
+        outputNode.data.value = node.attributeName.value;
+        outputNode.data.dataType = node.attributeName.dataType;
+        setSelectedAttribute(node.attributeName.dataType);
+      } else if (node.type === "constant" && node.value && !node.left) {
+        outputNode.data.showType = "setNode";
+        outputNode2.data.showType = "valueNode";
+        outputNode2.data.value = node.value;
+      } else if (node.type === "constant" && node.dataType) {
+        outputNode.data.showType = "valueNode";
+        outputNode.data.value = node.value;
+      } else if (node.right.type === "constant" && node.dataType) {
+        outputNode.data.showType = "valueNode";
+        outputNode.data.value = node.value;
+      } else if (node.type === "math_operation" && node.value === "+" && node.left) {
+        outputNode.data.showType = "increaseNode";
+        outputNode2.data.showType = "valueNode";
+        outputNode2.data.value = node.right.value;
+      }  else if (node.type === "math_operation" && node.value === "+") {
+        outputNode.data.showType = "increaseNode";
+        outputNode.data.value = node.value;
+      } else if (node.type === "math_operation" && node.value === "-") {
+        outputNode.data.showType = "decreaseNode";
+        outputNode.data.value = node.value;
+      }
 
-        if (node.value1 && node.value1.right) {
-            const edgeId = `e${nodeId}-${parseInt(nodeId)+1}`;
-            edgesArr.push({
-                id: edgeId,
-                source: nodeId,
-                target: processNode(node.value1.right, nodeId, parentPositionY + 300).id,
-                animated: true,
-                style: { stroke: "#FFAA9A" },
-                type: "smoothstep",
-            });
-        }
+      if (node.type === "constant" && node.value) {
+        outputArray.push(outputNode, outputNode2);
+        console.log("V====", outputArray);
+      } else {
+        console.log("A===",outputArray)
+        outputArray.push(outputNode,outputNode2);
+        console.log("V====", outputArray);
+      }
 
-        return outputNode;
+      if (
+        node.value1 &&
+        node.value1.value &&
+        node.value1.type !== "math_operation"
+      ) {
+        console.log("<---", node.value1);
+        edgesArr.push(
+          {
+            id: `e${nodeId}-${parseInt(nodeId) + 1}`,
+            source: nodeId,
+            target: processNode(node.value1, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          },
+          {
+            id: `e${parseInt(nodeId) + 1}-${parseInt(nodeId) + 2}`,
+            source: `${parseInt(nodeId) + 1}`,
+            target: `${parseInt(nodeId) + 2}`,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          }
+        );
+      }
+
+      if (node.value1 && node.value1.right) {
+        const edgeId = `e${nodeId}-${parseInt(nodeId) + 1}`;
+        edgesArr.push(
+          {
+            id: edgeId,
+            source: nodeId,
+            target: processNode(node.value1, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          },
+          {
+            id: `e${parseInt(nodeId) + 1}-${parseInt(nodeId) + 2}`,
+            source: `${parseInt(nodeId) + 1}`,
+            target: `${parseInt(nodeId) + 2}`,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          },
+        );
+      }
+
+      return outputNode;
     };
 
     processNode(obj);
-    setEdges(edgesArr)
+    setEdges(edgesArr);
     setNodes(outputArray);
-};
-
-  
+  };
 
   const onDrop = async (event: DragEvent) => {
     event.preventDefault();
@@ -463,10 +525,10 @@ const BasicFlow = () => {
   }, [nodes, setNodes]);
 
   useEffect(() => {
-    if(nodes.length > 1){
-
-        setSelectedAttribute(nodes[0].data.dataType);
+    if (nodes.length > 1) {
+      setSelectedAttribute(nodes[0].data.dataType);
     }
+    // here
     // if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
     //   setCreateFirstNode(false);
     //   const onAddId = getId();
@@ -506,11 +568,11 @@ const BasicFlow = () => {
     saveSCHEMA_CODE(param.schema_revision);
 
     const firstMetaData = param.meta_function;
-    console.log("-->",param.meta_function)
+    console.log("-->", param.meta_function);
     convertObject(parser_then.parse(firstMetaData));
-
+    console.log("D-->", convertObject(parser_then.parse(firstMetaData)));
     setMetaData(param.meta_function);
-
+    console.log("metaData", metaData);
   }, []);
 
   useEffect(() => {
@@ -800,8 +862,18 @@ const BasicFlow = () => {
             ></NormalButton>
           </div>
         </div>
-            <button onClick={()=>console.log(nodes)}>log</button>
-            <button onClick={()=>console.log(edges)}>log edges</button>
+        <button onClick={() => console.log(nodes)}>log</button>
+        <button onClick={() => console.log(edges)}>log edges</button>
+        <button
+          onClick={() =>
+            console.log(
+              "D-->",
+              convertObject(parser_then.parse(param.meta_function))
+            )
+          }
+        >
+          log metaData
+        </button>
       </div>
       <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
     </div>

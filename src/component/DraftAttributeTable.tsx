@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import menuIcon from "../pic/draft-expand-menu.png";
 import editIcon from "../pic/draft-edit.png";
 import saveIcon from "../pic/draft-save.png";
-import { Button } from "@mui/material";
-const DraftAttributeTable = ({ type, data }) => {
-  // useEffect(() => {
-  //   console.log("==>",data)
-  // }, [data]);
 
+const DraftAttributeTable = ({ type, data }) => {
   const [selectedItem, setSelectedItem] = useState("");
+
+  const [mockData, setData] = useState(data);
 
   const [editableRow, setEditableRow] = useState(null);
 
@@ -21,7 +19,7 @@ const DraftAttributeTable = ({ type, data }) => {
   };
 
   const handleCellChange = (index, field, value) => {
-    console.log(`item.data_type: ${value}`);
+    console.log(`item.data_type ${index}: ${value}`);
     const newData = [...data];
     const fieldParts = field.split(".");
 
@@ -35,32 +33,23 @@ const DraftAttributeTable = ({ type, data }) => {
       currentObj["default_mint_value"] = {
         string_attribute_value: { value: "" },
       };
+      setSelectedItem("string");
     } else if (value === "number") {
       currentObj["default_mint_value"] = {
         number_attribute_value: { value: 0 },
       };
+      setSelectedItem("number");
     } else if (value === "boolean") {
       currentObj["default_mint_value"] = {
         boolean_attribute_value: { value: false },
       };
+      setSelectedItem("boolean");
     }
   };
 
-  const handleChangeIcon = (e) => {
-    // //(typeof e.target.id)
-    if (e.target.id == "string") {
-      data["data_type"] = "string";
-      data["default_mint_value"] = { string_attribute_value: { value: "" } };
-    } else if (e.target.id == "number") {
-      data["data_type"] = "number";
-      data["default_mint_value"] = { number_attribute_value: { value: 0 } };
-    } else if (e.target.id == "boolean") {
-      data["data_type"] = "boolean";
-      data["default_mint_value"] = {
-        boolean_attribute_value: { value: false },
-      };
-    }
-  };
+  useEffect(() => {
+    console.log("---?");
+  }, [type, data]);
 
   return (
     <div className="w-[560px] h-96 border-2 border-white rounded-xl">
@@ -79,7 +68,7 @@ const DraftAttributeTable = ({ type, data }) => {
           alt="expand-menu"
           className="w-4 h-4 cursor-pointer hover:scale-125 duration-300"
         />
-        <button onClick={() => console.log(data)}>log</button>
+        {/* <button onClick={() => console.log(data)}>log</button> */}
       </div>
       <div className="w-full max-h-[320px] flex justify-center items-center overflow-scroll">
         {data.length === 0 ? (
@@ -87,7 +76,7 @@ const DraftAttributeTable = ({ type, data }) => {
             <p>NO DATA</p>
           </div>
         ) : (
-          <table className=" text-left border border-white text-black bg-[#C8C9CD] w-full">
+          <table className=" text-left border border-white text-black bg-[#C8C9CD] w-full mx-4">
             <thead>
               <tr className="border border-white">
                 <th className="border border-white">Name</th>
@@ -126,52 +115,107 @@ const DraftAttributeTable = ({ type, data }) => {
                         // }
                       >
                         <div className="flex justify-evenly">
-                          <button
-                            onClick={(e) => {
-                              handleCellChange(index, "data_type", e.target.id);
-                            }}
-                            id="string"
-                            style={{
-                              backgroundColor:
-                                item.data_type === "string"
-                                  ? "#D9D9D975"
-                                  : "transparent",
-                            }}
-                            className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                              item.data_type === "string"
-                                ? "focus:bg-[#D9D9D975]"
-                                : "bg-transparent"
-                            }`}
-                          >
-                            abc
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              handleCellChange(index, "data_type", e.target.id);
-                            }}
-                            id="number"
-                            className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                              item.data_type === "number"
-                                ? "focus:bg-[#D9D9D975]"
-                                : "bg-transparent"
-                            }`}
-                          >
-                            123
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              handleCellChange(index, "data_type", e.target.id);
-                            }}
-                            id="boolean"
-                            className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                              item.data_type === "boolean"
-                                ? "focus:bg-[#D9D9D975]"
-                                : "bg-transparent"
-                            }`}
-                          >
-                            Y/N
-                          </button>
+                          {["string", "number", "boolean"].map((type) => (
+                            <button
+                              key={type}
+                              onClick={(e) => {
+                                handleCellChange(
+                                  index,
+                                  "data_type",
+                                  e.target.id
+                                );
+                              }}
+                              id={type}
+                              className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                                item.data_type === type
+                                  ? "bg-[#D9D9D975]"
+                                  : "bg-transparent"
+                              }`}
+                            >
+                              {type === "string"
+                                ? "abc"
+                                : type === "number"
+                                ? "123"
+                                : "Y/N"}
+                            </button>
+                          ))}
                         </div>
+                        {/* <div className="flex justify-evenly">
+                          <ul className="flex">
+                            <li>
+                              <input
+                                type="radio"
+                                className="hidden peer"
+                                id="string"
+                                value={item.data_type}
+                                onClick={(e) => {
+                                  handleCellChange(index, "data_type", e.target.id);
+                                }}
+                              />
+                              <label
+                                htmlFor="string"
+                                className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                                  item.data_type === "string"
+                                    ? "bg-[#D9D9D975]"
+                                    : "bg-transparent"
+                                }`}                              >
+                                <div className="w-7 h-7 flex items-center justify-center">
+                                  <div className="w-full text-xs font-semibold text-center">
+                                    abc
+                                  </div>
+                                </div>
+                              </label>
+                            </li>
+                            <li>
+                              <input
+                                type="radio"
+                                id="number"
+                                className="hidden peer"
+                                value={item.data_type}
+                                onClick={(e) => {
+                                  handleCellChange(index, "data_type", e.target.id);
+                                }}
+                              />
+                              <label
+                                htmlFor="number"
+                                className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                                  item.data_type === "number"
+                                    ? "bg-[#D9D9D975]"
+                                    : "bg-transparent"
+                                }`}                              >
+                                <div className="w-7 h-7 flex items-center justify-center">
+                                  <div className="w-full text-xs font-semibold text-center">
+                                    123
+                                  </div>
+                                </div>
+                              </label>
+                            </li>
+                            <li>
+                              <input
+                                type="radio"
+                                id="boolean"
+                                value={item.data_type}
+                                className="hidden peer"
+                                onClick={(e) => {
+                                  handleCellChange(index, "data_type", e.target.id);
+                                }}
+                              />
+                              <label
+                                htmlFor="boolean"
+                                className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                                  item.data_type === "boolean"
+                                    ? "bg-[#D9D9D975]"
+                                    : "bg-transparent"
+                                }`}                              >
+                                <div className="w-7 h-7 flex items-center justify-center">
+                                  <div className="w-full text-xs font-semibold text-center">
+                                   Y/N
+                                  </div>
+                                </div>
+                              </label>
+                            </li>
+                          </ul>
+                        </div> */}
                       </td>
                       <td
                         className="border border-white w-36"
@@ -230,54 +274,30 @@ const DraftAttributeTable = ({ type, data }) => {
                         // }
                       >
                         <div className="flex justify-evenly">
-                          <button
-                            onClick={(e) => {
-                              handleCellChange(index, "data_type", e.target.id);
-                            }}
-                            // onMouseLeave={() => fetchError()}
-                            id="string"
-                            style={{
-                              backgroundColor:
-                                item.data_type === "string"
-                                  ? "#D9D9D975"
-                                  : "transparent",
-                            }}
-                            className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                              item.data_type === "string"
-                                ? "focus:bg-[#D9D9D975]"
-                                : "bg-transparent"
-                            }`}
-                          >
-                            abc
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              handleCellChange(index, "data_type", e.target.id);
-                            }}
-                            // onMouseLeave={() => fetchError()}
-                            id="number"
-                            className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                              item.data_type === "number"
-                                ? "focus:bg-[#D9D9D975]"
-                                : "bg-transparent"
-                            }`}
-                          >
-                            123
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              handleCellChange(index, "data_type", e.target.id);
-                            }}
-                            // onMouseLeave={() => fetchError()}
-                            id="boolean"
-                            className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                              item.data_type === "boolean"
-                                ? "focus:bg-[#D9D9D975]"
-                                : "bg-transparent"
-                            }`}
-                          >
-                            Y/N
-                          </button>
+                        {["string", "number", "boolean"].map((type) => (
+                            <button
+                              key={type}
+                              onClick={(e) => {
+                                handleCellChange(
+                                  index,
+                                  "data_type",
+                                  e.target.id
+                                );
+                              }}
+                              id={type}
+                              className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                                item.data_type === type
+                                  ? "bg-[#D9D9D975]"
+                                  : "bg-transparent"
+                              }`}
+                            >
+                              {type === "string"
+                                ? "abc"
+                                : type === "number"
+                                ? "123"
+                                : "Y/N"}
+                            </button>
+                          ))}
                         </div>
                       </td>
                       <td
@@ -339,6 +359,7 @@ const DraftAttributeTable = ({ type, data }) => {
                     </tr>
                   ))}
             </tbody>
+            
           </table>
         )}
       </div>

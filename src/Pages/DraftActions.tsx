@@ -83,7 +83,7 @@ const DraftActions = () => {
               <DraftMenu menu="actions" schemaCode={schema_revision} ></DraftMenu>
             </div>
             <div className="h-[83%] flex items-center justify-center">
-              <div className="w-[45%] h-[80%] border-2 border-r rounded-l-xl border-white">
+              <div className="w-[45%] h-[80%] border-2 border-r rounded-l-xl border-white overflow-scroll">
                 <h1 className="text-2xl p-4">Actions</h1>
                 {loading === true ? (
                   <div className="flex justify-center items-center">
@@ -95,7 +95,7 @@ const DraftActions = () => {
                       }}
                     ></CircularProgress>
                   </div>
-                ):( <div className="grid grid-cols-2 gap-4 p-4">
+                ):( <div className="grid grid-cols-2 gap-4 px-4 pb-6">
                 {actions !== undefined &&
                   actions.map((data, index) => (
                     <div
@@ -106,34 +106,18 @@ const DraftActions = () => {
                       <DraftActionCard key={index} data={data} />
                     </div>
                   ))}
+                  
               </div>)}
               </div>
-              <div className="w-[45%] h-[80%] border-2 border-l rounded-r-xl border-white">
+              <div className="w-[45%] h-[80%] border-2 border-l rounded-r-xl border-white overflow-scroll pb-6">
                 <h1 className="text-2xl p-4">Code Preview</h1>
-                <div className="flex justify-center">
+                <div className="flex justify-center mx-6 " >
                   {selectedAction !== null && (
-
                   <DraftActionPreviewCard data={selectedAction} param={schema_revision}/>
                   )}
                 </div>
               </div>
             </div>
-            {/* <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
-              <div className="w-32">
-                <NormalButton
-                  TextTitle="SAVE"
-                  BorderRadius={0}
-                  FontSize={24}
-                ></NormalButton>
-              </div>
-              <div className="w-32">
-                <NormalButton
-                  TextTitle="DISCARD"
-                  BorderRadius={0}
-                  FontSize={24}
-                ></NormalButton>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>

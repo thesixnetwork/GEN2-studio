@@ -78,11 +78,12 @@ const DraftAttributes = () => {
   };
 
   const saveData = async () => {
+
     const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
     const requestData = {
       "payload": {
         "schema_info": data,
-        "schema_code":getSCHEMA_CODE() ,
+        "schema_code": schema_revision,
         "status": "Draft",
         "current_state": "0"
       }
