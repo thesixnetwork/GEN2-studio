@@ -30,6 +30,8 @@ const DynamicNode = (props: CircleNodeProps) => {
   const [isSelected, setIsSelected] = useState(false);
   const [attributeOption, setAttributeOption] = useState([]);
   const [attributesObj, setAttributesObj] = useState();
+  const [value, setValue] = useState(props.data.value);
+  const [selectValue, setSelectValue] = useState({name: props.data.value, dataType: props.data.dataType});
 
 
   const combineArrays = (arr1, arr2) => {
@@ -84,9 +86,10 @@ const DynamicNode = (props: CircleNodeProps) => {
 
   const onChange = (e: EventProps) => {
     const { nodeInternals } = store.getState();
+    setValue(e.target.value);
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
-        console.log("props.data.id", props.data);
+        // console.log("props.data.id", props.data);
         if (node.id === props.data.id) {
           node.data.value = e.target.value;
         }
@@ -98,12 +101,13 @@ const DynamicNode = (props: CircleNodeProps) => {
   const handleSelect = (e: EventProps) => {
     setIsSelected(true);
     const selectedOption = JSON.parse(e.target.value);
+    setSelectValue({name: selectedOption.name, dataType: selectedOption.dataType});
     // props.data.value = selectedOption.name
     // props.data.dataType = selectedOption.dataType
     const { nodeInternals } = store.getState();
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
-        console.log("props.data.id", props.data);
+        // console.log("props.data.id", props.data);
         if (node.id === props.data.id) {
           props.data.value = selectedOption.name;
           props.data.dataType = selectedOption.dataType;
@@ -152,6 +156,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           onChange={(e) => {
             onChange(e);
           }}
+          value={value}
         />
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />
@@ -185,15 +190,15 @@ const DynamicNode = (props: CircleNodeProps) => {
           :&nbsp;{" "}
         </p>
         <select
-          defaultValue=""
           id=""
           name=""
           form=""
           className="rounded-full text-black"
           onChange={handleSelect}
+          value={selectValue.name}
         >
-          <option value="" disabled selected hidden>
-            -- select here --
+          <option value={selectValue.name} disabled selected hidden>
+            {selectValue.name === "" || selectValue.name === undefined  ? "- select type -" : selectValue.name}
           </option>
           {attributeOption.map((item, index) => (
             <option

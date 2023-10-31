@@ -66,8 +66,10 @@ const DraftActions = () => {
       .catch((error) => {
         // Handle errors here
         console.error("Error:", error);
+        setLoading(false);
       });
   };
+
 
   useEffect(() => {
     FindSchemaCode();
@@ -111,7 +113,7 @@ const DraftActions = () => {
                 <div className="flex justify-center">
                   {selectedAction !== null && (
 
-                  <DraftActionPreviewCard data={selectedAction} />
+                  <DraftActionPreviewCard data={selectedAction} param={schema_revision}/>
                   )}
                 </div>
               </div>
