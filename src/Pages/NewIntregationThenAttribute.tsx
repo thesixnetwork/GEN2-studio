@@ -534,6 +534,7 @@ const BasicFlow = () => {
     };
 
     const object = Factory.createObject(transformData(nodes)).toString();
+    console.log("--->obj", transformData(nodes))
     setMetaData(object);
     return object;
   };

@@ -39,9 +39,9 @@ const DynamicNode = (props: CircleNodeProps) => {
     name: props.data.value,
     dataType: props.data.dataType,
   });
-  console.log("props-->", props.data.value);
-  console.log("-->atb", typeof props.data.value + ">" + props.data.value);
-  console.log("atbot--->", selectAttributeValue);
+  // console.log("props-->", props.data.value);
+  // console.log("-->atb", typeof props.data.value + ">" + props.data.value);
+  // console.log("atbot--->", selectAttributeValue);
   const handleDragEnter = () => {
     setHovered(true);
   };
@@ -171,15 +171,15 @@ const DynamicNode = (props: CircleNodeProps) => {
     asyncFetchData();
   }, []);
 
-  useEffect(() => {
-    setSelectAttributeValue(
-      {
-        name: props.data.value,
-        dataType: props.data.dataType,
-      }
-    )
-    console.log("Select Attribute Value:", selectAttributeValue, props.data.value);
-  }, [selectAttributeValue, props.data.value]);
+  // useEffect(() => {
+  //   setSelectAttributeValue(
+  //     {
+  //       name: props.data.value,
+  //       dataType: props.data.dataType,
+  //     }
+  //   )
+  //   console.log("Select Attribute Value:", selectAttributeValue, props.data.value);
+  // }, [selectAttributeValue, props.data.value]);
 
   useEffect(() => {
     if (attributesObj !== undefined) {
