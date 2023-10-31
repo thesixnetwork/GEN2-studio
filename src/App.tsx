@@ -51,16 +51,18 @@ import NewIntregationThenTransformStatic from './Pages/NewIntregationThenTransfo
 import NewIntregationThenTransformDynamic from './Pages/NewIntregationThenTransformDynamic.tsx';
 import DraftAttributes from './Pages/DraftAttributes.tsx';
 import DraftActions from './Pages/DraftActions.tsx';
-import Deployment from './Pages/DraftDeployment.tsx';
+import DraftDeployment from './Pages/DraftDeployment.tsx';
 import Testto from './Pages/Testto.tsx';
+import DraftEditActionsWhen from './Pages/DraftEditActionsWhen.tsx';
+import DraftEditActionsThen from './Pages/DraftEditActionsThen.tsx';
+import DraftEditActionsThenAttribute from './Pages/DraftEditActionsThenAttribute.tsx';
+import DraftEditOriginData from './Pages/DraftEditOriginData.tsx';
+
+
 
 export const ABCDE = () => {
   console.log("ABC")
 }
-
-
-
-
 
 
 const router = createBrowserRouter([
@@ -99,18 +101,6 @@ const router = createBrowserRouter([
   {
     path: "/newintregation/7",
     element: <NewIntregation7></NewIntregation7>
-  },
-  {
-    path: "/test",
-    element: <Test></Test>
-  },
-  {
-    path: "/test2",
-    element: <Test2></Test2>
-  },
-  {
-    path: "/test3",
-    element: <Test3></Test3>
   },
   {
     path: "/newintregation/8",
@@ -173,12 +163,28 @@ const router = createBrowserRouter([
     element: <DraftAttributes></DraftAttributes>
   },
   {
+    path: "/draft/origindata/:schema_revision",
+    element: <DraftEditOriginData></DraftEditOriginData>
+  },
+  {
     path: "/draft/actions/:schema_revision",
     element: <DraftActions></DraftActions>
   },
   {
     path: "/draft/deployment/:schema_revision",
-    element: <Deployment/>
+    element: <DraftDeployment/>
+  },
+  {
+    path: "/draft/actions/edit/when/:action_name/:meta_function/:schema_revision",
+    element: <DraftEditActionsWhen/>
+  },
+  {
+    path: "/draft/actions/edit/then/:action_name/:meta_function/:schema_revision",
+    element: <DraftEditActionsThen/>
+  },
+  {
+    path: "/draft/actions/edit/then/attribute/:action_name/:meta_function/:schema_revision",
+    element: <DraftEditActionsThenAttribute/>
   },
   {
     path: "/testto",

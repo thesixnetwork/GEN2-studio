@@ -1,10 +1,14 @@
+import { Button } from "@mui/material";
 import editIcon from "../pic/draft-edit-rounded.png";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import * as React from "react";
+import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-const DraftActionPreviewCard = ({ data }) => {
+const DraftActionPreviewCard = ({ data, param }) => {
+  console.log("----p",param)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -13,15 +17,17 @@ const DraftActionPreviewCard = ({ data }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  console.log("===>", data);
   return (
     <div className="border border-white w-[520px]">
       <div className="ml-[484px] absolute ">
         <IconButton
           onClick={handleOpen}
           size="small"
-          aria-controls={open ? 'account-menu' : undefined}
+          aria-controls={open ? "account-menu" : undefined}
           aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
+          aria-expanded={open ? "true" : undefined}
         >
           <img src={editIcon} alt="edit" className="h-6 w-6"></img>
         </IconButton>
@@ -56,13 +62,23 @@ const DraftActionPreviewCard = ({ data }) => {
         <div className="flex">
           <p>When:&nbsp;</p>
           <span>{data.when}</span>
+          <Link to={`/draft/actions/edit/when/${data.name}/${data.when}/${param}`}>
+                  <button>
+                    <img src={editIcon} alt="edit" className="w-4 h-4" />
+                  </button>
+                </Link>
         </div>
         <div className="">
           <p>Then:&nbsp;</p>
           <ul className="ml-8">
             {data.then.map((item, index) => (
-              <li key={index} className="list-disc w-96">
+              <li key={index} className="list-disc w-96 flex items-center">
                 {item}
+                <Link to={`/draft/actions/edit/then/${data.name}/${data.then[index]}/${param}`}>
+                  <button>
+                    <img src={editIcon} alt="edit" className="w-4 h-4" />
+                  </button>
+                </Link>
               </li>
             ))}
           </ul>

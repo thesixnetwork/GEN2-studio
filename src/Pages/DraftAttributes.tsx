@@ -17,7 +17,7 @@ import blackArrow from "../pic/action-back-arrow.png";
 import ActionTypeCard from "../component/ActionTypeCard";
 import { getActionName } from "../helpers/AuthService";
 import DraftMenu from "../component/DraftMenu";
-import DraftAttributeTabel from "../component/DraftAttributeTable";
+import DraftAttributeTable from "../component/DraftAttributeTable";
 import NormalButton from "../component/NormalButton";
 import axios from "axios";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
@@ -68,7 +68,7 @@ const DraftAttributes = () => {
           response.data.data.schema_info.schema_info.onchain_data.token_attributes
         );
 
-        setData(response)
+        setData(response.data.data.schema_info.schema_info)
           setLoading(false)
       })
       .catch((error) => {
@@ -77,40 +77,50 @@ const DraftAttributes = () => {
       });
   };
 
-  // const saveOriginTokenAttributes = async () => {
-  //   const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
-  //   const requestData = {
-  //     "payload": {
-  //       "schema_info": {
-  //         "origin_data": {
-  //           "origin_attributes": text     
-  //         }
-  //       },
-  //       "schema_code":getSCHEMA_CODE() ,
-  //       "status": "Draft",
-  //       "current_state": "3"
-  //     }
-  //   }
-  //     ;
+  const saveData = async () => {
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
+    const requestData = {
+      "payload": {
+        "schema_info": data,
+        "schema_code":getSCHEMA_CODE() ,
+        "status": "Draft",
+        "current_state": "0"
+      }
+    }
+      ;
 
-  //   await axios.post(apiUrl, requestData, {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-  //       // Add any other headers your API requires
-  //     },
-  //   })
-  //     .then(response => {
-  //       console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
-  //       console.log("Request :",requestData)
-  //       // You can handle the API response here
-  //     })
-  //     .catch(error => {
-  //       console.error('API Error:', error);
-  //       // Handle errors here
-  //     });
+    await axios.post(apiUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+        // Add any other headers your API requires
+      },
+    })
+      .then(response => {
+        console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
+        console.log("Request :",requestData)
+        // You can handle the API response here
+         Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Attributes saved",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Something went wrong",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      });
 
-  // }
+  }
   
   useEffect(() => {
     FindSchemaCode();
@@ -124,23 +134,22 @@ const DraftAttributes = () => {
               <DraftMenu menu="attributes" schemaCode={schema_revision}></DraftMenu>
             </div>
             <div className="h-[83%] overflow-scroll">
-              {loading === false ? (
+              {loading === false && data !== undefined ? (
                 <div className=" flex flex-col gap-8 m-6 justify-center items-center ">
                   <div className="flex w-full justify-center gap-8 ">
-                    <DraftAttributeTabel
+                    <DraftAttributeTable
                       type="originAttributes"
-                      data={originAttributes}
+                      data={data.origin_data.origin_attributes}
                       setOriginAttributes={setOriginAttributes}
-                      setData={setData}
                     />
-                    <DraftAttributeTabel
+                    <DraftAttributeTable
                       type="collectionAttributes"
-                      data={collectionAttributes}
+                      data={data.onchain_data.nft_attributes}
                     />
                   </div>
-                  <DraftAttributeTabel
+                  <DraftAttributeTable
                     type="tokenAttributes"
-                    data={tokenAttributes}
+                    data={data.onchain_data.token_attributes}
                   />
                 </div>
               ) : (
@@ -156,7 +165,7 @@ const DraftAttributes = () => {
               )}
             </div>
             <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
-              <div className="w-32" onClick={()=>console.log(data.data.data)}>
+              <div className="w-32" onClick={saveData}>
                 <NormalButton
                   TextTitle="SAVE"
                   BorderRadius={0}
