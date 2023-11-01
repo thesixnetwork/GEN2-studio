@@ -152,7 +152,7 @@ export const generateTreeFromReactFlow = (nodes:Node[],edges:Edge[]) => {
     // const nodesMap:[key:string]:ITreeNode{} = {}
     const nodesMap:{[key:string]:ITreeNode} = {}
     for(let i=0;i<nodes.length; i++) {
-        let node = nodes[i];
+        const node = nodes[i];
         const treeNode = {
             id: node.id,
             name: node.id,
@@ -226,7 +226,7 @@ export const adjustParents = async (tree:Tree) => {
     for(let i = level; i > 0; i--) {
         const paintNodes = tree.findNodeWithBoxByLevel(i)
         // console.log("paintNodes",level,paintNodes)
-        var parentIds = paintNodes.map(node => node.parentId)
+        let parentIds = paintNodes.map(node => node.parentId)
         parentIds = _.uniq(parentIds)
         // loop over parentIds
         for(let j = 0; j < parentIds.length; j++) {
@@ -277,7 +277,7 @@ export const drawTree = async(nodes:Node[],tree:Tree,node: TreeNode, x: number, 
                 // check if length is even
                 const childrenLength = node.children.length
                 const isEven = node.children.length % 2 === 0;
-                var pX = 0;
+                let pX = 0;
                 // init start position x
                 if(isEven) {
                     // case of even
@@ -288,11 +288,11 @@ export const drawTree = async(nodes:Node[],tree:Tree,node: TreeNode, x: number, 
 
                     // console.log("pX",pX)
                 }
-                var pY = y + GRID_HEIGHT
+                const pY = y + GRID_HEIGHT
 
-                var firstDrew = false;
+                const firstDrew = false;
 
-                var updatedX = x;
+                let updatedX = x;
 
                 // while(!firstDrew) {
                     for(let i = 0; i < node.children.length; i++) {

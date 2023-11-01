@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 
@@ -64,7 +64,7 @@ const walletcounterSlice = createSlice({
     },
     
   },
-  extraReducers: (builder) => {
+  // extraReducers: (builder) => {
     // builder.addCase(setValueAsync.fulfilled, (state, action) => {
     //   // state.counter = action.payload;
     //   state.loading = false;
@@ -81,7 +81,7 @@ const walletcounterSlice = createSlice({
     //   state.loading = true;
 
     // });
-  },
+  // },
 });
 
 export const { setisloggin,setBalance,setAddress,setAccess_token,setRefresh_token,setLoading } = walletcounterSlice.actions;

@@ -77,7 +77,7 @@ export default function EnterBox(props: MyComponentProps) {
 
             const findParams = (string: string) => {
                 const regex = /params\['([^']+)'\]/g;
-                let matches = [];
+                const matches = [];
                 let match;
                 
                 while (match = regex.exec(string)) {

@@ -92,7 +92,7 @@ export default function Newintregation8() {
 
 
     const searchError = () => {
-        for (var i = 0; i < text.length; i++) {
+        for (let i = 0; i < text.length; i++) {
             if (text[i].Error === "F") {
                 document.getElementById(i).scrollIntoView({ behavior: 'smooth' });
                 break
@@ -223,7 +223,7 @@ export default function Newintregation8() {
             elementDelete2.style.zIndex = "0";
             elementPlus.style.zIndex = "0";
 
-            console.log(helpStep);
+            console.log("helpStep =>",helpStep);
             sethelpStep(helpStep + 1);
         }
     };
