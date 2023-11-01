@@ -662,7 +662,7 @@ const BasicFlow = () => {
       });
   };
 
-  const convertObject = (outputObj) => {
+  const convertObjectToNode = (outputObj) => {
     setIsDraft(true);
     console.log("-->out", outputObj);
     const tempNodeArray = [];
@@ -866,9 +866,7 @@ const BasicFlow = () => {
     console.log("firstMetaData", firstMetaData);
     if (firstMetaData.startsWith("meta.TransferNumber")) {
       console.log("it's work");
-      convertObject(parser_then.parse(firstMetaData));
-      console.log("D-->", convertObject(parser_then.parse(firstMetaData)));
-      setNodes(convertObject(parser_then.parse(firstMetaData)));
+      convertObjectToNode(parser_then.parse(firstMetaData));
       setMetaData(param.meta_function);
       console.log("metaData", metaData);
     }
