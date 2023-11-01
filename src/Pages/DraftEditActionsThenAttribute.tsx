@@ -23,7 +23,7 @@ import ReactFlow, {
   NodeOrigin,
 } from "reactflow";
 import "reactflow/dist/base.css";
-import { Factory } from "../function/ConvertObjectToMetadata/Factory";
+import { Factory, MetaFunction } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
 import Customnode from "../component/node/Customnode";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
@@ -97,12 +97,25 @@ const BasicFlow = () => {
   const [redraw, setRedraw] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
+  const [actionName, setactionName] = useState("");
+  const [actionData, setActionData] = useState();
+  const [actionThenArr, setActionThenArr] = useState([]);
+  const [actionThenIndex, setActionThenIndex] = useState(null);
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
     width_input: 151.2,
     height_input: 35.2,
     grid_padding: 60,
+  };
+
+
+  const isBase64 = (str) => {
+    try {
+      return btoa(atob(str)) === str;
+    } catch (error) {
+      return false;
+    }
   };
 
   const onConnect = (params: Connection | Edge) =>
@@ -114,7 +127,7 @@ const BasicFlow = () => {
     event.dataTransfer.dropEffect = "move";
   };
 
-  const convertObject = (obj) => {
+  const convertObjectToNode = (obj) => {
     let nodeIdCounter = 1;
     const outputArray = [];
     const edgesArr = [];
@@ -149,7 +162,7 @@ const BasicFlow = () => {
         data: {
           showType: "",
           id: `${parseInt(nodeId) + 1}`,
-          parentNode: parentNodeId,
+          parentNode: `${parseInt(parentNodeId) + 1}`,
           label: { x: 0, y: parentPositionY + 150 },
           value: "",
           dataType: "",
@@ -195,12 +208,18 @@ const BasicFlow = () => {
       }
 
       if (node.type === "constant" && node.value) {
-        outputArray.push(outputNode, outputNode2);
-        console.log("V====", outputArray);
+        if(outputNode2.data.showType === "valueNode"){
+          outputArray.push(outputNode,outputNode2);
+        }else{
+          outputArray.push(outputNode);
+        }
       } else {
         console.log("A===",outputArray)
-        outputArray.push(outputNode,outputNode2);
-        console.log("V====", outputArray);
+        if(outputNode2.data.showType === "valueNode"){
+          outputArray.push(outputNode,outputNode2);
+        }else{
+          outputArray.push(outputNode);
+        }
       }
 
       if (
@@ -529,36 +548,36 @@ const BasicFlow = () => {
       setSelectedAttribute(nodes[0].data.dataType);
     }
     // here
-    // if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
-    //   setCreateFirstNode(false);
-    //   const onAddId = getId();
-    //   const nodeOnAdd = {
-    //     id: onAddId,
-    //     position: { x: 0, y: 150 },
-    //     type: "customInputNode",
-    //     data: {
-    //       showType: "addNode",
-    //       label: { x: 0, y: 100 },
-    //       id: onAddId,
-    //       parentNode: 1,
-    //     },
-    //     draggable: false,
-    //   };
+    if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
+      setCreateFirstNode(false);
+      const onAddId = getId();
+      const nodeOnAdd = {
+        id: onAddId,
+        position: { x: 0, y: 150 },
+        type: "customInputNode",
+        data: {
+          showType: "addNode",
+          label: { x: 0, y: 100 },
+          id: onAddId,
+          parentNode: 1,
+        },
+        draggable: false,
+      };
 
-    //   const edgesOnAdd = [
-    //     {
-    //       id: `e1-${onAddId}`,
-    //       source: "1",
-    //       target: onAddId,
-    //       animated: true,
-    //       style: { stroke: "#FFAA9A" },
-    //       type: "smoothstep",
-    //     },
-    //   ];
+      const edgesOnAdd = [
+        {
+          id: `e1-${onAddId}`,
+          source: "1",
+          target: onAddId,
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        },
+      ];
 
-    //   setNodes([...nodes, nodeOnAdd]);
-    //   setEdges([...edges, ...edgesOnAdd]);
-    // }
+      setNodes([...nodes, nodeOnAdd]);
+      setEdges([...edges, ...edgesOnAdd]);
+    }
   }, [nodes[0].data.value]);
 
   useEffect(() => {
@@ -568,11 +587,13 @@ const BasicFlow = () => {
     saveSCHEMA_CODE(param.schema_revision);
 
     const firstMetaData = param.meta_function;
-    console.log("-->", param.meta_function);
-    convertObject(parser_then.parse(firstMetaData));
-    console.log("D-->", convertObject(parser_then.parse(firstMetaData)));
-    setMetaData(param.meta_function);
-    console.log("metaData", metaData);
+    if(firstMetaData.startsWith("meta.SetString") || firstMetaData.startsWith("meta.SetBoolean")|| firstMetaData.startsWith("meta.SetNumber")|| firstMetaData.startsWith("meta.SetFloat")){
+      console.log("it's work")
+      convertObjectToNode(parser_then.parse(firstMetaData));
+      setMetaData(param.meta_function);
+      console.log("metaData", metaData);
+
+    }
   }, []);
 
   useEffect(() => {
@@ -722,9 +743,9 @@ const BasicFlow = () => {
       return result;
     };
 
-    // const object = Factory.createObject(transformData(nodes)).toString();
-    // setMetaData(object);
-    // return object;
+    const object = Factory.createObject(transformData(nodes)).toString();
+    setMetaData(object);
+    return object;
   };
 
   const sortNode = (nodes) => {
@@ -740,43 +761,39 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
-  const [actionName, setactionName] = useState("");
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
     };
-    // Make a GET request with parameters
     await axios
       .get(apiUrl, {
-        params: params, // Pass parameters as an object
-        headers: headers, // Pass headers as an object
+        params: params,
+        headers: headers,
       })
       .then((response) => {
-        // Handle successful response here
-        console.log("Response:", response.data);
-        setactionName(
-          response.data.data.schema_info.schema_info.onchain_data.actions[0]
-            .name
+        setActionData(
+          response.data.data.schema_info.schema_info.onchain_data.actions
         );
       })
       .catch((error) => {
-        // Handle errors here
         console.error("Error:", error);
       });
   };
 
   const saveAction = async () => {
+    actionThenArr[actionThenIndex] = metaData;
+    console.log("arr= ", actionThenArr);
     const apiUrl =
       "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
     const requestData = {
       payload: {
-        schema_code: getSCHEMA_CODE(),
-        update_then: true,
-        name: getActionName(),
-        then: [metaData],
+        schema_code: param.schema_revision,
+        update_then: false,
+        name: param.action_name,
+        then: actionThenArr,
       },
     };
 
@@ -801,6 +818,38 @@ const BasicFlow = () => {
         // Handle errors here
       });
   };
+
+  useEffect(() => {
+    const convertFromBase64 = (str) => {
+      console.log("str: ", str);
+      return atob(str);
+    };
+    if (actionData !== undefined) {
+      const getDataByName = (data, name) => {
+        return data.find((item) => item.name === name);
+      };
+      if (isBase64(param.meta_function)) {
+        const result = getDataByName(actionData, param.action_name);
+        console.log("result: ", actionData);
+        console.log("actionName: ", param.action_name);
+        setActionThenArr(result.then);
+        const index = actionThenArr.indexOf(
+          convertFromBase64(param.meta_function)
+        );
+        console.log("--: ", index);
+        setActionThenIndex(index);
+      } else {
+        const result = getDataByName(actionData, param.action_name);
+        console.log("result: ", result);
+        setActionThenArr(result.then);
+        const index = actionThenArr.indexOf(param.meta_function);
+        console.log("--: ", index);
+        setActionThenIndex(index);
+      }
+
+      console.log("actionThenArr: ", actionThenArr);
+    }
+  }, [actionData]);
 
   useEffect(() => {
     FindSchemaCode();
@@ -868,11 +917,21 @@ const BasicFlow = () => {
           onClick={() =>
             console.log(
               "D-->",
-              convertObject(parser_then.parse(param.meta_function))
+              selectedAttribute
             )
           }
         >
           log metaData
+        </button>
+        <button
+          onClick={() =>
+            console.log(
+              "A-->",
+              param.meta_function
+            )
+          }
+        >
+          AAA
         </button>
       </div>
       <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
