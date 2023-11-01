@@ -60,6 +60,7 @@ import DraftEditActionsThenTransform from './Pages/DraftEditActionsThenTransform
 import DraftEditActionsThenTransfer from './Pages/DraftEditActionsThenTransfer.tsx';
 import DraftEditActionsThenTranformStatic from './Pages/DraftEditActionsThenTranformStatic.tsx';
 import DraftEditActionsThenTranformDynamic from './Pages/DraftEditActionsThenTranformDynamic.tsx';
+import DraftEditOriginData from './Pages/DraftEditOriginData.tsx';
 export const ABCDE = () => {
   console.log("ABC")
 }
