@@ -3,9 +3,9 @@ import React, { useState } from "react";
 function App() {
   const [keyType, setKeyType] = useState("string");
   const [value, setValue] = useState("");
-  const [obj, setObj] = useState({ [keyType]: "" });
+  const [obj, setObj] = useState<{[key:string]:string|boolean}>({ [keyType]: "" });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
 
     if (keyType === "string") {
@@ -15,7 +15,7 @@ function App() {
     }
   };
 
-  const handleKeyTypeChange = (e) => {
+  const handleKeyTypeChange = (e:React.ChangeEvent<HTMLSelectElement>) => {
     setKeyType(e.target.value);
     setObj({ [e.target.value]: value });
   };
@@ -32,7 +32,7 @@ function App() {
         onChange={handleChange}
         placeholder="Type here..."
       />
-      <input type="text" value={obj[keyType]} readOnly />
+      <input type="text" value={obj[keyType].toString()} readOnly />
     </div>
   );
 }

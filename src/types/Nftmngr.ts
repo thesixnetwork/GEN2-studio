@@ -37,7 +37,7 @@ export interface ISchemaInfo {
   export interface INftAttributes {
     "name": string,
     "data_type": string,
-    "required": Boolean,
+    "required": boolean,
     "display_value_field": string,
     "display_option": {
       "bool_true_value": string,
@@ -62,41 +62,41 @@ export interface ISchemaInfo {
         "value": string
       }
     },
-    "hidden_overide": Boolean,
-    "hidden_to_marketplace": Boolean,
-    "index": String
+    "hidden_overide": boolean,
+    "hidden_to_marketplace": boolean,
+    "index": string
   }
   
   export interface IActions {
-    "name": String,
-    "desc": String,
-    "disable": Boolean,
-    "when": String,
-    "then": String[],
-    "allowed_actioner": String,
+    "name": string,
+    "desc": string,
+    "disable": boolean,
+    "when": string,
+    "then": string[],
+    "allowed_actioner": string,
     "params": [
       {
-        "name": String,
-        "desc": String,
-        "data_type": String,
-        "required": Boolean,
-        "default_value": String
+        "name": string,
+        "desc": string,
+        "data_type": string,
+        "required": boolean,
+        "default_value": string
       }?,
     ]
   }
   
   export interface ItokenAttributes {
-    "name": String,
-    "data_type": String,
-    "required": Boolean,
-    "display_value_field": String,
+    "name": string,
+    "data_type": string,
+    "required": boolean,
+    "display_value_field": string,
     "display_option": {
-      "bool_true_value": String,
-      "bool_false_value": String,
+      "bool_true_value": string,
+      "bool_false_value": string,
       "opensea": {
-        "display_type": String,
-        "trait_type": String,
-        "max_value": String
+        "display_type": string,
+        "trait_type": string,
+        "max_value": string
       }
     },
     "default_mint_value": {
@@ -113,8 +113,8 @@ export interface ISchemaInfo {
         "value": string
       }
     },
-    "hidden_overide": Boolean,
-    "hidden_to_marketplace": Boolean,
+    "hidden_overide": boolean,
+    "hidden_to_marketplace": boolean,
   }
   
   export interface IOnChainData {
@@ -123,8 +123,8 @@ export interface ISchemaInfo {
     "actions": IActions[],
     "status": [
       {
-        "status_name": String,
-        "status_value": Boolean
+        "status_name": string,
+        "status_value": boolean
       }
     ]
   }

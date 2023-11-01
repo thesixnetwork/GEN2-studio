@@ -112,9 +112,9 @@ const Deploy = () => {
   };
 
   const HandlerDeploySchemaCode = async () => {
-    let msgArray: Array<EncodeObject> = [];
+    const msgArray: Array<EncodeObject> = [];
 
-    let encodeBase64Schema = Buffer.from(JSON.stringify(schemaInfo)).toString(
+    const encodeBase64Schema = Buffer.from(JSON.stringify(schemaInfo)).toString(
       "base64"
     );
     console.log("schemaInfo", schemaInfo);

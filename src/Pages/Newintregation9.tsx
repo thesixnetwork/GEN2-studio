@@ -92,7 +92,7 @@ export default function Newintregation9() {
 
 
     const searchError = () => {
-        for (var i = 0; i < text.length; i++) {
+        for (let i = 0; i < text.length; i++) {
             if (text[i].Error === "F") {
                 document.getElementById(i).scrollIntoView({ behavior: 'smooth' });
                 break
