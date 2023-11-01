@@ -883,7 +883,7 @@ const Flow = () => {
   return (
     <div>
       <Flowbar metaData={metaData}></Flowbar>
-      <div style={{ height: 500, width: 1200 }}>
+      <div style={{ height: 600, width: 1200 }}>
         <div ref={reactFlowWrapper} className="h-full">
           <ReactFlow
             nodes={nodes}
@@ -930,13 +930,6 @@ const DraftEditActionsWhen = () => {
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div className="flex ">
-              <div>
-                <Stepper2 ActiveStep={6}></Stepper2>
-                <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
-              </div>
-              <Conectwalet></Conectwalet>
-            </div>
             <div className="mt-[20px] flex flex-col items-center justify-center">
               <ReactFlowProvider>
                 <Flow />

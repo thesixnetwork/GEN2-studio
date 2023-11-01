@@ -38,11 +38,11 @@ const NewIntregationThen = () => {
             </div>
             <div className=" w-full flex flex-col items-center justify-center gap-20 min-h-[89.1%]">
               <div className="flex gap-x-20">
-                <ActionTypeCard type="update" />
-                <ActionTypeCard type="transfer" />
+                <ActionTypeCard type="update" draft={false}/>
+                <ActionTypeCard type="transfer" draft={false}/>
               </div>
               <div>
-                <ActionTypeCard type="transform" />
+                <ActionTypeCard type="transform" draft={false}/>
               </div>
             </div>
           </div>

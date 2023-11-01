@@ -56,10 +56,10 @@ import Testto from './Pages/Testto.tsx';
 import DraftEditActionsWhen from './Pages/DraftEditActionsWhen.tsx';
 import DraftEditActionsThen from './Pages/DraftEditActionsThen.tsx';
 import DraftEditActionsThenAttribute from './Pages/DraftEditActionsThenAttribute.tsx';
-import DraftEditOriginData from './Pages/DraftEditOriginData.tsx';
-
-
-
+import DraftEditActionsThenTransform from './Pages/DraftEditActionsThenTransform.tsx';
+import DraftEditActionsThenTransfer from './Pages/DraftEditActionsThenTransfer.tsx';
+import DraftEditActionsThenTranformStatic from './Pages/DraftEditActionsThenTranformStatic.tsx';
+import DraftEditActionsThenTranformDynamic from './Pages/DraftEditActionsThenTranformDynamic.tsx';
 export const ABCDE = () => {
   console.log("ABC")
 }
@@ -185,6 +185,22 @@ const router = createBrowserRouter([
   {
     path: "/draft/actions/edit/then/attribute/:action_name/:meta_function/:schema_revision",
     element: <DraftEditActionsThenAttribute/>
+  },
+  {
+    path: "/draft/actions/edit/then/transform/:action_name/:meta_function/:schema_revision",
+    element: <DraftEditActionsThenTransform/>
+  },
+  {
+    path: "/draft/actions/edit/then/transfer/:action_name/:meta_function/:schema_revision",
+    element: <DraftEditActionsThenTransfer/>
+  },
+  {
+    path: "/draft/actions/edit/then/transform/static/:action_name/:meta_function/:schema_revision",
+    element: <DraftEditActionsThenTranformStatic/>
+  },
+  {
+    path: "/draft/actions/edit/then/transform/dynamic/:action_name/:meta_function/:schema_revision",
+    element: <DraftEditActionsThenTranformDynamic/>
   },
   {
     path: "/testto",
