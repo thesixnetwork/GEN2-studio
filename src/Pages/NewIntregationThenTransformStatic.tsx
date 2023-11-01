@@ -16,10 +16,10 @@ import axios from "axios";
 const NewIntregationThenTransformStatic = () => {
   const [isShow, setIsShow] = useState(false);
   const [imgSource, setImgSource] = useState("");
+  const navigate = useNavigate();
 
   const onChange = (e: any) => {
     setImgSource(e.target.value);
-    setShowImg(false);
   };
 
 
@@ -57,7 +57,6 @@ const NewIntregationThenTransformStatic = () => {
       });
 
   }
-  const navigate = useNavigate();
 
 
 

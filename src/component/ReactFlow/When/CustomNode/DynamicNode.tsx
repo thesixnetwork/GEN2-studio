@@ -30,10 +30,13 @@ const DynamicNode = (props: CircleNodeProps) => {
   const [isSelected, setIsSelected] = useState(false);
   const [attributeOption, setAttributeOption] = useState([]);
   const [attributesObj, setAttributesObj] = useState();
-  const [value, setValue] = useState(props.data.value);
-  const [selectValue, setSelectValue] = useState({name: props.data.value, dataType: props.data.dataType});
+  const [inputValue, setInputValue] = useState(props.data.value);
+  const [selectValue, setSelectValue] = useState({
+    name: props.data.value,
+    dataType: props.data.dataType,
+  });
 
-
+  //getAttribute from token attribute and nftattribute
   const combineArrays = (arr1, arr2) => {
     const tempArr = [];
 
@@ -45,8 +48,8 @@ const DynamicNode = (props: CircleNodeProps) => {
       tempArr.push({ name: item.name, dataType: item.data_type.toLowerCase() });
     });
 
-    setAttributeOption(tempArr)
-  }
+    setAttributeOption(tempArr);
+  };
 
   const handleDragEnter = () => {
     setHovered(true);
@@ -74,7 +77,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       })
       .then((response) => {
         console.log("Response:", response.data);
-          setAttributesObj(
+        setAttributesObj(
           response.data.data.schema_info.schema_info.onchain_data
         );
         console.log("actionName:", attributesObj);
@@ -86,7 +89,7 @@ const DynamicNode = (props: CircleNodeProps) => {
 
   const onChange = (e: EventProps) => {
     const { nodeInternals } = store.getState();
-    setValue(e.target.value);
+    setInputValue(e.target.value);
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
         // console.log("props.data.id", props.data);
@@ -101,7 +104,10 @@ const DynamicNode = (props: CircleNodeProps) => {
   const handleSelect = (e: EventProps) => {
     setIsSelected(true);
     const selectedOption = JSON.parse(e.target.value);
-    setSelectValue({name: selectedOption.name, dataType: selectedOption.dataType});
+    setSelectValue({
+      name: selectedOption.name,
+      dataType: selectedOption.dataType,
+    });
     // props.data.value = selectedOption.name
     // props.data.dataType = selectedOption.dataType
     const { nodeInternals } = store.getState();
@@ -117,20 +123,20 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   };
 
-  useEffect( () => {
+  useEffect(() => {
     const asyncFetchData = async () => {
-      await fetchData() 
-    }
-    asyncFetchData()
-  },[])
+      await fetchData();
+    };
+    asyncFetchData();
+  }, []);
 
   useEffect(() => {
-    if(attributesObj !== undefined){
+    if (attributesObj !== undefined) {
       const tokenAttributes = attributesObj.token_attributes;
       const nftAttributes = attributesObj.nft_attributes;
-      combineArrays(tokenAttributes, nftAttributes)
+      combineArrays(tokenAttributes, nftAttributes);
     }
-  },[attributesObj])
+  }, [attributesObj]);
 
   return props.data.showType === "valueNode" ? (
     <div
@@ -156,21 +162,15 @@ const DynamicNode = (props: CircleNodeProps) => {
           onChange={(e) => {
             onChange(e);
           }}
-          value={value}
+          value={inputValue}
         />
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />
     </div>
   ) : props.data.showType === "attributeNode" ? (
     <div
-      className={`w-full p-2 rounded-full flex items-center justify-center border-2
-                ${
-                  props.data.showType === "attributeNode"
-                    ? "bg-[#D298DD]"
-                    : props.data.showType === "paramNode"
-                    ? "bg-[#FFCE74]"
-                    : "bg-white"
-                }
+      className={`w-full p-2 rounded-full flex items-center justify-center border-2 bg-[#D298DD]
+
                 ${
                   hovered ? "border-indigo-600 opacity-80" : "border-gray-600"
                 }`}
@@ -181,13 +181,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
         <p className={`${hovered ? "text-indigo-600 " : "text-gray-600"}`}>
-          {" "}
-          {props.data.showType === "attributeNode"
-            ? "@"
-            : props.data.showType === "paramNode"
-            ? "P"
-            : null}
-          :&nbsp;{" "}
+          @:&nbsp;
         </p>
         <select
           id=""
@@ -198,7 +192,9 @@ const DynamicNode = (props: CircleNodeProps) => {
           value={selectValue.name}
         >
           <option value={selectValue.name} disabled selected hidden>
-            {selectValue.name === "" || selectValue.name === undefined  ? "- select type -" : selectValue.name}
+            {selectValue.name === "" || selectValue.name === undefined
+              ? "-- select type --"
+              : selectValue.name}
           </option>
           {attributeOption.map((item, index) => (
             <option

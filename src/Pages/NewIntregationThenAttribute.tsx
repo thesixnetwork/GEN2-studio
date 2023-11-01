@@ -534,6 +534,7 @@ const BasicFlow = () => {
     };
 
     const object = Factory.createObject(transformData(nodes)).toString();
+    console.log("--->obj", transformData(nodes))
     setMetaData(object);
     return object;
   };
@@ -657,6 +658,8 @@ const BasicFlow = () => {
           <div className="flex justify-center" onClick={async () => { await saveAction()  ; console.log(metaData) ;navigate("/newintregation/beginer") }}>
             <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
           </div>
+          <button onClick={()=>console.log(nodes)}>log</button>
+          <button onClick={()=>console.log(edges)}>log edges</button>
         </div>
       </div>
       <Flowbar selectedAttribute={selectedAttribute}></Flowbar>

@@ -8,10 +8,10 @@ const DraftEditActionsThen = () => {
         <div className=" w-full flex flex-col items-center justify-center gap-20 min-h-[89.1%]">
               <div className="flex gap-x-20">
                 <ActionTypeCard type="update" draft={true} />
-                <ActionTypeCard type="transfer" draft={false} />
+                <ActionTypeCard type="transfer" draft={true} />
               </div>
               <div>
-                <ActionTypeCard type="transform" draft={false} />
+                <ActionTypeCard type="transform" draft={true} />
               </div>
             </div>
         </div>
