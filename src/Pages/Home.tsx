@@ -163,7 +163,7 @@ const Home = () => {
           </div>
           <div className="w-2/6 h-full flex flex-col items-end  ">
             <Conectwalet></Conectwalet>
-            <div className=" mt-[70%]">
+            <div className=" mt-[80%]">
               <WhiteBox
                 Title={"Choose your collection"}
                 DeTail={
