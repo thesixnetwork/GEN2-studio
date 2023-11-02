@@ -132,6 +132,8 @@ const DraftAttributes = () => {
     }
 
   }
+
+  console.log("data ===>",data)
   
   useEffect(() => {
     FindSchemaCode();
