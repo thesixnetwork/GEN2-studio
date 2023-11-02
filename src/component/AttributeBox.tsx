@@ -148,11 +148,13 @@ export default function AttributeBox(props: MyComponentProps) {
 
 
     const saveCheckErrorI = async (str) => {
-        console.log(str)
+        console.log("str =>",str)
         setIser(false)
-        setPartI(false)
-        if (!str) {
-            //("1")
+        // setPartI(false)
+        if (!str && str === "") {
+            // ("1")
+            console.log("str1 =>",str)
+
             setErrorMessage("Not Availible")
             setIser(true)
         }
@@ -176,8 +178,9 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(true)
         }
         else {
+            console.log("else 179")
             setIser(false)
-            setPartI(true)
+            // setPartI(true)
 
         }
     }
@@ -185,6 +188,10 @@ export default function AttributeBox(props: MyComponentProps) {
     function containsSame(str) {
         for (let i = 0; i <= props.text.length - 1; i++) {
             if ((i != props.index) && (str === props.text[i].name) && (props.text[i].name != "")) {
+                // console.log("i", i)
+                // console.log("props.index", props.index)
+                // console.log("str", str)
+                // console.log("props.text[i].name", props.text[i].name)
                 return true
                 break
             }
@@ -198,15 +205,20 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const CheckErrorI = async (e) => {
         setPartI(false)
+
         if (!e.target.value) {
+            // console.log(11111)
             setErrorMessage("Not Availible")
             setIser(true)
         }
-        else if (containsSame(e.target.value)) {
-            setErrorMessage("Not Same")
-            setIser(true)
+        // else if (containsSame(e.target.value)) {
+        //     // console.log("e =>",e.target.value.length)
+        //     // console.log("props =>", props.text[props.index].name)
+        //     // console.log("props2 =>", props.text.length)
+        //     setErrorMessage("Not Same")
+        //     setIser(true)
 
-        }
+        // }
         else if (containsSpecialChars(e.target.value)) {
             setErrorMessage("Sp Chars")
             setIser(true)
@@ -269,7 +281,7 @@ export default function AttributeBox(props: MyComponentProps) {
         }
         else {
             setIser(false)
-            return (true)
+            // return (true)
         }
     }
 
@@ -523,7 +535,7 @@ export default function AttributeBox(props: MyComponentProps) {
                             await CheckT();
 
                         }}
-                        onBlur={() => { CheckErrorI(e) }}
+                        // onBlur={() => { CheckErrorI(e) }}
                         className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[160px]"
                         placeholder="Add attribute name"
                     />

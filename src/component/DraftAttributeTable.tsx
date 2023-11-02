@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import menuIcon from "../pic/draft-expand-menu.png";
 import editIcon from "../pic/draft-edit.png";
 import saveIcon from "../pic/draft-save.png";
+import { PlusSquareIcon } from "@chakra-ui/icons";
+
+import OriginAtt from "../helpers/mockOriginAttributes.json";
+import OnChainAtt from "../helpers/mockOnchain.json";
 
 const DraftAttributeTable = ({ type, data }) => {
   const [selectedItem, setSelectedItem] = useState("");
 
-  const [mockData, setData] = useState(data);
-
+  const [isData, setIsData] = useState(data);
+  console.log(isData);
   const [editableRow, setEditableRow] = useState(null);
 
   const handleEditClick = (index) => {
@@ -21,6 +25,8 @@ const DraftAttributeTable = ({ type, data }) => {
   const handleCellChange = (index, field, value) => {
     console.log(`item.data_type ${index}: ${value}`);
     const newData = [...data];
+    // console.log(`item.data_type `, data);
+
     const fieldParts = field.split(".");
 
     let currentObj = newData[index];
@@ -50,6 +56,74 @@ const DraftAttributeTable = ({ type, data }) => {
   useEffect(() => {
     console.log("---?");
   }, [type, data]);
+  console.log(`item.data_type `, data);
+
+  const addDataTable = async () => {
+    // let newRow
+    // console.log("OriginAtt =>",OriginAtt)
+    // const newRow = OriginAtt
+    if (type === "originAttributes") {
+      const newRow = {
+        name: "",
+        data_type: "string",
+        required: false,
+        display_value_field: "",
+        display_option: {
+          bool_true_value: "",
+          bool_false_value: "",
+          opensea: {
+            display_type: "",
+            trait_type: "",
+            max_value: "0",
+          },
+        },
+        default_mint_value: null,
+        hidden_overide: false,
+        hidden_to_marketplace: false,
+      };
+
+      data.push(newRow);
+      setIsData([...isData, newRow]);
+    } else {
+      const newRow = {
+        name: "",
+        data_type: "string",
+        required: false,
+        display_value_field: "",
+        display_option: {
+          bool_true_value: "",
+          bool_false_value: "",
+          opensea: {
+            display_type: "",
+            trait_type: "",
+            max_value: "0",
+          },
+        },
+        default_mint_value: {
+          string_attribute_value: {
+            value: "",
+          },
+        },
+        hidden_overide: false,
+        hidden_to_marketplace: false,
+      };
+
+      data.push(newRow);
+      setIsData([...isData, newRow]);
+    }
+    // data.push(newRow);
+    // setIsData([...isData, newRow]);
+    // console.log(isData)
+  };
+
+  // const addDataTableOnChain = () => {
+  //   // const newRow = { name: '', data_type: 'string', display_option: { opensea: { trait_type: '' } } };
+  //   const newRow = OnChainAtt
+  //   data.push(newRow);
+  //   setIsData([...isData, newRow]);
+  // };
+
+  console.log("isData ==>", isData);
 
   return (
     <div className="w-[560px] h-96 border-2 border-white rounded-xl">
@@ -69,6 +143,8 @@ const DraftAttributeTable = ({ type, data }) => {
           className="w-4 h-4 cursor-pointer hover:scale-125 duration-300"
         />
         {/* <button onClick={() => console.log(data)}>log</button> */}
+        {/* <button onClick={() => addDataTable()}>log</button> */}
+        <PlusSquareIcon onClick={() => addDataTable()} />
       </div>
       <div className="w-full max-h-[320px] flex justify-center items-center overflow-scroll">
         {data.length === 0 ? (
@@ -91,7 +167,7 @@ const DraftAttributeTable = ({ type, data }) => {
             <tbody>
               {type === "originAttributes"
                 ? data !== undefined &&
-                  data.map((item, index) => (
+                  isData.map((item, index) => (
                     <tr
                       key={index}
                       className={`border border-white bg-[#B9BAC2] ${
@@ -140,82 +216,6 @@ const DraftAttributeTable = ({ type, data }) => {
                             </button>
                           ))}
                         </div>
-                        {/* <div className="flex justify-evenly">
-                          <ul className="flex">
-                            <li>
-                              <input
-                                type="radio"
-                                className="hidden peer"
-                                id="string"
-                                value={item.data_type}
-                                onClick={(e) => {
-                                  handleCellChange(index, "data_type", e.target.id);
-                                }}
-                              />
-                              <label
-                                htmlFor="string"
-                                className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                                  item.data_type === "string"
-                                    ? "bg-[#D9D9D975]"
-                                    : "bg-transparent"
-                                }`}                              >
-                                <div className="w-7 h-7 flex items-center justify-center">
-                                  <div className="w-full text-xs font-semibold text-center">
-                                    abc
-                                  </div>
-                                </div>
-                              </label>
-                            </li>
-                            <li>
-                              <input
-                                type="radio"
-                                id="number"
-                                className="hidden peer"
-                                value={item.data_type}
-                                onClick={(e) => {
-                                  handleCellChange(index, "data_type", e.target.id);
-                                }}
-                              />
-                              <label
-                                htmlFor="number"
-                                className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                                  item.data_type === "number"
-                                    ? "bg-[#D9D9D975]"
-                                    : "bg-transparent"
-                                }`}                              >
-                                <div className="w-7 h-7 flex items-center justify-center">
-                                  <div className="w-full text-xs font-semibold text-center">
-                                    123
-                                  </div>
-                                </div>
-                              </label>
-                            </li>
-                            <li>
-                              <input
-                                type="radio"
-                                id="boolean"
-                                value={item.data_type}
-                                className="hidden peer"
-                                onClick={(e) => {
-                                  handleCellChange(index, "data_type", e.target.id);
-                                }}
-                              />
-                              <label
-                                htmlFor="boolean"
-                                className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                                  item.data_type === "boolean"
-                                    ? "bg-[#D9D9D975]"
-                                    : "bg-transparent"
-                                }`}                              >
-                                <div className="w-7 h-7 flex items-center justify-center">
-                                  <div className="w-full text-xs font-semibold text-center">
-                                   Y/N
-                                  </div>
-                                </div>
-                              </label>
-                            </li>
-                          </ul>
-                        </div> */}
                       </td>
                       <td
                         className="border border-white w-36"
@@ -274,7 +274,7 @@ const DraftAttributeTable = ({ type, data }) => {
                         // }
                       >
                         <div className="flex justify-evenly">
-                        {["string", "number", "boolean"].map((type) => (
+                          {["string", "number", "boolean"].map((type) => (
                             <button
                               key={type}
                               onClick={(e) => {
@@ -359,7 +359,6 @@ const DraftAttributeTable = ({ type, data }) => {
                     </tr>
                   ))}
             </tbody>
-            
           </table>
         )}
       </div>

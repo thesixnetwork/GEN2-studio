@@ -114,7 +114,7 @@ const DraftDeployment = () => {
 
   const HandlerDeploySchemaCode = async () => {
     setDeployLoading(true);
-    let msgArray: Array<EncodeObject> = [];
+    const msgArray: Array<EncodeObject> = [];
 
     const encodeBase64Schema = Buffer.from(JSON.stringify(schemaInfo)).toString(
       "base64"

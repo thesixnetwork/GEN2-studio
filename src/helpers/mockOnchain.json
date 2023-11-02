@@ -1,0 +1,22 @@
+{
+    "name": "",
+    "data_type": "string",
+    "required": false,
+    "display_value_field": "",
+    "display_option": {
+        "bool_true_value": "",
+        "bool_false_value": "",
+        "opensea": {
+            "display_type": "",
+            "trait_type": "",
+            "max_value": "0"
+        }
+    },
+    "default_mint_value": {
+        "string_attribute_value": {
+            "value": ""
+        }
+    },
+    "hidden_overide": false,
+    "hidden_to_marketplace": false
+}

@@ -198,7 +198,7 @@ const Home = () => {
                                             {/* <HomeDraftCard CollectionName={item.schema_name} CollectionImage={getImg(item.schema_info[0].schema_info.origin_data.origin_base_uri)}></HomeDraftCard> */}
                                             {/* <button onClick={()=>{console.log(item)}}>btn</button> */}
                                             <HomeDraftCard
-                                                CollectionName={item.schema_name}
+                                                CollectionName={item.schema_revision}
                                                 CollectionImage={
                                                     item.schema_info &&
                                                     item.schema_info[0] &&
@@ -247,6 +247,7 @@ const Home = () => {
 
                             {/* <p className="text-[#FFFFFF] text-3xl mt-[30px] mb-1 ">Live</p> */}
                             {/* <div className="w-[891px] h-[1px] bg-[#D9D9D9]"></div> */}
+                            {console.log(listDraft)}
 
                             <Flex wrap={"wrap"} paddingBottom={"50px"}>
                                 <Box>

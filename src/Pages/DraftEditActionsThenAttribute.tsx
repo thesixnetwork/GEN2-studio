@@ -604,7 +604,7 @@ const BasicFlow = () => {
 
   const getDataFromNode = () => {
     const transformData = (nodes) => {
-      let result = {};
+      const result = {};
 
       for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
