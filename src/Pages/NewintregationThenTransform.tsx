@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tooltip } from "@mui/material";
 
-import Add from "../pic/Group 40.png";
 
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
 import ActionTransformCard from "../component/ActionTransformCard";
-import { Link } from "react-router-dom";
 
 const NewIntregationThenTransform = () => {
   const [isShow, setIsShow] = useState(false);
