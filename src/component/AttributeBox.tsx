@@ -85,7 +85,7 @@ export default function AttributeBox(props: MyComponentProps) {
     const [iser, setIser] = useState(false);
     const [textInputI, settextInputI] = useState("")
     const [partI, setPartI] = useState(false);
-    var [partII, setPartII] = useState(false);
+    const [partII, setPartII] = useState(false);
     const [SAME, setSAME] = useState(false);
     const [partIII, setPartIII] = useState(false);
 
@@ -183,7 +183,7 @@ export default function AttributeBox(props: MyComponentProps) {
     }
 
     function containsSame(str) {
-        for (var i = 0; i <= props.text.length - 1; i++) {
+        for (let i = 0; i <= props.text.length - 1; i++) {
             if ((i != props.index) && (str === props.text[i].name) && (props.text[i].name != "")) {
                 return true
                 break
@@ -344,7 +344,7 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const searchError = () => {
         // //(`name :${props.text[props.index].name}`)
-        for (var i = 0; i <= props.text.length; i++) {
+        for (let i = 0; i <= props.text.length; i++) {
 
             // //.log(`dataType :${props.text[i].dataType}`)
             // //.log(`traitType :${props.text[i].traitType}`)

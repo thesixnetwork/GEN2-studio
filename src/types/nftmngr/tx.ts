@@ -1,4 +1,5 @@
 import { Reader, Writer } from "protobufjs/minimal";
+import { DeepPartial } from "..";
 
 export interface MsgCreateNFTSchema {
     creator: string;
@@ -24,7 +25,7 @@ export const MsgCreateNFTSchema = {
   
     decode(input: Reader | Uint8Array, length?: number): MsgCreateNFTSchema {
       const reader = input instanceof Uint8Array ? new Reader(input) : input;
-      let end = length === undefined ? reader.len : reader.pos + length;
+      const end = length === undefined ? reader.len : reader.pos + length;
       const message = { ...baseMsgCreateNFTSchema } as MsgCreateNFTSchema;
       while (reader.pos < end) {
         const tag = reader.uint32();
