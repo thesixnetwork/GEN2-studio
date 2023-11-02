@@ -9,7 +9,6 @@ import NormalButton from '../component/NormalButton';
 function DraftEditOriginData() {
     const { schema_revision } = useParams();
     const [Title, setTitle] = useState(["Collection Data", "Origin Data"]);
-    const [schemaInFo, setSchemaInFo] = useState(null)
     const [loading, setLoading] = useState(true)
     const [Discard,setDiscard] = useState(false)
     const [Save,setSave] = useState(false)
@@ -73,7 +72,7 @@ function DraftEditOriginData() {
                                         FontSize={24}
                                     ></NormalButton>
                                 </div>
-                                <div className="w-32" onClick={()=>{ setDiscard(!Discard)}} >
+                                <div className="w-32" onClick={()=>{ setDiscard(!Discard) }} >
                                     <NormalButton
                                         TextTitle="DISCARD"
                                         BorderRadius={0}

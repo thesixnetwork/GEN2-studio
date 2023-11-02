@@ -10,6 +10,7 @@ import axios from 'axios';
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { createTheme } from '@mui/material';
 
 interface ComponentProps {
     Title: string
@@ -23,7 +24,6 @@ function DraftOrigindataCard(Props: ComponentProps) {
     const { schema_revision } = useParams();
     // console.log("Info :", Props.Info)
     const [loading, setLoading] = useState(false)
-    const [data, setData] = useState(null)
     const [isInputDisabledOriginChain, setisInputDisabledOriginChain] = useState(true)
     const [schemaInfo, setschemaInfo] = useState({})
     const [FirstschemaInfo, setFirstschemaInfo] = useState({})
@@ -37,23 +37,23 @@ function DraftOrigindataCard(Props: ComponentProps) {
     //     console.log(schemaInfo)
     // }
 
+    const handleRefresh = () => {
+        window.location.reload();
+    };
+
     const DISCARD = () => {
         setschemaInfo(FirstschemaInfo);
-        console.log("FirstschemaInfo :", FirstschemaInfo)
-        console.log("schemaInfo :", schemaInfo)
-        navigate('')
+
+        // console.log("FirstschemaInfo :", FirstschemaInfo)
+        // console.log("schemaInfo :", schemaInfo)
         // setschemaInfo((prevState) => {
         //     const newState = { ...prevState };
 
 
         //     newState.schema_info.description = FirstschemaInfo.schema_info.description;
 
-
         //     return newState;
         // });
-
-
-
     }
     // console.log("schemaInfo :",schemaInfo.schema_info)
 
@@ -67,6 +67,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
     }, [Props.Discard])
 
     const saveData = async () => {
+        console.log(":::::::::: saveDataFunction ::::::::")
         const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
         const requestData = {
             "payload": {
@@ -115,9 +116,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
         //     ...prevState,
         //     "name": schemaInfo.collectionname,
         // }));
-
-        console.log("DATA:", data)
-        console.log("schemaInfo:", schemaInfo)
+        console.log("Props.Save :", Props.Save)
         saveData()
     }, [Props.Save])
 
@@ -216,6 +215,20 @@ function DraftOrigindataCard(Props: ComponentProps) {
         console.log(schemaInfo);
     };
 
+    const selectFieldStyles = {
+        ".MuiOutlinedInput-notchedOutline": {
+            borderColor: "#ffffff",
+        },
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#ffffff",
+            borderWidth: "thin",
+        },
+        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#ffffff",
+            borderWidth: "thin",
+        },
+    };
+
     return (
         <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
             <div
@@ -269,9 +282,9 @@ function DraftOrigindataCard(Props: ComponentProps) {
                 <div className=' m-5'>
                     <div className=' flex  justify-start items-center'>
                         <p className="font-bold text-xl mr-2">Origin Chain : </p>
-                        <FormControl className=' text-white' sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel htmlFor="grouped-native-select">NETWORK</InputLabel>
-                            <Select native value={selectedNetwork} onChange={handleNetworkChange} id="grouped-native-select" label="Grouping">
+                        <FormControl sx={{ m: 1, minWidth: 120 }}>
+                            <InputLabel className='' htmlFor="grouped-native-select">NETWORK</InputLabel>
+                            <Select sx={selectFieldStyles} native value={selectedNetwork} onChange={handleNetworkChange} id="grouped-native-select" label="Grouping">
                                 <option aria-label="None" value="" />
                                 <optgroup label="Mainnet">
                                     <option value={1}>SIXNET</option>

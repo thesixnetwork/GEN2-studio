@@ -1,11 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip } from "@mui/material";
-
-import Add from "../pic/Group 40.png";
-
-import Conectwalet from "../component/Connectwallet";
-import Stepper2 from "../component/Stepper2";
-import Darkbg from "../component/Alert/Darkbg";
 import EastIcon from "@mui/icons-material/East";
 import { Link, useNavigate } from "react-router-dom";
 import NormalButton from "../component/NormalButton";
@@ -13,7 +6,7 @@ import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from ".
 import axios from "axios";
 
 const DraftEditActionsThenTranformDynamic = () => {
-  const [isShow, setIsShow] = useState(false);
+ 
   const [showImg, setShowImg] = useState(false);
   const [imgSource, setImgSource] = useState("");
   const [postfix, setPostfix] = useState("");
@@ -79,6 +72,37 @@ const DraftEditActionsThenTranformDynamic = () => {
       });
 
   }
+
+  const saveimgSource = async () => {
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_image_url'; // Replace with your API endpoint
+    const requestData = {
+      "payload": {
+        "schema_code": getSCHEMA_CODE(),
+        "update_then": true,
+        "name": getActionName(),
+        "then": [convertMetaData(imgFormat, postfix)],
+      }
+    };
+
+    await axios.post(apiUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+        // Add any other headers your API requires
+      },
+    })
+      .then(response => {
+        console.log('API Response saveOnchainCollectionAttributes :', response.data);
+        console.log("Request :", requestData)
+        // You can handle the API response here
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+      });
+
+  }
+
   const navigate = useNavigate();
 
   return (

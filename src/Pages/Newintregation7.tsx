@@ -133,9 +133,8 @@ const NewIntregation7 = () => {
     }, 500);
     await saveOriginTokenAttributes()
     LoadingCheckErro()
+    navigate('/newintregation/8')
   };
-
-
 
   const handleCreateAttribute = () => {
     const newAttribute = {

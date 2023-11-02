@@ -38,7 +38,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
 
     useEffect(() => {
         setInputValue(props.text[props.index].value);
-      }, [props.text[props.index].value]);
+    }, [props.text[props.index].value]);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -106,21 +106,9 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                 document.getElementById(`box${props.index}`).style.zIndex = "0";
             }
         }
-        else if (containsSpecialChars(str)) {
-            setErrorMessage("Speail Chars")
-            setIser(true)
-            updatedText[props.index].Error = false;
-            document.getElementById(`box${props.index}`).style.zIndex = "50";
-        }
-        else if (containsUppercase(str)) {
-            setErrorMessage("Uppercase")
-            setIser(true)
-            updatedText[props.index].Error = false;
-            document.getElementById(`box${props.index}`).style.zIndex = "50";
-        }
         else if (props.text[props.index].Name !== "Description") {
-            if (containsSpace(str)) {
-                setErrorMessage("Space")
+            if (containsSpecialChars(str)) {
+                setErrorMessage("Speail Chars")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
@@ -137,14 +125,14 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         if (props.Next) {
             saveCheckErrorI(props.text[props.index].value)
         }
-    }, [,props.Next])
+    }, [, props.Next])
 
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>
             <div className=' w-4/5 flex justify-start items-center '>
                 <p className='font-bold text-[24px] w-2/5 mr-[5%]'>{props.text[props.index].Name}</p>
                 <input
-                    value={inputValue} 
+                    value={inputValue}
                     type="text"
                     // onChange={handleInputschemaCode}
                     onChange={async (e) => {
