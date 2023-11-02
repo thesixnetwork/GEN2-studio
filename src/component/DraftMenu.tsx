@@ -2,8 +2,9 @@ import Conectwalet from "./Connectwallet";
 import NormalButton from "./NormalButton";
 import { Link } from "react-router-dom";
 
-const DraftMenu = ({ menu, schemaCode }) => {
+const DraftMenu = ({ menu,schemaCode }) => {
   console.log(menu);
+  console.log(schemaCode)
 
   return (
     <div className="w-[1280px]">
@@ -14,6 +15,8 @@ const DraftMenu = ({ menu, schemaCode }) => {
               ? "Draft: Attributes"
               : menu === "deployment"
               ? "Draft: Deplotment"
+              : menu === "origin"
+              ? "Draft: Origin Data"
               : "Draft: Actions"}
           </h1>
           <div className="h-full flex items-end pb-2">
@@ -24,6 +27,8 @@ const DraftMenu = ({ menu, schemaCode }) => {
                     ? `/draft/actions/${schemaCode}`
                     : menu === "actions"
                     ? `/draft/deployment/${schemaCode}`
+                    : menu === "origin"
+                    ? `/draft/attributes/${schemaCode}`
                     : "/"
                 }
               >

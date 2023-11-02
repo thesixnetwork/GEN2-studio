@@ -61,6 +61,7 @@ import DraftEditActionsThenTransform from './Pages/DraftEditActionsThenTransform
 import DraftEditActionsThenTransfer from './Pages/DraftEditActionsThenTransfer.tsx';
 import DraftEditActionsThenTranformStatic from './Pages/DraftEditActionsThenTranformStatic.tsx';
 import DraftEditActionsThenTranformDynamic from './Pages/DraftEditActionsThenTranformDynamic.tsx';
+import DraftEditOriginData from './Pages/DraftEditOriginData.tsx';
 export const ABCDE = () => {
   console.log("ABC")
 }
@@ -102,18 +103,6 @@ const router = createBrowserRouter([
   {
     path: "/newintregation/7",
     element: <NewIntregation7></NewIntregation7>
-  },
-  {
-    path: "/test",
-    element: <Test></Test>
-  },
-  {
-    path: "/test2",
-    element: <Test2></Test2>
-  },
-  {
-    path: "/test3",
-    element: <Test3></Test3>
   },
   {
     path: "/newintregation/8",
@@ -174,6 +163,10 @@ const router = createBrowserRouter([
   {
     path: "/draft/attributes/:schema_revision",
     element: <DraftAttributes></DraftAttributes>
+  },
+  {
+    path: "/draft/origindata/:schema_revision",
+    element: <DraftEditOriginData></DraftEditOriginData>
   },
   {
     path: "/draft/attributes/:attribute_type/:schema_revision",

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import logo1 from '../pic/Chain/SIX Protocol Icon.png'
@@ -50,6 +50,8 @@ const NewIntregation6 = () => {
 
     ]);
 
+    
+
     const navigate = useNavigate();
     const [ml, setml] = useState(0)
     const [isSelection, setisSelection] = useState(false)
@@ -57,12 +59,20 @@ const NewIntregation6 = () => {
     const handleml = (event: any) => {
         const id = event.target.id;
         console.log(id);
-        setml(100 * id)
+        setml(133 * id)
         setisSelection(true)
         setisError(false)
     }
+
+    useEffect(() => {
+        if (getSCHEMA_CODE()) {
+            setisSelection(true)
+            setisError(false)
+
+        }
+    }, [])
+
     const handleSubmit = async (e) => {
-        await saveOriginContractAddressAndOriginBaseURI();
         e.preventDefault();
         if (isSelection) {
             navigate('/newintregation/7');
@@ -70,6 +80,7 @@ const NewIntregation6 = () => {
         else {
             setisError(true)
         }
+        await saveOriginContractAddressAndOriginBaseURI();
     }
 
     const HandleText = (e) => {
@@ -85,8 +96,8 @@ const NewIntregation6 = () => {
                 "schema_info": {
                     "origin_data": {
                         "origin_chain": "SIXNET",
-                        "origin_contract_address": `${text[1].value}` ,
-                        "origin_base_uri": `${text[2].value}` 
+                        "origin_contract_address": `${text[1].value}`,
+                        "origin_base_uri": `${text[2].value}`
                     }
                 },
                 "schema_code": getSCHEMA_CODE(),
@@ -163,9 +174,9 @@ const NewIntregation6 = () => {
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
                         <form onSubmit={handleSubmit} className=' h-5/6  flex flex-col justify-start items-center py-[30px] relative '>
-                            <div className='w-[758px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-center px-[20px] z-10 '>
+                            <div className='w-[758px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-between px-[20px] z-10 '>
                                 <p className='font-bold text-[20px] '>{text[0].Name}</p>
-                                <div className='flex justify-between w-[400px] ml-[60px]'>
+                                <div className='flex justify-between w-[70%] mr-10'>
                                     {isSelection && <div className='absolute border w-[100px] h-[100px] duration-300' style={{ marginLeft: `${ml}px` }}></div>}
                                     <Tooltip title="SIX Protocol">
                                         <div className='w-[100px] h-[100px] flex justify-center items-center'>
@@ -256,7 +267,7 @@ const NewIntregation6 = () => {
                     <div className='absolute duration-500' onClick={() => { setisError(false); }}>
                         <Darkbg ></Darkbg>
                         <AlertCard BG={1} ML={320} MT={-250} Width={266} Height={140} heaDer="Required" detailsText="Origin Chain is required. Please choose one of the supported Chain"  ></AlertCard>
-                        <RedAleart Height={20} Width={120} Rotate={90} ML={195} MT={-197} detailsText="Require" ></RedAleart>
+                        <RedAleart Height={20} Width={120} Rotate={90} ML={174} MT={-187} detailsText="Require" ></RedAleart>
                     </div>
                 }
             </div>

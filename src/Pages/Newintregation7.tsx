@@ -84,7 +84,7 @@ const NewIntregation7 = () => {
 
 
   const searchError = () => {
-    for (var i = 0; i < text.length; i++) {
+    for (let i = 0; i < text.length; i++) {
       if (text[i].Error === "F") {
         document.getElementById(i).scrollIntoView({ behavior: 'smooth' });
         break
@@ -125,17 +125,16 @@ const NewIntregation7 = () => {
   }
 
   const handleSave = async () => {
-    await saveOriginTokenAttributes()
+    
     setSave(true);
     searchError()
     setTimeout(() => {
       checkALLError()
-      navigate('/newintregation/8')
     }, 500);
+    await saveOriginTokenAttributes()
     LoadingCheckErro()
+    navigate('/newintregation/8')
   };
-
-
 
   const handleCreateAttribute = () => {
     const newAttribute = {
@@ -397,7 +396,6 @@ const NewIntregation7 = () => {
             }}
           >
             <Darkbg></Darkbg>
-
           </div>
         )}
       </div>
