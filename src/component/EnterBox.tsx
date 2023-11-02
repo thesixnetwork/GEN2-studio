@@ -153,7 +153,7 @@ export default function
     useEffect(() => {
         if (partI) {
             saveCheckErrorII(text[0].description)
-        };
+        }
 
         const SaveAction = async () => {
             await saveAction()
@@ -164,15 +164,15 @@ export default function
             SaveAction()
         } else {
             props.setIsSave(false)
-        };
+        }
 
     }, [props.isSave])
 
     useEffect(() => {
         if (props.isSave) {
             saveCheckErrorI(text[0].name)
-        };
-        if (partI) { setshowII(true) };
+        }
+        if (partI) { setshowII(true) }
 
     }, [props.isSave])
 
@@ -242,7 +242,7 @@ export default function
                             />
                         </div>
                         {!showII &&
-                            <div className='ml-[15px]' onClick={() => { if (partI) { setshowII(true) }; saveCheckErrorI(text[0].name) }}>
+                            <div className='ml-[15px]' onClick={() => { if (partI) { setshowII(true) } saveCheckErrorI(text[0].name) }}>
                                 <NormalButton BorderRadius={0} FontSize={0} TextTitle={'Next'}></NormalButton>
                             </div>
                         }

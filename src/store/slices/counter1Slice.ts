@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 type Counter1State = {
@@ -32,7 +32,7 @@ const counter1Slice = createSlice({
   name: "counter1",
   initialState: initialValues,
   reducers: {
-    increase: (state: Counter1State, action: PayloadAction<void>) => {
+    increase: (state: Counter1State) => {
       state.counter = state.counter + 1;
       console.log(state.counter)
     },
@@ -43,12 +43,12 @@ const counter1Slice = createSlice({
       state.loading = false;
     });
 
-    builder.addCase(setValueAsync.rejected, (state, action) => {
+    builder.addCase(setValueAsync.rejected, (state) => {
       state.counter = 0;
       state.loading = false;
     });
 
-    builder.addCase(setValueAsync.pending, (state, action) => {
+    builder.addCase(setValueAsync.pending, (state) => {
       state.loading = true;
     });
   },
