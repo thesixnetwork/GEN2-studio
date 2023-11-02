@@ -128,8 +128,8 @@ const DynamicNode = (props: CircleNodeProps) => {
 
   const handleSelectAttribute = (e: EventProps) => {
     const selectedOption = JSON.parse(e.target.value);
-    // props.data.value = selectedOption.name
-    // props.data.dataType = selectedOption.dataType
+    props.data.value = selectedOption.name
+    props.data.dataType = selectedOption.dataType
     setSelectAttributeValue({
       name: selectedOption.name,
       dataType: selectedOption.dataType,
@@ -171,15 +171,15 @@ const DynamicNode = (props: CircleNodeProps) => {
     asyncFetchData();
   }, []);
 
-  // useEffect(() => {
-  //   setSelectAttributeValue(
-  //     {
-  //       name: props.data.value,
-  //       dataType: props.data.dataType,
-  //     }
-  //   )
-  //   console.log("Select Attribute Value:", selectAttributeValue, props.data.value);
-  // }, [selectAttributeValue, props.data.value]);
+  useEffect(() => {
+    setSelectAttributeValue(
+      {
+        name: props.data.value,
+        dataType: props.data.dataType,
+      }
+    )
+    console.log("Select Attribute Value:", selectAttributeValue, props.data.value);
+  }, []);
 
   useEffect(() => {
     if (attributesObj !== undefined) {
@@ -201,9 +201,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     >
       <Handle type="target" position={Position.Top} />
       <div className="flex flex-col items-center justify-center">
-        <button onClick={() => console.log(selectAttributeValue)}>
-          log here
-        </button>
+
         <p
           className={`text-white ${
             hovered ? "text-indigo-600 " : "text-gray-600"
