@@ -5,10 +5,13 @@ import saveIcon from "../pic/draft-save.png";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import narrowIcon from "../pic/draft-narrow-menu.png";
+import { PlusSquareIcon, DeleteIcon } from "@chakra-ui/icons";
 
+import { Box, Flex } from "@chakra-ui/react";
 
 const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
   const param = useParams();
+  const [isData, setIsData] = useState(data);
 
   const [selectedItem, setSelectedItem] = useState("");
   const [editableRow, setEditableRow] = useState(null);
@@ -16,42 +19,44 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
 
   const handleEditClick = (index) => {
     setIsEdit(true);
-    if(type === "originAttributes"){
-      setIsSave(prevState => ({
+    if (type === "originAttributes") {
+      setIsSave((prevState) => ({
         ...prevState,
-        originattributes: false
+        originattributes: false,
       }));
-    }else if(type === "collectionAttributes"){
-      setIsSave(prevState => ({
+    } else if (type === "collectionAttributes") {
+      setIsSave((prevState) => ({
         ...prevState,
-        collectionattributes: false
+        collectionattributes: false,
       }));
-    }else if(type === "tokenAttributes"){
-      setIsSave(prevState => ({
+    } else if (type === "tokenAttributes") {
+      setIsSave((prevState) => ({
         ...prevState,
-        tokenattributes: false
-      }));}
+        tokenattributes: false,
+      }));
+    }
 
-     setEditableRow(index);
+    setEditableRow(index);
   };
 
   const handleSaveClick = () => {
     setIsEdit(false);
-    if(type === "originAttributes"){
-      setIsSave(prevState => ({
+    if (type === "originAttributes") {
+      setIsSave((prevState) => ({
         ...prevState,
-        originattributes: true
+        originattributes: true,
       }));
-    }else if(type === "collectionAttributes"){
-      setIsSave(prevState => ({
+    } else if (type === "collectionAttributes") {
+      setIsSave((prevState) => ({
         ...prevState,
-        collectionattributes: true
+        collectionattributes: true,
       }));
-    }else if(type === "tokenAttributes"){
-      setIsSave(prevState => ({
+    } else if (type === "tokenAttributes") {
+      setIsSave((prevState) => ({
         ...prevState,
-        tokenattributes: true
-      }));}
+        tokenattributes: true,
+      }));
+    }
     setEditableRow(null);
   };
 
@@ -65,21 +70,28 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
       currentObj = currentObj[fieldParts[i]];
     }
     currentObj[fieldParts[fieldParts.length - 1]] = value;
+    // console.log("currentObj[fieldParts[fieldParts.length - 1]]",currentObj[fieldParts[fieldParts.length - 1]])
 
     if (value === "string") {
-      currentObj["default_mint_value"] = {
-        string_attribute_value: { value: "" },
-      };
+      if (type !== "originAttributes") {
+        currentObj["default_mint_value"] = {
+          string_attribute_value: { value: "" },
+        };
+      }
       setSelectedItem("string");
     } else if (value === "number") {
-      currentObj["default_mint_value"] = {
-        number_attribute_value: { value: 0 },
-      };
+      if (type !== "originAttributes") {
+        currentObj["default_mint_value"] = {
+          number_attribute_value: { value: 0 },
+        };
+      }
       setSelectedItem("number");
     } else if (value === "boolean") {
-      currentObj["default_mint_value"] = {
-        boolean_attribute_value: { value: false },
-      };
+      if (type !== "originAttributes") {
+        currentObj["default_mint_value"] = {
+          boolean_attribute_value: { value: false },
+        };
+      }
       setSelectedItem("boolean");
     }
   };
@@ -89,6 +101,65 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
   useEffect(() => {
     console.log("---?");
   }, [type, data]);
+
+  const addDataTable = async () => {
+    // let newRow
+    // console.log("OriginAtt =>",OriginAtt)
+    // const newRow = OriginAtt
+    if (type === "originAttributes") {
+      const newRow = {
+        name: "",
+        data_type: "",
+        required: false,
+        display_value_field: "",
+        display_option: {
+          bool_true_value: "",
+          bool_false_value: "",
+          opensea: {
+            display_type: "",
+            trait_type: "",
+            max_value: "0",
+          },
+        },
+        default_mint_value: null,
+        hidden_overide: false,
+        hidden_to_marketplace: false,
+      };
+
+      data.push(newRow);
+      setIsData([...isData, newRow]);
+    } else {
+      const newRow = {
+        name: "",
+        data_type: "string",
+        required: false,
+        display_value_field: "",
+        display_option: {
+          bool_true_value: "",
+          bool_false_value: "",
+          opensea: {
+            display_type: "",
+            trait_type: "",
+            max_value: "0",
+          },
+        },
+        default_mint_value: {
+          string_attribute_value: {
+            value: "",
+          },
+        },
+        hidden_overide: false,
+        hidden_to_marketplace: false,
+      };
+
+      data.push(newRow);
+      setIsData([...isData, newRow]);
+    }
+    // data.push(newRow);
+    // setIsData([...isData, newRow]);
+    // console.log(isData)
+  };
+  console.log(data);
 
   return (
     <div
@@ -124,8 +195,10 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
           </Link>
         )}
         {/* <button onClick={() => console.log(data)}>log</button> */}
+        <PlusSquareIcon onClick={() => addDataTable()} />
       </div>
       <div className="w-full max-h-[320px] flex justify-center items-center overflow-scroll">
+
         {data.length === 0 ? (
           <div className="h-full">
             <p>NO DATA</p>
@@ -162,10 +235,10 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                     <>
                       <th className="border border-white w-[40%]">Name</th>
                       <th className="border border-white w-[20%]">Data Type</th>
-                      <th className="border border-white w-[35%]">
+                      <th className="border border-white w-[30%]">
                         Trait Type
                       </th>
-                      <th className="border border-white w-[5%]"></th>
+                      <th className="border border-white w-[10%]"></th>
                     </>
                   ) : (
                     <>
@@ -174,8 +247,8 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                       <th className="border border-white w-[20%]">
                         Trait Type
                       </th>
-                      <th className="border border-white w-[30%]">Value</th>
-                      <th className="border border-white w-[5%]"></th>
+                      <th className="border border-white w-[25%]">Value</th>
+                      <th className="border border-white w-[15%]"></th>
                     </>
                   )}
                 </tr>
@@ -199,18 +272,18 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                     >
                       {item.name}
                     </td>
-                    <td
-                      className="border border-white"
-
-                    >
+                    <td className="border border-white">
                       <div className="flex justify-evenly">
                         {["string", "number", "boolean"].map((type) => (
                           <button
                             key={type}
                             onClick={(e) => {
-                              if(isEdit){
-
-                                handleCellChange(index, "data_type", e.target.id);
+                              if (isEdit) {
+                                handleCellChange(
+                                  index,
+                                  "data_type",
+                                  e.target.id
+                                );
                               }
                             }}
                             id={type}
@@ -271,6 +344,25 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                       </td>
                     )}
                     <th className="border border-white  ">
+                      <Flex>
+                        <DeleteIcon />
+                        {editableRow === index ? (
+                          <img
+                            src={saveIcon}
+                            alt="save"
+                            className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
+                            onClick={handleSaveClick}
+                          />
+                        ) : (
+                          <img
+                            src={editIcon}
+                            alt="edit"
+                            className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
+                            onClick={() => handleEditClick(index)}
+                          />
+                        )}
+                      </Flex>
+                      {/* <PlusSquareIcon/>
                       {editableRow === index ? (
                         <img
                         src={saveIcon}
@@ -284,8 +376,8 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                           alt="edit"
                           className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
                           onClick={() => handleEditClick(index)}
-                          />
-                          )}
+                        />
+                      )} */}
                     </th>
                   </tr>
                 ))}
