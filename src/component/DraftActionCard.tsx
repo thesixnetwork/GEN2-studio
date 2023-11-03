@@ -8,7 +8,7 @@ const DraftActionCard = ({data}) =>{
             </div>
             <div className="flex">
                 <p className="text-md">Description:&nbsp;</p>
-                <span className="text-md underline text-gray-300 decoration-gray-300">{data.desc}t</span>
+                <span className="text-md underline text-gray-300 decoration-gray-300">{data.desc}</span>
             </div>            
         </div>
     )

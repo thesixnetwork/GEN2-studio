@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import narrowIcon from "../pic/draft-narrow-menu.png";
 
+
 const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
   const param = useParams();
 
@@ -82,6 +83,8 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
       setSelectedItem("boolean");
     }
   };
+
+
 
   useEffect(() => {
     console.log("---?");
@@ -270,19 +273,19 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                     <th className="border border-white  ">
                       {editableRow === index ? (
                         <img
-                          src={saveIcon}
-                          alt="save"
-                          className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
-                          onClick={handleSaveClick}
+                        src={saveIcon}
+                        alt="save"
+                        className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
+                        onClick={handleSaveClick}
                         />
-                      ) : (
-                        <img
+                        ) : (
+                          <img
                           src={editIcon}
                           alt="edit"
                           className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
                           onClick={() => handleEditClick(index)}
-                        />
-                      )}
+                          />
+                          )}
                     </th>
                   </tr>
                 ))}

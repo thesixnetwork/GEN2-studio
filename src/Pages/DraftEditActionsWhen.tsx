@@ -16,7 +16,11 @@ import ReactFlow, {
 import "reactflow/dist/base.css";
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 
-import { saveSCHEMA_CODE,getAccessTokenFromLocalStorage,getSCHEMA_CODE } from "../helpers/AuthService";
+import {
+  saveSCHEMA_CODE,
+  getAccessTokenFromLocalStorage,
+  getSCHEMA_CODE,
+} from "../helpers/AuthService";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
@@ -37,7 +41,6 @@ import {
   generateTreeFromReactFlow,
 } from "../function/auto-layout";
 import { useNavigate } from "react-router-dom";
-
 
 interface NodeProps {
   id: string;
@@ -94,7 +97,7 @@ const initialNodes: Node[] = [
 
 const Flow = () => {
   const metaDataParams = useParams();
-  const [metaData, setMetaData] = useState("");
+  const [metaData, setMetaData] = useState("please add item");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const nodeTypes = useMemo(() => {
@@ -105,7 +108,6 @@ const Flow = () => {
   }, []);
   const { setCenter } = useReactFlow();
   const navigate = useNavigate();
-
 
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] =
@@ -829,16 +831,17 @@ const Flow = () => {
   };
 
   useEffect(() => {
-    console.log("setRedraw=>");
-    setRedraw(true);
-
-    saveSCHEMA_CODE(metaDataParams.schema_revision);
-
-    const firstMetaData = metaDataParams.meta_function;
-
-    convertObject(parser_when.parse(firstMetaData));
-
-    setMetaData(metaDataParams.meta_function);
+    console.log(">>>",metaDataParams.meta_function)
+    if (
+      metaDataParams.meta_function !== "create-new-when" && 
+      metaDataParams.meta_function !== "please add item"
+    ) {
+      setRedraw(true);
+      saveSCHEMA_CODE(metaDataParams.schema_revision);
+      const firstMetaData = metaDataParams.meta_function;
+      convertObject(parser_when.parse(firstMetaData));
+      setMetaData(metaDataParams.meta_function);
+    }
   }, []);
 
   useEffect(() => {
@@ -878,8 +881,6 @@ const Flow = () => {
     }
   }, [nodes, setNodes]);
 
-  
-
   return (
     <div>
       <Flowbar metaData={metaData}></Flowbar>
@@ -905,7 +906,7 @@ const Flow = () => {
           <div className="flex justify-center">
             <div
               onClick={async () => {
-                ()=>console.log("saving")
+                () => console.log("saving");
                 await getDataFromNode();
                 await saveAction();
                 navigate(`/draft/actions/${metaDataParams.schema_revision}`);

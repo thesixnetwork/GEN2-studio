@@ -23,7 +23,10 @@ import ReactFlow, {
   NodeOrigin,
 } from "reactflow";
 import "reactflow/dist/base.css";
-import { Factory, MetaFunction } from "../function/ConvertObjectToMetadata/Factory";
+import {
+  Factory,
+  MetaFunction,
+} from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
 import Customnode from "../component/node/Customnode";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
@@ -101,6 +104,7 @@ const BasicFlow = () => {
   const [actionData, setActionData] = useState();
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
+  const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -108,7 +112,6 @@ const BasicFlow = () => {
     height_input: 35.2,
     grid_padding: 60,
   };
-
 
   const isBase64 = (str) => {
     try {
@@ -195,11 +198,15 @@ const BasicFlow = () => {
       } else if (node.right.type === "constant" && node.dataType) {
         outputNode.data.showType = "valueNode";
         outputNode.data.value = node.value;
-      } else if (node.type === "math_operation" && node.value === "+" && node.left) {
+      } else if (
+        node.type === "math_operation" &&
+        node.value === "+" &&
+        node.left
+      ) {
         outputNode.data.showType = "increaseNode";
         outputNode2.data.showType = "valueNode";
         outputNode2.data.value = node.right.value;
-      }  else if (node.type === "math_operation" && node.value === "+") {
+      } else if (node.type === "math_operation" && node.value === "+") {
         outputNode.data.showType = "increaseNode";
         outputNode.data.value = node.value;
       } else if (node.type === "math_operation" && node.value === "-") {
@@ -208,16 +215,16 @@ const BasicFlow = () => {
       }
 
       if (node.type === "constant" && node.value) {
-        if(outputNode2.data.showType === "valueNode"){
-          outputArray.push(outputNode,outputNode2);
-        }else{
+        if (outputNode2.data.showType === "valueNode") {
+          outputArray.push(outputNode, outputNode2);
+        } else {
           outputArray.push(outputNode);
         }
       } else {
-        console.log("A===",outputArray)
-        if(outputNode2.data.showType === "valueNode"){
-          outputArray.push(outputNode,outputNode2);
-        }else{
+        console.log("A===", outputArray);
+        if (outputNode2.data.showType === "valueNode") {
+          outputArray.push(outputNode, outputNode2);
+        } else {
           outputArray.push(outputNode);
         }
       }
@@ -266,7 +273,7 @@ const BasicFlow = () => {
             animated: true,
             style: { stroke: "#FFAA9A" },
             type: "smoothstep",
-          },
+          }
         );
       }
 
@@ -587,20 +594,20 @@ const BasicFlow = () => {
     saveSCHEMA_CODE(param.schema_revision);
 
     const firstMetaData = param.meta_function;
-    if(firstMetaData.startsWith("meta.SetString") || firstMetaData.startsWith("meta.SetBoolean")|| firstMetaData.startsWith("meta.SetNumber")|| firstMetaData.startsWith("meta.SetFloat")){
-      console.log("it's work")
+    if (
+      firstMetaData.startsWith("meta.SetString") ||
+      firstMetaData.startsWith("meta.SetBoolean") ||
+      firstMetaData.startsWith("meta.SetNumber") ||
+      firstMetaData.startsWith("meta.SetFloat")
+    ) {
+      console.log("it's work");
       convertObjectToNode(parser_then.parse(firstMetaData));
       setMetaData(param.meta_function);
       console.log("metaData", metaData);
-
     }
   }, []);
 
-  useEffect(() => {
-    if (createFirstNode) {
-      console.log("yo");
-    }
-  }, [createFirstNode]);
+
 
   const getDataFromNode = () => {
     const transformData = (nodes) => {
@@ -784,25 +791,41 @@ const BasicFlow = () => {
   };
 
   const saveAction = async () => {
-    actionThenArr[actionThenIndex] = metaData;
+    console.log("-->", (actionThenArr[actionThenIndex] = metaData));
     console.log("arr= ", actionThenArr);
     const apiUrl =
       "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
-    const requestData = {
-      payload: {
-        schema_code: param.schema_revision,
-        update_then: false,
-        name: param.action_name,
-        then: actionThenArr,
-      },
-    };
+      let requestData
+      if (isCreateNewAction) {
+      requestData = {
+        payload: {
+          schema_code: param.schema_revision,
+          update_then: false,
+          name: param.action_name,
+
+          then: [...actionThenArr, metaData]
+        },
+      };
+      console.log(">",requestData)
+    } else {
+       requestData = {
+        payload: {
+          schema_code: param.schema_revision,
+          update_then: false,
+          name: param.action_name,
+
+          then: actionThenArr,
+        },
+      };
+      console.log(">>",requestData)
+
+    }
 
     await axios
       .post(apiUrl, requestData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, // Set the content type to JSON
-          // Add any other headers your API requires
+          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
         },
       })
       .then((response) => {
@@ -847,6 +870,9 @@ const BasicFlow = () => {
         setActionThenIndex(index);
       }
 
+      if(param.meta_function === "create-new-action"){
+      setIsCreateNewAction(true)
+      }
       console.log("actionThenArr: ", actionThenArr);
     }
   }, [actionData]);
@@ -913,24 +939,10 @@ const BasicFlow = () => {
         </div>
         <button onClick={() => console.log(nodes)}>log</button>
         <button onClick={() => console.log(edges)}>log edges</button>
-        <button
-          onClick={() =>
-            console.log(
-              "D-->",
-              selectedAttribute
-            )
-          }
-        >
+        <button onClick={() => console.log("D-->", selectedAttribute)}>
           log metaData
         </button>
-        <button
-          onClick={() =>
-            console.log(
-              "A-->",
-              param.meta_function
-            )
-          }
-        >
+        <button onClick={() => console.log("A-->", param.meta_function)}>
           AAA
         </button>
       </div>
