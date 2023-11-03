@@ -100,7 +100,7 @@ const BasicFlow = () => {
   const [actionData, setActionData] = useState();
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
-
+  const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -631,14 +631,28 @@ const BasicFlow = () => {
     console.log("arr= ", actionThenArr);
     const apiUrl =
       "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
-    const requestData = {
-      payload: {
-        schema_code: param.schema_revision,
-        update_then: false,
-        name: param.action_name,
-        then: actionThenArr,
-      },
-    };
+      let requestData;
+      if (isCreateNewAction) {
+        requestData = {
+          payload: {
+            schema_code: param.schema_revision,
+            update_then: false,
+            name: param.action_name,
+  
+            then: [...actionThenArr, metaData]
+          },
+        };
+      } else {
+         requestData = {
+          payload: {
+            schema_code: param.schema_revision,
+            update_then: false,
+            name: param.action_name,
+  
+            then: actionThenArr,
+          },
+        };
+      }
 
     await axios
       .post(apiUrl, requestData, {
@@ -910,6 +924,10 @@ const BasicFlow = () => {
         console.log("--: ", index);
         setActionThenIndex(index);
       }
+
+      if(param.meta_function === "create-new-action"){
+        setIsCreateNewAction(true)
+        }
 
       console.log("actionThenArr: ", actionThenArr);
     }

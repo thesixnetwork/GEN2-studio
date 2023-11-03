@@ -26,8 +26,8 @@ import { set } from "lodash";
 import DraftActionCard from "../component/DraftActionCard";
 import DraftActionPreviewCard from "../component/DraftActionPreviewCard";
 import { CircularProgress } from "@mui/material";
-import { useParams } from 'react-router-dom';
-
+import { useParams } from "react-router-dom";
+import DraftCreateNewAction from "../component/DraftCreateNewAction";
 
 const DraftActions = () => {
   const [actions, setActions] = useState([]);
@@ -35,8 +35,10 @@ const DraftActions = () => {
   const [selectedAction, setSelectedAction] = useState(null);
   const [loading, setLoading] = useState(true);
   const { schema_revision } = useParams();
+  const [isCreateNewAction, setIsCreacteNewAction] = useState(false);
 
   const handleActionClick = (data) => {
+    setIsCreacteNewAction(false);
     setSelectedAction(data);
     console.log(data);
   };
@@ -70,6 +72,9 @@ const DraftActions = () => {
       });
   };
 
+  const createNewAction = () => {
+    setIsCreacteNewAction(true);
+  };
 
   useEffect(() => {
     FindSchemaCode();
@@ -80,7 +85,10 @@ const DraftActions = () => {
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full">
             <div className="flex justify-between">
-              <DraftMenu menu="actions" schemaCode={schema_revision} ></DraftMenu>
+              <DraftMenu
+                menu="actions"
+                schemaCode={schema_revision}
+              ></DraftMenu>
             </div>
             <div className="h-[83%] flex items-center justify-center">
               <div className="w-[45%] h-[80%] border-2 border-r rounded-l-xl border-white overflow-scroll">
@@ -95,25 +103,34 @@ const DraftActions = () => {
                       }}
                     ></CircularProgress>
                   </div>
-                ):( <div className="grid grid-cols-2 gap-4 px-4 pb-6">
-                {actions !== undefined &&
-                  actions.map((data, index) => (
-                    <div
-                      onClick={() => {
-                        handleActionClick(data);
-                      }}
-                    >
-                      <DraftActionCard key={index} data={data} />
+                ) : (
+                  <div className="grid grid-cols-2 gap-4 px-4 pb-6">
+                    <div className="border border-white max-w-64 h-24 flex justify-center items-center text-3xl hover:bg-opacity-20 hover:bg-white cursor-pointer"
+                    onClick={createNewAction}>
+                      +
                     </div>
-                  ))}
-                  
-              </div>)}
+                    {actions !== undefined &&
+                      actions.map((data, index) => (
+                        <div
+                          onClick={() => {
+                            handleActionClick(data);
+                          }}
+                        >
+                          <DraftActionCard key={index} data={data} />
+                        </div>
+                      ))}
+                  </div>
+                )}
               </div>
               <div className="w-[45%] h-[80%] border-2 border-l rounded-r-xl border-white overflow-scroll pb-6">
                 <h1 className="text-2xl p-4">Code Preview</h1>
-                <div className="flex justify-center mx-6 " >
-                  {selectedAction !== null && (
-                  <DraftActionPreviewCard data={selectedAction} param={schema_revision}/>
+                <div className="flex justify-center mx-6 ">
+                  {isCreateNewAction && <DraftCreateNewAction />}
+                  {selectedAction !== null && !isCreateNewAction && (
+                    <DraftActionPreviewCard
+                      data={selectedAction}
+                      param={schema_revision}
+                    />
                   )}
                 </div>
               </div>
