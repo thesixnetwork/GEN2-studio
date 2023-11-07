@@ -636,10 +636,6 @@ const BasicFlow = () => {
           console.log("1", nodes[i].data.dataType);
         }
 
-        if (nodes[i].data.showType === "paramNode") {
-          nodes[i].data.dataType = nodes[0].data.dataType;
-          console.log("1", nodes[i].data.dataType);
-        }
 
         if (nodes[i].data.showType === "selectAttributeNode") {
           console.log("x");
@@ -806,7 +802,6 @@ const BasicFlow = () => {
           then: [...actionThenArr, metaData]
         },
       };
-      console.log(">",requestData)
     } else {
        requestData = {
         payload: {
@@ -817,8 +812,6 @@ const BasicFlow = () => {
           then: actionThenArr,
         },
       };
-      console.log(">>",requestData)
-
     }
 
     await axios
@@ -873,7 +866,6 @@ const BasicFlow = () => {
       if(param.meta_function === "create-new-action"){
       setIsCreateNewAction(true)
       }
-      console.log("actionThenArr: ", actionThenArr);
     }
   }, [actionData]);
 

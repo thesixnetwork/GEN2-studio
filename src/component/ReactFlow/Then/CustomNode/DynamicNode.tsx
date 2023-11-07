@@ -118,7 +118,6 @@ const DynamicNode = (props: CircleNodeProps) => {
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
         if (node.id === props.data.id) {
-          props.data.value = selectedOption.name;
           props.data.dataType = selectedOption.dataType;
         }
         return node;
@@ -150,13 +149,13 @@ const DynamicNode = (props: CircleNodeProps) => {
     setIsSelected(true);
     const selectedOption = JSON.parse(e.target.value);
     // props.data.value = selectedOption.name
-    // props.data.dataType = selectedOption.dataType
+    props.data.dataType = selectedOption.dataType
+    console.log("---o>",selectedOption)
     const { nodeInternals } = store.getState();
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
         console.log("props.data.id", props.data);
         if (node.id === props.data.id) {
-          props.data.value = selectedOption.name;
           props.data.dataType = selectedOption.dataType;
         }
         return node;
@@ -168,24 +167,29 @@ const DynamicNode = (props: CircleNodeProps) => {
     const asyncFetchData = async () => {
       await fetchData();
     };
-    asyncFetchData();
+    if(props.data.showType === "selectAttributeNode" || props.data.showType === "attributeNode"){
+      asyncFetchData();
+    }
   }, []);
 
   useEffect(() => {
-    setSelectAttributeValue(
-      {
-        name: props.data.value,
-        dataType: props.data.dataType,
+    if(props.data.showType === "selectAttributeNode" || props.data.showType === "attributeNode"){
+
+      setSelectAttributeValue(
+        {
+          name: props.data.value,
+          dataType: props.data.dataType,
+        }
+        )
       }
-    )
     console.log("Select Attribute Value:", selectAttributeValue, props.data.value);
-  }, []);
+  }, [ props.data.value]);
 
   useEffect(() => {
-    if (attributesObj !== undefined) {
-      const tokenAttributes = attributesObj.token_attributes;
-      const nftAttributes = attributesObj.nft_attributes;
-      getAttributeOption(tokenAttributes, nftAttributes);
+      if (attributesObj !== undefined) {
+        const tokenAttributes = attributesObj.token_attributes;
+        const nftAttributes = attributesObj.nft_attributes;
+        getAttributeOption(tokenAttributes, nftAttributes);
     }
   }, [attributesObj]);
 

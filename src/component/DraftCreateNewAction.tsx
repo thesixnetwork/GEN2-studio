@@ -17,7 +17,7 @@ import { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import RedAleart from "./Alert/RedAleart";
 
-const DraftCreateNewAction = () => {
+const DraftCreateNewAction = ( {actions,setActions}) => {
   const [actionNameValue, setActionNameValue] = useState("");
   const [actionDescriptionValue, setActionDescriptionValue] = useState("");
   const [showActionName, setShowActionName] = useState(false);
@@ -31,7 +31,7 @@ const DraftCreateNewAction = () => {
 
   const saveAction = async () => {
     const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
+      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions";
     const requestData = {
       payload: {
         schema_code: param.schema_revision,
@@ -39,6 +39,7 @@ const DraftCreateNewAction = () => {
         desc: actionDescriptionValue,
       },
     };
+    console.log("1",requestData)
 
     await axios
       .post(apiUrl, requestData, {
@@ -53,11 +54,14 @@ const DraftCreateNewAction = () => {
           response.data
         );
         console.log("Request :", requestData);
+        console.log(">",actions)
+        console.log(">>",response.data)
+        console.log(">>>",response.data.data.schema_info.schema_info.onchain_data.actions)
+        setActions([...actions,response.data.data.schema_info.schema_info.onchain_data.actions[response.data.data.schema_info.schema_info.onchain_data.actions.length-1]])
       })
       .catch((error) => {
         console.error("API Error:", error);
       });
-    navigate(`/draft/actions/${param.schema_revision}`);
   };
 
   const containsSpecialChars = (str) => {
