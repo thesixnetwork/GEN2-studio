@@ -1,5 +1,4 @@
 
-import updateValueImg from "../pic/action-update-value.png";
 import dynamicImg from "../pic/action-dynamic.png";
 import staticImg from "../pic/action-static.png";
 import { Link } from "react-router-dom";

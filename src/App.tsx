@@ -39,6 +39,7 @@ import NewIntregationThenTransform from './Pages/NewintregationThenTransform.tsx
 import NewIntregationThenTransformStatic from './Pages/NewIntregationThenTransformStatic.tsx';
 import NewIntregationThenTransformDynamic from './Pages/NewIntregationThenTransformDynamic.tsx';
 import DraftAttributes from './Pages/DraftAttributes.tsx';
+import DraftAttributesType from './Pages/DraftAttributesType.tsx'
 import DraftActions from './Pages/DraftActions.tsx';
 import DraftDeployment from './Pages/DraftDeployment.tsx';
 import Testto from './Pages/Testto.tsx';
@@ -143,6 +144,10 @@ const router = createBrowserRouter([
   {
     path: "/draft/origindata/:schema_revision",
     element: <DraftEditOriginData></DraftEditOriginData>
+  },
+  {
+    path: "/draft/attributes/:attribute_type/:schema_revision",
+    element: <DraftAttributesType></DraftAttributesType>
   },
   {
     path: "/draft/actions/:schema_revision",

@@ -24,6 +24,7 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { getSCHEMA_CODE } from "../helpers/AuthService";
 import { set } from "lodash";
 
+
 import { useParams } from 'react-router-dom';
 
 
@@ -37,6 +38,7 @@ const DraftAttributes = () => {
   const [tokenAttributes, setTokenAttributes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState()
+  const [isSave, setIsSave] = useState({"originattributes":true,"collectionattributes":true,"tokenattributes":true});
 
   const { schema_revision } = useParams();
 
@@ -89,6 +91,7 @@ const DraftAttributes = () => {
         "status": "Draft",
         "current_state": "0"
       }
+<<<<<<< HEAD
     }
       ;
 
@@ -110,21 +113,57 @@ const DraftAttributes = () => {
           showConfirmButton: false,
           timer: 1500,
         });
+=======
+    };
+    if (Object.values(isSave).every(attribute => attribute === true)) {
+      await axios.post(apiUrl, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+          // Add any other headers your API requires
+        },
+>>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
       })
-      .catch(error => {
-        console.error('API Error:', error);
-        // Handle errors here
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "Something went wrong",
-          showConfirmButton: false,
-          timer: 1500,
+        .then(response => {
+          console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
+          console.log("Request :",requestData)
+          // You can handle the API response here
+           Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Attributes saved",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        })
+        .catch(error => {
+          console.error('API Error:', error);
+          // Handle errors here
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Something went wrong",
+            showConfirmButton: false,
+            timer: 1500,
+          });
         });
+    }else{
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Plase save your edited before save your attributes",
+        showConfirmButton: true,
       });
+
+    }
 
   }
 
+<<<<<<< HEAD
+=======
+  console.log("data ===>",data)
+  
+>>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
   useEffect(() => {
     FindSchemaCode();
   }, []);
@@ -142,16 +181,22 @@ const DraftAttributes = () => {
                   <div className="flex w-full justify-center gap-8 ">
                     <DraftAttributeTable
                       type="originAttributes"
+                      expand={false}
                       data={data.origin_data.origin_attributes}
-                    />
+                      setIsSave={setIsSave}
+                      />
                     <DraftAttributeTable
                       type="collectionAttributes"
+                      expand={false}
                       data={data.onchain_data.nft_attributes}
-                    />
+                      setIsSave={setIsSave}
+                      />
                   </div>
                   <DraftAttributeTable
                     type="tokenAttributes"
+                    expand={false}
                     data={data.onchain_data.token_attributes}
+                    setIsSave={setIsSave}
                   />
                 </div>
               ) : (
@@ -174,7 +219,11 @@ const DraftAttributes = () => {
                   FontSize={24}
                 ></NormalButton>
               </div>
+<<<<<<< HEAD
               <div className="w-32" onClick={() => console.log(originAttributes)} >
+=======
+              <div className="w-32" onClick={FindSchemaCode} >
+>>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
                 <NormalButton
                   TextTitle="DISCARD"
                   BorderRadius={0}

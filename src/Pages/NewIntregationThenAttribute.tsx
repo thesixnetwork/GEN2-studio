@@ -424,11 +424,6 @@ const BasicFlow = () => {
           console.log("1", nodes[i].data.dataType);
         }
 
-        if (nodes[i].data.showType === "paramNode") {
-          nodes[i].data.dataType = nodes[0].data.dataType
-          console.log("1", nodes[i].data.dataType);
-        }
-
         if (nodes[i].data.showType === "selectAttributeNode") {
           console.log("x");
           result.type = "meta_function";
