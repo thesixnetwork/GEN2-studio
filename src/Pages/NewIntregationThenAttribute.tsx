@@ -3,9 +3,9 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import NextPageButton from "../component/NextPageButton";
-import { useState, DragEvent, useRef, useCallback } from "react";
-import Help from "../component/Alert/Help";
+
+import { useState, DragEvent, useRef } from "react";
+
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -25,18 +25,10 @@ import ReactFlow, {
 import "reactflow/dist/base.css";
 import { Factory } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
-import Customnode from "../component/node/Customnode";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 
-import {
-  Tree,
-  adjustParents,
-  adjustTreePosition,
-  drawTree,
-  generateTreeFromReactFlow,
-} from "../function/auto-layout";
 import NormalButton from "../component/NormalButton";
 import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
 import axios from "axios";
@@ -88,13 +80,13 @@ const BasicFlow = () => {
   const [redraw, setRedraw] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
-  const nodeWidthAndHeight = {
-    width: 150,
-    height: 57,
-    width_input: 151.2,
-    height_input: 35.2,
-    grid_padding: 60,
-  };
+  // const nodeWidthAndHeight = {
+  //   width: 150,
+  //   height: 57,
+  //   width_input: 151.2,
+  //   height_input: 35.2,
+  //   grid_padding: 60,
+  // };
 
   const onConnect = (params: Connection | Edge) =>
     setEdges((eds) => addEdge(params, eds));

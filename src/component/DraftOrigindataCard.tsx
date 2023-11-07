@@ -13,8 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { createTheme } from '@mui/material';
 
 interface ComponentProps {
-    Title: string
-    Index: number
+    Title: string[]
     Discard: boolean
     Save: boolean
 }
@@ -40,11 +39,10 @@ function DraftOrigindataCard(Props: ComponentProps) {
     const handleRefresh = () => {
         window.location.reload();
     };
-
+          
     const DISCARD = () => {
-        setschemaInfo(FirstschemaInfo);
-
-        // console.log("FirstschemaInfo :", FirstschemaInfo)
+        // setschemaInfo(FirstschemaInfo);
+        console.log("FirstschemaInfo :", FirstschemaInfo)
         // console.log("schemaInfo :", schemaInfo)
         // setschemaInfo((prevState) => {
         //     const newState = { ...prevState };
@@ -59,15 +57,12 @@ function DraftOrigindataCard(Props: ComponentProps) {
 
 
     useEffect(() => {
-
-
         DISCARD()
         handleResetDefault()
-
     }, [Props.Discard])
 
     const saveData = async () => {
-        console.log(":::::::::: saveDataFunction ::::::::")
+        
         const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
         const requestData = {
             "payload": {
@@ -109,7 +104,6 @@ function DraftOrigindataCard(Props: ComponentProps) {
                 });
             });
     }
-
 
     useEffect(() => {
         // setData((prevState) => ({
@@ -164,7 +158,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
                 headers: headers,
             })
             .then((response) => {
-                console.log("SchemaInFo :", response.data.data.schema_info)
+                console.log("SchemaInFo FindSchemaCode :", response.data.data.schema_info)
                 setschemaInfo(response.data.data.schema_info)
                 setFirstschemaInfo(response.data.data.schema_info)
                 setLoading(true)
@@ -176,7 +170,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
 
     useEffect(() => {
         FindSchemaCode();
-    }, [])
+    },[])
 
     const handleNetworkChange = (event) => {
         // Add your condition here
@@ -230,103 +224,114 @@ function DraftOrigindataCard(Props: ComponentProps) {
     };
 
     return (
-        <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
-            <div
-                onClick={() => setisInputDisabledOriginChain(!isInputDisabledOriginChain)}
-                className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
-                <EditIcon></EditIcon>
+        <div className=' w-full flex flex-col justify-center items-center'>
+            <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
+                <div
+                    onClick={() => setisInputDisabledOriginChain(!isInputDisabledOriginChain)}
+                    className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
+                    <EditIcon></EditIcon>
+                </div>
+                <h1 className=' text-3xl '>{Props.Title[0]}</h1>
+                {loading && (
+                    <div className=' m-5 flex flex-col'>
+                        <div className=' flex  justify-start items-end'>
+                            <p className="font-bold text-xl mr-4">Schema Code : </p>
+                            <input
+                                value={schemaInfo.schema_name}
+                                type="text"
+                                disabled={true}
+                                onChange={(e) => {
+                                    handleChangeValue(e, "schema_info.schema_name");
+                                }}
+                                className={` w-[20%]  bg-transparent text-[14px] border-[1px] border-none placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                            ></input>
+                        </div>
+                        <div className=' flex  justify-start items-end mt-5'>
+                            <p className="font-bold text-xl mr-4">Collection Name : </p>
+                            <input
+                                value={schemaInfo.schema_info.name}
+                                type="text"
+                                disabled={isInputDisabledOriginChain}
+                                onChange={(e) => {
+                                    handleChangeValue(e, "schema_info.schema_info.name");
+                                }}
+                                className={` w-[30%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                            ></input>
+                        </div>
+                        <div className=' flex  justify-start items-end mt-5'>
+                            <p className="font-bold text-xl mr-4">Description : </p>
+                            <input
+                                value={schemaInfo.schema_info.description}
+                                type="text"
+                                disabled={isInputDisabledOriginChain}
+                                onChange={(e) => {
+                                    handleChangeValue(e, "schema_info.schema_info.description");
+                                }}
+                                className={`w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                            ></input>
+                        </div>
+                    </div>
+                )}
             </div>
-            <h1 className=' text-3xl '>{Props.Title}</h1>
-            {(Props.Index === 0 && loading) && (
-                <div className=' m-5 flex flex-col'>
-                    <div className=' flex  justify-start items-end'>
-                        <p className="font-bold text-xl mr-4">Schema Code : </p>
-                        <input
-                            value={schemaInfo.schema_name}
-                            type="text"
-                            disabled={true}
-                            onChange={(e) => {
-                                handleChangeValue(e, "schema_info.schema_name");
-                            }}
-                            className={` w-[20%]  bg-transparent text-[14px] border-[1px] border-none placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
-                        ></input>
-                    </div>
-                    <div className=' flex  justify-start items-end mt-5'>
-                        <p className="font-bold text-xl mr-4">Collection Name : </p>
-                        <input
-                            value={schemaInfo.schema_info.name}
-                            type="text"
-                            disabled={isInputDisabledOriginChain}
-                            onChange={(e) => {
-                                handleChangeValue(e, "schema_info.schema_info.name");
-                            }}
-                            className={` w-[30%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
-                        ></input>
-                    </div>
-                    <div className=' flex  justify-start items-end mt-5'>
-                        <p className="font-bold text-xl mr-4">Description : </p>
-                        <input
-                            value={schemaInfo.schema_info.description}
-                            type="text"
-                            disabled={isInputDisabledOriginChain}
-                            onChange={(e) => {
-                                handleChangeValue(e, "schema_info.schema_info.description");
-                            }}
-                            className={`w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
-                        ></input>
-                    </div>
-                </div>
-            )}
 
-            {(Props.Index === 1 && loading) && (
-                <div className=' m-5'>
-                    <div className=' flex  justify-start items-center'>
-                        <p className="font-bold text-xl mr-2">Origin Chain : </p>
-                        <FormControl sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel className='' htmlFor="grouped-native-select">NETWORK</InputLabel>
-                            <Select sx={selectFieldStyles} native value={selectedNetwork} onChange={handleNetworkChange} id="grouped-native-select" label="Grouping">
-                                <option aria-label="None" value="" />
-                                <optgroup label="Mainnet">
-                                    <option value={1}>SIXNET</option>
-                                    <option value={2}>ETHEREUM</option>
-                                    <option value={3}>KLAYTN</option>
-                                    <option value={4}>BSC</option>
-                                </optgroup>
-                                <optgroup label="Testnet">
-                                    <option value={5}>FIVENET</option>
-                                    <option value={6}>GOERLI</option>
-                                    <option value={7}>BAOBAB</option>
-                                    <option value={8}>BSCTEST</option>
-                                </optgroup>
-                            </Select>
-                        </FormControl>
-                    </div>
-                    <div className=' flex  justify-start items-end mt-5'>
-                        <p className="font-bold text-xl mr-6">Origin Contract Address : </p>
-                        <input
-                            value={schemaInfo.schema_info.origin_data.origin_contract_address}
-                            type="text"
-                            disabled={isInputDisabledOriginChain}
-                            onChange={(e) => {
-                                handleChangeValue(e, "schema_info.origin_data.origin_contract_address");
-                            }}
-                            className={` w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
-                        ></input>
-                    </div>
-                    <div className=' flex  justify-start items-end mt-5'>
-                        <p className="font-bold text-xl mr-6">Origin Base URI : </p>
-                        <input
-                            value={schemaInfo.schema_info.origin_data.origin_base_uri}
-                            type="text"
-                            disabled={isInputDisabledOriginChain}
-                            onChange={(e) => {
-                                handleChangeValue(e, "schema_info.origin_data.origin_base_uri");
-                            }}
-                            className={` w-[70%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
-                        ></input>
-                    </div>
+
+            <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
+                <div
+                    onClick={() => setisInputDisabledOriginChain(!isInputDisabledOriginChain)}
+                    className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
+                    <EditIcon></EditIcon>
                 </div>
-            )}
+                <h1 className=' text-3xl '>{Props.Title[1]}</h1>
+                {loading && (
+                    <div className=' m-5'>
+                        <div className=' flex  justify-start items-center'>
+                            <p className="font-bold text-xl mr-2">Origin Chain : </p>
+                            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                <InputLabel className='' htmlFor="grouped-native-select">NETWORK</InputLabel>
+                                <Select sx={selectFieldStyles} native value={selectedNetwork} onChange={handleNetworkChange} id="grouped-native-select" label="Grouping">
+                                    <option aria-label="None" value="" />
+                                    <optgroup label="Mainnet">
+                                        <option value={1}>SIXNET</option>
+                                        <option value={2}>ETHEREUM</option>
+                                        <option value={3}>KLAYTN</option>
+                                        <option value={4}>BSC</option>
+                                    </optgroup>
+                                    <optgroup label="Testnet">
+                                        <option value={5}>FIVENET</option>
+                                        <option value={6}>GOERLI</option>
+                                        <option value={7}>BAOBAB</option>
+                                        <option value={8}>BSCTEST</option>
+                                    </optgroup>
+                                </Select>
+                            </FormControl>
+                        </div>
+                        <div className=' flex  justify-start items-end mt-5'>
+                            <p className="font-bold text-xl mr-6">Origin Contract Address : </p>
+                            <input
+                                value={schemaInfo.schema_info.origin_data.origin_contract_address}
+                                type="text"
+                                disabled={isInputDisabledOriginChain}
+                                onChange={(e) => {
+                                    handleChangeValue(e, "schema_info.origin_data.origin_contract_address");
+                                }}
+                                className={` w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                            ></input>
+                        </div>
+                        <div className=' flex  justify-start items-end mt-5'>
+                            <p className="font-bold text-xl mr-6">Origin Base URI : </p>
+                            <input
+                                value={schemaInfo.schema_info.origin_data.origin_base_uri}
+                                type="text"
+                                disabled={isInputDisabledOriginChain}
+                                onChange={(e) => {
+                                    handleChangeValue(e, "schema_info.origin_data.origin_base_uri");
+                                }}
+                                className={` w-[70%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                            ></input>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

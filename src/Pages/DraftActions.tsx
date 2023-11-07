@@ -27,6 +27,7 @@ import DraftActionCard from "../component/DraftActionCard";
 import DraftActionPreviewCard from "../component/DraftActionPreviewCard";
 import { CircularProgress } from "@mui/material";
 import { useParams } from 'react-router-dom';
+import GobackButton from "../component/GobackButton";
 
 
 const DraftActions = () => {
@@ -77,7 +78,7 @@ const DraftActions = () => {
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
-        <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
+        <div className=" relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full">
             <div className="flex justify-between">
               <DraftMenu menu="actions" schemaCode={schema_revision} ></DraftMenu>
@@ -118,6 +119,9 @@ const DraftActions = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className=' absolute left-0 bottom-2'>
+            <GobackButton BackPage={`/draft/attributes/${schema_revision}`}></GobackButton>
           </div>
         </div>
       </div>

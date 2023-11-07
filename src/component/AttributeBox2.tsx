@@ -37,10 +37,7 @@ interface MyComponentProps {
   setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
   save: boolean;
   setSave: React.Dispatch<React.SetStateAction<boolean>>;
-  errorObj: Array<{ error: boolean; errorMessage: string }>; // Corrected this line
-  setErrorObj: React.Dispatch<
-    React.SetStateAction<Array<{ error: boolean; errorMessage: string }>>
-  >;
+ 
   helpStep: number;
 }
 
@@ -302,14 +299,12 @@ export default function AttributeBox(props: MyComponentProps) {
           setIser(false);
         }
     } else if (props.text[props.index].data_type === "boolean") {
-        
         const isValue = props.text[props.index]["default_mint_value"]["boolean_attribute_value"]?.value
         const isValue2 = props.text[props.index]["default_mint_value"]
         setErrorMessage("Value is not of type boolean");
         console.log("Dddd1 =>", isValue)
         console.log("Dddd2 =>", isValue2)
         setIser(true);
-
         if (typeof isValue === "boolean") {
           setIser(false);
         }

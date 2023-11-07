@@ -79,10 +79,10 @@ export default function Newintregation9() {
                     </div>
                     <div className='w-2/6 h-[full] flex flex-col items-center justify-between  '>
                         <Conectwalet></Conectwalet>
-                        <WhiteBox Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it'></WhiteBox>
-                        <WhiteBox Title='Description' DeTail='To clarify what is the action mean'></WhiteBox>
-                        <WhiteBox Title='Parameters' DeTail='Some action might require parameter to perform it'></WhiteBox>
-                        <WhiteBox Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error'></WhiteBox>
+                        <WhiteBox Title='Action Name' DeTail='Name of action must be unique. And will call action by its name when we want to perform it' Height={150} Width={266} TitleSize={0} DetailSize={14}></WhiteBox>
+                        <WhiteBox Title='Description' DeTail='To clarify what is the action mean' Height={150} Width={266} TitleSize={0} DetailSize={14}></WhiteBox>
+                        <WhiteBox Title='Parameters' DeTail='Some action might require parameter to perform it' Height={150} Width={266} TitleSize={0} DetailSize={14}></WhiteBox>
+                        <WhiteBox Title='Condition and Action' DeTail='Action can be perform while condition is met. When condition is unmet tx will be error' Height={150} Width={266} TitleSize={0} DetailSize={14}></WhiteBox>
 
                         <div className='flex w-full  justify-between items-end px-2  '>
                             <div  >
