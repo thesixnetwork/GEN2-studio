@@ -19,6 +19,7 @@ const NewIntregationThenTransformDynamic = () => {
   const [isNext, setIsNext] = useState(false);
   const [imgFormat, setImgFormat] = useState("");
   const [tokenId, setTokenId] = useState("1");
+
   const onChange = (e: any) => {
     setImgSource(e.target.value);
     // setShowImg(false);
@@ -59,7 +60,6 @@ const NewIntregationThenTransformDynamic = () => {
         "then": [convertMetaData(imgFormat, postfix)],
       }
     };
-
     await axios.post(apiUrl, requestData, {
       headers: {
         'Content-Type': 'application/json',
@@ -76,10 +76,36 @@ const NewIntregationThenTransformDynamic = () => {
         console.error('API Error:', error);
         // Handle errors here
       });
-
   }
-  const navigate = useNavigate();
 
+
+  const saveImageUrl = async () => {
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_image_url'; // Replace with your API endpoint
+    const requestData = {
+        "schema_code": getSCHEMA_CODE(),
+        "path" :  imgSource,
+        "format" : imgFormat.replace('.', '', 1),
+        "dynamic": true, 
+    };
+    await axios.post(apiUrl, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':`Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+        // Add any other headers your API requires
+      },
+    })
+      .then(response => {
+        console.log('API Response saveImageUrl :', response.data);
+        console.log("Request :", requestData)
+        // You can handle the API response here
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        // Handle errors here
+    });
+  }
+
+  const navigate = useNavigate();
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
@@ -207,7 +233,7 @@ const NewIntregationThenTransformDynamic = () => {
                         )}
                       </div>
                     </div>
-                    <div className="flex justify-center" onClick={async () => { await saveAction(); navigate("/newintregation/beginer") }}>
+                    <div className="flex justify-center" onClick={async () => { await saveAction() ; await saveImageUrl(); navigate("/newintregation/beginer") }}>
                       <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
                     </div>
                   </div>

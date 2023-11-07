@@ -28,8 +28,10 @@ import { useParams } from 'react-router-dom';
 
 
 import { CircularProgress } from "@mui/material";
+import GobackButton from "../component/GobackButton";
 
 const DraftAttributes = () => {
+  
   const [originAttributes, setOriginAttributes] = useState([]);
   const [collectionAttributes, setCollectionAttributes] = useState([]);
   const [tokenAttributes, setTokenAttributes] = useState([]);
@@ -69,7 +71,7 @@ const DraftAttributes = () => {
         );
 
         setData(response.data.data.schema_info.schema_info)
-          setLoading(false)
+        setLoading(false)
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -99,9 +101,9 @@ const DraftAttributes = () => {
     })
       .then(response => {
         console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
-        console.log("Request :",requestData)
+        console.log("Request :", requestData)
         // You can handle the API response here
-         Swal.fire({
+        Swal.fire({
           position: "center",
           icon: "success",
           title: "Attributes saved",
@@ -122,14 +124,14 @@ const DraftAttributes = () => {
       });
 
   }
-  
+
   useEffect(() => {
     FindSchemaCode();
   }, []);
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
-        <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
+        <div className=" relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full">
             <div className="flex justify-between">
               <DraftMenu menu="attributes" schemaCode={schema_revision}></DraftMenu>
@@ -172,7 +174,7 @@ const DraftAttributes = () => {
                   FontSize={24}
                 ></NormalButton>
               </div>
-              <div className="w-32" onClick={()=>console.log(originAttributes)} >
+              <div className="w-32" onClick={() => console.log(originAttributes)} >
                 <NormalButton
                   TextTitle="DISCARD"
                   BorderRadius={0}
@@ -180,6 +182,9 @@ const DraftAttributes = () => {
                 ></NormalButton>
               </div>
             </div>
+          </div>
+          <div className=' absolute left-0 bottom-2'>
+            <GobackButton BackPage={`/draft/origindata/${schema_revision}`}></GobackButton>
           </div>
         </div>
       </div>

@@ -34,6 +34,13 @@ const NewIntregation6 = () => {
             Error: false,
         },
         {
+            Name: "Chain Type",
+            placeholder: "",
+            value: ["Testnet", "Mainnet"],
+            require: true,
+            Error: true,
+        },
+        {
             Name: "Origin Contract Address",
             placeholder: "0x40df0C834CE7549e9234D11525aD1f7E7CF48E88",
             value: "",
@@ -50,8 +57,8 @@ const NewIntregation6 = () => {
 
     ]);
 
-    
 
+    const [ChainType, setChainType] = useState("")
     const navigate = useNavigate();
     const [ml, setml] = useState(0)
     const [isSelection, setisSelection] = useState(false)
@@ -95,9 +102,9 @@ const NewIntregation6 = () => {
             "payload": {
                 "schema_info": {
                     "origin_data": {
-                        "origin_chain": "SIXNET",
-                        "origin_contract_address": `${text[1].value}`,
-                        "origin_base_uri": `${text[2].value}`
+                        "origin_chain": `${ChainType}`,
+                        "origin_contract_address": `${text[2].value}`,
+                        "origin_base_uri": `${text[3].value}`
                     }
                 },
                 "schema_code": getSCHEMA_CODE(),
@@ -127,13 +134,14 @@ const NewIntregation6 = () => {
     }
 
     const getBaseURIFromContract = async () => {
+        console.log("text[2].value: ",text[2].value)
         const updatedText = [...text];
-        updatedText[2].value = "";
+        updatedText[3].value = "";
         setisLoading(true)
         const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/base_uri_from_contract'; // Replace with your API endpoint
 
         const params = {
-            contract_address: `${text[1].value}`,
+            contract_address: `${text[2].value}`,
             chain_id: "98",
         };
 
@@ -151,9 +159,9 @@ const NewIntregation6 = () => {
                 // Handle successful response here
                 console.log('Response:', response.data);
                 const updatedText = [...text];
-                updatedText[2].value = response.data.data.base_uri
+                updatedText[3].value = response.data.data.base_uri
                 console.log(text)
-                saveOriginContractAddressToLocalStorage(text[1].value)
+                saveOriginContractAddressToLocalStorage(text[2].value)
                 console.log(getOriginContractAddressFromLocalStorage())
             })
             .catch((error) => {
@@ -173,7 +181,7 @@ const NewIntregation6 = () => {
                             </div>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
-                        <form onSubmit={handleSubmit} className=' h-5/6  flex flex-col justify-start items-center py-[30px] relative '>
+                        <form onSubmit={handleSubmit} className=' h-5/6  flex flex-col justify-start items-center py-[1%] relative '>
                             <div className='w-[758px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-between px-[20px] z-10 '>
                                 <p className='font-bold text-[20px] '>{text[0].Name}</p>
                                 <div className='flex justify-between w-[70%] mr-10'>
@@ -204,24 +212,46 @@ const NewIntregation6 = () => {
                                 </div>
                                 <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[710px] mb-[90px]'></div>
                             </div>
-                            <div className=' mt-[6%] w-[758px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-between px-[20px] '>
+                            <div className='mt-[3%]  w-[758px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-between px-[20px] z-10 '>
                                 <p className='font-bold text-[20px] '>{text[1].Name}</p>
+                                <div className=' flex justify-center w-[80%]'>
+                                    <Tooltip title="Testnet">
+                                        <div
+                                            className={`${ChainType === "FIVENET" ? 'bg-[#c0c0c0]' : 'bg-transparent'} border p-2 hover:scale-110 hover:bg-[#c0c0c0] duration-500 cursor-pointer mr-[20%]`}
+                                            onClick={() => { setChainType("FIVENET") }}
+                                        >
+                                            <p className=' text-2xl'>{text[1].value[0]}</p>
+                                        </div>
+                                    </Tooltip>
+                                    <Tooltip title="Testnet">
+                                        <div
+                                            className={`${ChainType === "SIXNET" ? 'bg-[#c0c0c0]' : 'bg-transparent'} border p-2 hover:scale-110 hover:bg-[#c0c0c0] duration-500 cursor-pointer`}
+                                            onClick={() => { setChainType("SIXNET") }}
+                                        >
+                                            <p className=' text-2xl'>{text[1].value[1]}</p>
+                                        </div>
+                                    </Tooltip>
+                                </div>
+                                <div className='w-[15px] h-[15px] bg-[#D9D9D9] rounded-full absolute ml-[710px] mb-[90px]'></div>
+                            </div>
+                            <div className=' mt-[3%] w-[758px] h-[121px] border-[1px] border-white rounded-xl p-2 flex  items-center justify-between px-[20px] '>
+                                <p className='font-bold text-[20px] '>{text[2].Name}</p>
                                 <input
-                                    id='1'
+                                    id='2'
                                     onChange={(e) => { HandleText(e); getBaseURIFromContract(); }}
                                     type="text"
-                                    placeholder={text[1].placeholder}
+                                    placeholder={text[2].placeholder}
                                     className='bg-transparent text-[16px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[429px] '>
                                 </input>
                                 <div className='w-[15px] h-[15px]  bg-transparent border rounded-full absolute ml-[710px] mb-[90px]'></div>
                             </div>
-                            <div className=' mt-[6%] w-[758px] h-[141px] border-[1px] border-white rounded-xl p-2 flex flex-col items-start justify-center px-5 '>
-                                <p className='font-bold text-[24px] mr-10'>{text[2].Name}</p>
+                            <div className=' mt-[3%] w-[758px] h-[141px] border-[1px] border-white rounded-xl p-2 flex flex-col items-start justify-center px-5 '>
+                                <p className='font-bold text-[24px] mr-10'>{text[3].Name}</p>
                                 <input
-                                    value={text[2].value}
-                                    id='2'
+                                    value={text[3].value}
+                                    id='3'
                                     type="text"
-                                    placeholder={text[2].placeholder}
+                                    placeholder={text[3].placeholder}
                                     className='placeholder-gray-300 placeholder:text-[12px] bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-[102%] duration-1000 w-full h-[62px]  '></input>
                                 <div className='w-[15px] h-[15px]  bg-transparent border rounded-full absolute ml-[710px] mb-[90px]'></div>
                             </div>

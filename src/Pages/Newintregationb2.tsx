@@ -3,7 +3,6 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import NextPageButton from "../component/NextPageButton";
 import { useState, DragEvent, useRef } from "react";
 
 import ReactFlow, {
@@ -32,7 +31,6 @@ import {
   drawTree,
   generateTreeFromReactFlow,
 } from "../function/auto-layout/";
-import { update } from "lodash";
 import NormalButton from "../component/NormalButton";
 import {
   getAccessTokenFromLocalStorage,
@@ -116,7 +114,7 @@ const BasicFlow = () => {
     };
   }, []);
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
   const { setCenter } = useReactFlow();

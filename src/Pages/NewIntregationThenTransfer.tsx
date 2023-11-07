@@ -3,9 +3,9 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import NextPageButton from "../component/NextPageButton";
+
 import { useState, DragEvent, useRef, useCallback } from "react";
-import Help from "../component/Alert/Help";
+
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -25,18 +25,11 @@ import ReactFlow, {
 import "reactflow/dist/base.css";
 import { Factory } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
-import Customnode from "../component/node/Customnode";
+
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 
-import {
-  Tree,
-  adjustParents,
-  adjustTreePosition,
-  drawTree,
-  generateTreeFromReactFlow,
-} from "../function/auto-layout";
 import NormalButton from "../component/NormalButton";
 import { useNavigate } from "react-router-dom";
 import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
@@ -84,7 +77,7 @@ const BasicFlow = () => {
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
   const { setCenter, project } = useReactFlow();
-  const [redraw, setRedraw] = useState(false);
+  
   const [createFirstNode, setCreateFirstNode] = useState(true);
 
   const nodeWidthAndHeight = {

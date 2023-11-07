@@ -6,10 +6,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import { Button } from '@mui/material'
-import Conectwalet from './component/Connectwallet'
 import Connect from './Pages/Connect.tsx'
-import Root from "./routes/root";
 import Home from './Pages/Home.tsx'
 import NewIntregation1 from './Pages/Newintregation1.tsx'
 import NewIntregation2 from './Pages/Newintregation2.jsx';
@@ -18,19 +15,11 @@ import NewIntregation4 from './Pages/Newintregation4.jsx';
 import NewIntregation5 from './Pages/Newintregation5.jsx';
 import NewIntregation6 from './Pages/Newintregation6.jsx';
 import NewIntregation7 from './Pages/Newintregation7.jsx';
-import Test from './component/TEST/Test.tsx'
-import Page1 from './component/TEST/Page1.tsx'
-import Test2 from './component/TEST/Test2.tsx'
-import Test3 from './component/TEST/Test3.tsx'
 import Newintregation8 from './Pages/Newintregation8.tsx'
 import Newintregation9 from './Pages/Newintregation9.tsx'
 import Newintregationb from './Pages/Newintregationb.tsx'
 import Newintregationb1 from './Pages/Newintregationb1.tsx'
 import Newintregationb2 from './Pages/Newintregationb2.tsx'
-import Newintregationb3 from './Pages/Newintregationb3.tsx'
-import CollisionDetectionFlow from './component/TEST/CollisionDetectionFlow.tsx'
-import Newintregationb4 from './Pages/Newintregationb4.tsx'
-import Newintregationb2copy from './Pages/Newintregationb2copy.tsx'
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, isAccessTokenExpired, saveTokensToLocalStorage } from './helpers/AuthService.tsx';
 import axios from 'axios';
 import { useAppDispatch } from './store/store.ts';
@@ -122,18 +111,6 @@ const router = createBrowserRouter([
   {
     path: "/newintregation/beginer/2",
     element: <Newintregationb2></Newintregationb2>
-  },
-  {
-    path: "/newintregation/beginer/3",
-    element: <Newintregationb3></Newintregationb3>
-  },
-  {
-    path: "/newintregation/beginer/4",
-    element: <Newintregationb4></Newintregationb4>
-  },
-  {
-    path: "testflow",
-    element: <Newintregationb2copy></Newintregationb2copy>
   },
   {
     path: "/newintregation/beginer/then",

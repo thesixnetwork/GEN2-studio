@@ -1,20 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Tooltip } from "@mui/material";
-
-import Add from "../pic/Group 40.png";
-
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import AlertCard from "../component/Alert/AlertCard";
-
-import Swal from "sweetalert2";
-import AttributeBox from "../component/AttributeBox";
-import NormalButton from "../component/NormalButton";
-import { useNavigate } from "react-router-dom";
-
-import whiteArrow from "../pic/action-white-arrow.png";
-import blackArrow from "../pic/action-back-arrow.png";
 import ActionTypeCard from "../component/ActionTypeCard";
 import { getActionName } from "../helpers/AuthService";
 

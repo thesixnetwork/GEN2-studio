@@ -2,24 +2,17 @@ import React from 'react'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2';
 import Darkbg from '../component/Alert/Darkbg';
-import WhiteBox from '../component/WhiteBox';
 
-import Add from "../pic/Group 40.png";
-import { useNavigate } from 'react-router-dom';
+
 import NormalButton from '../component/NormalButton';
 import Help from '../component/Alert/Help';
 import EnterBox from '../component/EnterBox';
 import GobackButton from '../component/GobackButton';
-import axios from 'axios';
-import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 
 
 export default function Newintregation9() {
     const [isShow, setIsShow] = React.useState(false);
     const [isSave, setIsSave] = React.useState(false);
-    const navigate = useNavigate();
-
-
     
     return (
         <div className='w-full flex justify-center ' >

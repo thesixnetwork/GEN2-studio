@@ -14,9 +14,6 @@ import AlertCard from "../component/Alert/AlertCard";
 import Swal from "sweetalert2";
 
 
-
-
-import AttributeBox from "../component/AttributeBox";
 import NormalButton from "../component/NormalButton";
 import { useNavigate } from "react-router-dom";
 import AttributeBox2 from '../component/AttributeBox2';
@@ -124,7 +121,6 @@ export default function Newintregation8() {
                 "current_state": "4"
             }
         };
-
         await axios.post(apiUrl, requestData, {
             headers: {
                 'Content-Type': 'application/json',
@@ -289,7 +285,6 @@ export default function Newintregation8() {
                                         isShow={isShow}
                                         setIsShow={setIsShow}
                                         helpStep={helpStep}
-
                                     />
                                 ))}
                                 <div

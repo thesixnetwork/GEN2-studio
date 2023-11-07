@@ -217,20 +217,21 @@ export default function Newintregation9() {
 
 
     const [helpStep, sethelpStep] = useState(0)
-    const handleHelp = () => {
-        const element0 = document.getElementById("0");
-        const elementDelete2 = document.getElementById("delete2");
-        const elementPlus = document.getElementById("plus");
 
-        if (element0 && elementDelete2 && elementPlus) {
-            element0.style.zIndex = "0";
-            elementDelete2.style.zIndex = "0";
-            elementPlus.style.zIndex = "0";
+    // const handleHelp = () => {
+    //     const element0 = document.getElementById("0");
+    //     const elementDelete2 = document.getElementById("delete2");
+    //     const elementPlus = document.getElementById("plus");
 
-            console.log(helpStep);
-            sethelpStep(helpStep + 1);
-        }
-    };
+    //     if (element0 && elementDelete2 && elementPlus) {
+    //         element0.style.zIndex = "0";
+    //         elementDelete2.style.zIndex = "0";
+    //         elementPlus.style.zIndex = "0";
+
+    //         console.log(helpStep);
+    //         sethelpStep(helpStep + 1);
+    //     }
+    // };
 
     // useEffect(() => {
     //     document.getElementById("plus").style.zIndex = "0";

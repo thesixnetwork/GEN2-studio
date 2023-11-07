@@ -40,6 +40,7 @@ import Swal from "sweetalert2";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import GobackButton from "../component/GobackButton";
 
 const DraftDeployment = () => {
   const { schema_revision } = useParams();
@@ -276,8 +277,8 @@ const DraftDeployment = () => {
     // </Box>
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
-        <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
-          <div className="w-full h-full">
+        <div className=" relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
+          <div className=" w-full h-full">
             <div className="flex justify-between">
               <DraftMenu menu="deployment"></DraftMenu>
             </div>
@@ -373,7 +374,11 @@ const DraftDeployment = () => {
               </div>
             </div>
           </div>
+          <div className=' absolute left-0 bottom-2'>
+            <GobackButton BackPage={`/draft/actions/${schema_revision}`}></GobackButton>
+          </div>
         </div>
+
       </div>
     </div>
   );
