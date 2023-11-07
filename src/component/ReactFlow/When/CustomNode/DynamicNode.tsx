@@ -127,8 +127,11 @@ const DynamicNode = (props: CircleNodeProps) => {
     const asyncFetchData = async () => {
       await fetchData();
     };
-    asyncFetchData();
-  }, []);
+    if (props.data.showType === "attributeNode") {
+      asyncFetchData();
+      console.log("fetching")
+    }
+  }, [props.data.showType]);
 
   useEffect(() => {
     if (attributesObj !== undefined) {

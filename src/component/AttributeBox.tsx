@@ -133,7 +133,7 @@ export default function AttributeBox(props: MyComponentProps) {
         const lastField = fieldPathArray[fieldPathArray.length - 1];
         target[lastField] = e.target.value;
 
-        console.log("TEXT:",updatedText[props.index]);
+        // console.log("TEXT:",updatedText[props.index]);
         props.setText(updatedText);
         props.setIsShow(false);
     };
@@ -148,12 +148,14 @@ export default function AttributeBox(props: MyComponentProps) {
 
 
     const saveCheckErrorI = async (str) => {
-        console.log(str)
         setIser(false)
         setPartI(false)
         if (!str) {
-            //("1")
             setErrorMessage("Not Availible")
+            setIser(true)
+        }
+        else if (!props.text[props.index].data_type){
+            setErrorMessage("Need Data Type");
             setIser(true)
         }
         else if (containsSame(str)) {
@@ -177,7 +179,7 @@ export default function AttributeBox(props: MyComponentProps) {
         }
         else {
             setIser(false)
-            setPartI(true)
+            // setPartI(true)
 
         }
     }
@@ -201,7 +203,7 @@ export default function AttributeBox(props: MyComponentProps) {
         if (!e.target.value) {
             setErrorMessage("Not Availible")
             setIser(true)
-        }
+        } 
         else if (containsSame(e.target.value)) {
             setErrorMessage("Not Same")
             setIser(true)
@@ -229,9 +231,13 @@ export default function AttributeBox(props: MyComponentProps) {
         if (!e.target.value) {
             setErrorMessage("Not Availible")
             setIser(true)
+        } else if (!props.text[props.index].data_type){
+            setErrorMessage("Need Data Type");
+            setIser(true)
+
         }
         else {
-            setIser(false)
+            // setIser(false)
         }
     }
 
@@ -262,14 +268,13 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const SavecheckErrorII = (str) => {
         setIser(false)
-        if (!str) {
-            //("11111111")
+        if (!str && str === "") {
             setErrorMessage("Not Availible")
             setIser(true)
         }
         else {
             setIser(false)
-            return (true)
+            // return (true)
         }
     }
 
@@ -523,7 +528,7 @@ export default function AttributeBox(props: MyComponentProps) {
                             await CheckT();
 
                         }}
-                        onBlur={() => { CheckErrorI(e) }}
+                        // onBlur={() => { CheckErrorI(e) }}
                         className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[160px]"
                         placeholder="Add attribute name"
                     />

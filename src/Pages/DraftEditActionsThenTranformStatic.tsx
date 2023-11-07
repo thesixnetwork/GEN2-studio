@@ -20,7 +20,7 @@ const DraftEditActionsThenTranformStatic = () => {
   const [actionData, setActionData] = useState();
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
-
+  const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const convertToBase64 = (str) => {
     return btoa(str);
   };
@@ -29,6 +29,7 @@ const DraftEditActionsThenTranformStatic = () => {
     console.log("str: ", str);
     return atob(str);
   };
+  
   const FindSchemaCode = async () => {
     const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
     const params = {};
@@ -105,6 +106,10 @@ const DraftEditActionsThenTranformStatic = () => {
     } else {
       setMetaFunction(param.meta_function);
     }
+
+    if(param.meta_function === "create-new-action"){
+      setIsCreateNewAction(true)
+      }
   }, [param.meta_function, metaFunction]);
 
   useEffect(() => {
@@ -130,14 +135,28 @@ const DraftEditActionsThenTranformStatic = () => {
     console.log(actionThenArr);
     const apiUrl =
       "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
-    const requestData = {
-      payload: {
-        schema_code: param.schema_revision,
-        update_then: false,
-        name: param.action_name,
-        then: actionThenArr,
-      },
-    };
+      let requestData
+      if (isCreateNewAction) {
+        requestData = {
+          payload: {
+            schema_code: param.schema_revision,
+            update_then: false,
+            name: param.action_name,
+  
+            then: [...actionThenArr, convertMetaData(imgSource)]
+          },
+        };
+      } else {
+         requestData = {
+          payload: {
+            schema_code: param.schema_revision,
+            update_then: false,
+            name: param.action_name,
+  
+            then: actionThenArr,
+          },
+        };
+      }
 
     await axios
       .post(apiUrl, requestData, {
