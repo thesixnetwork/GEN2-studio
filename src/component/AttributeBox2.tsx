@@ -114,7 +114,7 @@ export default function AttributeBox(props: MyComponentProps) {
   // });
 
   function containsSpecialChars(str) {
-    const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
     return specialChars.test(str);
   }
 
