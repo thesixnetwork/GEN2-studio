@@ -277,42 +277,71 @@ export default function AttributeBox(props: MyComponentProps) {
     // console.log("props.text >>>",props.index)
     // const updatedText = [...props.text];
     // console.log("updatedText >>>", updatedText[props.index].value);
+    if (!props.text[props.index].name) {
+      setErrorMessage("Not Availible");
+      setIser(true);
+      return
+
+    } else if (containsSame(props.text[props.index].name)) {
+      setErrorMessage("Not Same");
+      setIser(true);
+      return
+
+    } else if (containsSpecialChars(props.text[props.index].name)) {
+      setErrorMessage("Sp Chars");
+      setIser(true);
+      return
+
+    } else if (containsSpace(props.text[props.index].name)) {
+      setErrorMessage("Space");
+      setIser(true);
+      return
+    } else if (containsUppercase(props.text[props.index].name)) {
+      setErrorMessage("Uppercase");
+      setIser(true);
+      return
+    }
 
     if (props.text[props.index].data_type === "") {
       //   console.log(1111);
       setErrorMessage("Need datatype");
       setIser(true);
     } else if (props.text[props.index].data_type === "string") {
-      const isValue = props.text[props.index]["default_mint_value"]["string_attribute_value"].value
-      setErrorMessage("Value is not of type string");
-      if (!isValue || isValue === '') {
+      // const isValue =
+      //   props.text[props.index]["default_mint_value"]["string_attribute_value"]
+      //     .value;
+      // setErrorMessage("Value is not of type string");
+      // if (!isValue || isValue !== "") {
+      //   setIser(true);
+      // } else {
+        setIser(false);
+      // }
+    } else if (props.text[props.index].data_type === "number") {
+      const isValue =
+        props.text[props.index]["default_mint_value"]["number_attribute_value"]
+          .value;
+      setErrorMessage("Value is not of type number");
+      setIser(true);
+      if (typeof isValue !== "number" && !isValue) {
         setIser(true);
-      }else {
+      }
+
+      if (typeof isValue === "number") {
         setIser(false);
       }
-    } else if (props.text[props.index].data_type === "number") {
-        const isValue = props.text[props.index]["default_mint_value"]["number_attribute_value"].value
-        setErrorMessage("Value is not of type number");
-        setIser(true);
-        if (typeof isValue !== "number" && !isValue) {
-          setIser(true);
-        }
-        
-        if(typeof isValue === "number"){
-          setIser(false);
-        }
     } else if (props.text[props.index].data_type === "boolean") {
-        
-        const isValue = props.text[props.index]["default_mint_value"]["boolean_attribute_value"]?.value
-        const isValue2 = props.text[props.index]["default_mint_value"]
-        setErrorMessage("Value is not of type boolean");
-        console.log("Dddd1 =>", isValue)
-        console.log("Dddd2 =>", isValue2)
-        setIser(true);
+      const isValue =
+        props.text[props.index]["default_mint_value"]["boolean_attribute_value"]
+          ?.value;
+      const isValue2 = props.text[props.index]["default_mint_value"];
+      setErrorMessage("Value is not of type boolean");
+      console.log("Dddd1 =>", isValue);
+      console.log("Dddd2 =>", isValue2);
+      setIser(true);
 
-        if (typeof isValue === "boolean") {
-          setIser(false);
-        }
+      if (typeof isValue === "boolean") {
+        setIser(false);
+      }
     } else {
       setIser(false);
       setPartII(true);
@@ -332,7 +361,6 @@ export default function AttributeBox(props: MyComponentProps) {
         return "Value is not of type string";
       }
     }
-    
 
     if (props.DataType === "number") {
       if (!str && str != "0") {
@@ -503,7 +531,7 @@ export default function AttributeBox(props: MyComponentProps) {
           )
         ) {
           SavecheckErrorII(props.text[props.index].value);
-        //   console.log("COCO:", SavecheckErrorII(props.text[props.index].value));
+          //   console.log("COCO:", SavecheckErrorII(props.text[props.index].value));
           if (SavecheckErrorII(props.text[props.index].value)) {
             document.getElementById(props.index).style.zIndex = "0";
             const updatedText = [...props.text];
@@ -555,7 +583,8 @@ export default function AttributeBox(props: MyComponentProps) {
   //     //(props.errorObj);
   // };
 
-  const [selectedItem, setSelectedItem] = useState("");
+  const [selectedItem, setSelectedItem] = useState("Icon0");
+  const [selectedItemValue, setSelectedItemValue] = useState("Icon4");
 
   const changeBgColorButton = async (e) => {
     const itemId = e.target.id;
@@ -564,42 +593,121 @@ export default function AttributeBox(props: MyComponentProps) {
     props.setIsShow(false);
   };
 
-  const handleChangeIcon = (e) => {
-    console.log("updatedText[]",props.text[props.index]);
+  const changeBgColorButtonValue = async (e) => {
+    const itemId = e.target.id;
+    await setSelectedItemValue(itemId);
+    await handleChangeIconValue(e);
+    props.setIsShow(false);
+  };
+
+  const handleChangeIconValue = (e) => {
     const updatedText = [...props.text];
-    // let isValue 
-    // if 
-    console.log("updatedText[]",props.text[props.index]["default_mint_value"]);
-    console.log("e.target.id]",e.target.id);
+
+    if (e.target.id == "Icon4") {
+      updatedText[props.index]["default_mint_value"] = {
+        boolean_attribute_value: {
+          value: true
+        },
+      };
+    } else if (e.target.id == "Icon5") {
+      updatedText[props.index]["default_mint_value"] = {
+        boolean_attribute_value: {
+          value: false
+        },
+      };
+    }
+  }
+
+
+  const handleChangeIcon = (e) => {
+    console.log("updatedText[]", props.text[props.index]);
+    const updatedText = [...props.text];
+    // let isValue
+    // if
+    console.log("updatedText[]", props.text[props.index]["default_mint_value"]);
+    console.log("e.target.id]", e.target.id);
     // //(typeof e.target.id)
     if (e.target.id == "Icon0") {
       updatedText[props.index]["data_type"] = "string";
       updatedText[props.index]["default_mint_value"] = {
-        string_attribute_value: { value: props.text[props.index]["default_mint_value"]["string_attribute_value"]?.value || props.text[props.index]["default_mint_value"]["_attribute_value"]?.value},
+        string_attribute_value: {
+          value:
+            props.text[props.index]["default_mint_value"][
+              "string_attribute_value"
+            ]?.value ||
+            props.text[props.index]["default_mint_value"]["_attribute_value"]
+              ?.value,
+        },
       };
     } else if (e.target.id == "Icon1") {
       updatedText[props.index]["data_type"] = "number";
+      // updatedText[props.index]["default_mint_value"] = {
+      //   number_attribute_value: {
+      //     value:
+      //       props.text[props.index]["default_mint_value"][
+      //         "number_attribute_value"
+      //       ]?.value ||
+      //       props.text[props.index]["default_mint_value"]["_attribute_value"]
+      //         ?.value,
+      //   },
+      // };
       updatedText[props.index]["default_mint_value"] = {
-        number_attribute_value: { value: props.text[props.index]["default_mint_value"]["number_attribute_value"]?.value || props.text[props.index]["default_mint_value"]["_attribute_value"]?.value },
+        number_attribute_value: {
+          value: 0
+        },
       };
     } else if (e.target.id == "Icon2") {
       updatedText[props.index]["data_type"] = "boolean";
-      if(props.text[props.index]["default_mint_value"]["boolean_attribute_value"]){
-        console.log(222)
+      // if (
+      //   props.text[props.index]["default_mint_value"]["boolean_attribute_value"]
+      // ) {
+      //   console.log(222);
 
-        updatedText[props.index]["default_mint_value"] = {
-            boolean_attribute_value: { value: typeof props.text[props.index]["default_mint_value"]["boolean_attribute_value"]?.value === "boolean" && props.text[props.index]["default_mint_value"]["boolean_attribute_value"]?.value },
-        };
-      }
+      //   // updatedText[props.index]["default_mint_value"] = {
+      //   //   boolean_attribute_value: {
+      //   //     value:
+      //   //       typeof props.text[props.index]["default_mint_value"][
+      //   //         "boolean_attribute_value"
+      //   //       ]?.value === "boolean" &&
+      //   //       props.text[props.index]["default_mint_value"][
+      //   //         "boolean_attribute_value"
+      //   //       ]?.value,
+      //   //   },
+      //   // };
+      // }
 
-      if(props.text[props.index]["default_mint_value"]["_attribute_value"]){
-        console.log(1111)
-        updatedText[props.index]["default_mint_value"] = {
-            boolean_attribute_value: { value: JSON.parse(props.text[props.index]["default_mint_value"]["_attribute_value"]?.value ) },
-        };
-      }
+      // if (props.text[props.index]["default_mint_value"]["_attribute_value"]) {
+      //   console.log(1111);
+      //   updatedText[props.index]["default_mint_value"] = {
+      //     boolean_attribute_value: {
+      //       value: JSON.parse(
+      //         props.text[props.index]["default_mint_value"]["_attribute_value"]
+      //           ?.value
+      //       ),
+      //     },
+      //   };
+      // }
+      // updatedText[props.index]["default_mint_value"] = {
+      //   boolean_attribute_value: {
+      //     value:
+      //       typeof props.text[props.index]["default_mint_value"][
+      //         "boolean_attribute_value"
+      //       ]?.value === "boolean"
+      //         ? props.text[props.index]["default_mint_value"][
+      //             "boolean_attribute_value"
+      //           ]?.value
+      //         : props.text[props.index]["default_mint_value"][
+      //             "_attribute_value"
+      //           ]?.value &&
+      //           props.text[props.index]["default_mint_value"][
+      //             "_attribute_value"
+      //           ]?.value,
+      //   },
+      // };
       updatedText[props.index]["default_mint_value"] = {
-        boolean_attribute_value: { value: typeof props.text[props.index]["default_mint_value"]["boolean_attribute_value"]?.value === "boolean" ? props.text[props.index]["default_mint_value"]["boolean_attribute_value"]?.value : props.text[props.index]["default_mint_value"]["_attribute_value"]?.value && props.text[props.index]["default_mint_value"]["_attribute_value"]?.value },
+        boolean_attribute_value: {
+          value: true
+        },
       };
     }
     props.setText(updatedText);
@@ -619,7 +727,10 @@ export default function AttributeBox(props: MyComponentProps) {
     } else if (props.text[props.index].data_type.toLowerCase() === "boolean") {
       updatedText[props.index]["default_mint_value"] = {
         [`${dataType}_attribute_value`]: {
-            value: e.target.value === "true" || e.target.value === "false" ? JSON.parse(e.target.value) : undefined,
+          value:
+            e.target.value === "true" || e.target.value === "false"
+              ? JSON.parse(e.target.value)
+              : undefined,
         },
       };
     } else {
@@ -684,7 +795,12 @@ export default function AttributeBox(props: MyComponentProps) {
               onClick={(e) => {
                 changeBgColorButton(e);
                 checkErrorIII();
-                console.log("props.text",props.text[props.index]["default_mint_value"]["string_attribute_value"]["value"]);
+                console.log(
+                  "props.text",
+                  props.text[props.index]["default_mint_value"][
+                    "string_attribute_value"
+                  ]["value"]
+                );
               }}
               // onMouseLeave={() => fetchError()}
               id="Icon0"
@@ -741,35 +857,88 @@ export default function AttributeBox(props: MyComponentProps) {
         </div>
         <div className="flex text-[14px] items-center">
           Value :&ensp;{" "}
-          <input
-            type="text"
-            // value={
-            //   props.text[props.index]["default_mint_value"][
-            //     "string_attribute_value"
-            //   ]?.value ||
-            //   props.text[props.index]["default_mint_value"][
-            //     `${props.text[props.index].data_type}_attribute_value`
-            //   ]?.value
-            // }
-            onChange={(e) => {
-              console.log(props.State);
-            //   console.log("eeee =>", e.target.value);
-              handleChangValue(e);
+          {props.text[props.index]["default_mint_value"][
+            "string_attribute_value"
+          ] && (
+            <input
+              type="text"
+              // value={
+              //   props.text[props.index]["default_mint_value"][
+              //     "string_attribute_value"
+              //   ]?.value ||
+              //   props.text[props.index]["default_mint_value"][
+              //     `${props.text[props.index].data_type}_attribute_value`
+              //   ]?.value
+              // }
+              onChange={(e) => {
+                console.log(props.State);
+                //   console.log("eeee =>", e.target.value);
+                handleChangValue(e);
 
-            //   SavecheckErrorII(
-            //     props.text[props.index]["default_mint_value"][
-            //       "string_attribute_value"
-            //     ]?.value ||
-            //       props.text[props.index]["default_mint_value"][
-            //         `${props.text[props.index].data_type}_attribute_value`
-            //       ]?.value
-            //   );
-              SavecheckErrorII(e.target.value);
-            }}
-            // onBlur={fetchError}
-            className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
-            placeholder="Add trait type here"
-          />
+                //   SavecheckErrorII(
+                //     props.text[props.index]["default_mint_value"][
+                //       "string_attribute_value"
+                //     ]?.value ||
+                //       props.text[props.index]["default_mint_value"][
+                //         `${props.text[props.index].data_type}_attribute_value`
+                //       ]?.value
+                //   );
+                // SavecheckErrorII(e.target.value);
+              }}
+              // onBlur={fetchError}
+              className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
+              placeholder="Add value here"
+            />
+          )}
+          {props.text[props.index]["default_mint_value"][
+            "number_attribute_value"
+          ] && (
+            <input
+              type="number"
+              value={
+                props.text[props.index]["default_mint_value"][
+                  "number_attribute_value"
+                ]?.value 
+              }
+              onChange={(e) => {
+                console.log(props.State);
+                handleChangValue(e);
+                SavecheckErrorII(e.target.value);
+              }}
+              className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
+              placeholder="Add trait type here"
+            />
+          )}
+          {props.text[props.index]["default_mint_value"][
+            "boolean_attribute_value"
+          ] && (
+            <div className="flex w-[160px]  space-evenly">
+              <div
+                onClick={(e) => {
+                  changeBgColorButtonValue(e);
+                  checkErrorIII();
+                }}
+                id="Icon4"
+                className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                  selectedItemValue === "Icon4" ? "bg-[#D9D9D975]" : "bg-transparent"
+                }`}
+              >
+                Yes
+              </div>
+              <div
+              onClick={(e) => {
+                changeBgColorButtonValue(e);
+                checkErrorIII();
+              }}
+              id="Icon5"
+              className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                selectedItemValue === "Icon5" ? "bg-[#D9D9D975]" : "bg-transparent"
+              }`}
+            >
+              No
+            </div>
+            </div>
+          )}
         </div>
       </div>
       {iser && (

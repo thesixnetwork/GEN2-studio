@@ -16,6 +16,8 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
   const [selectedItem, setSelectedItem] = useState("");
   const [editableRow, setEditableRow] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [errorRows, setErrorRows] = useState([]);
+
 
   const handleEditClick = (index) => {
     setIsEdit(true);
@@ -24,6 +26,8 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
         ...prevState,
         originattributes: false,
       }));
+      console.log("index", index)
+      console.log("index", data[index])
     } else if (type === "collectionAttributes") {
       setIsSave((prevState) => ({
         ...prevState,
@@ -71,13 +75,23 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
     }
     currentObj[fieldParts[fieldParts.length - 1]] = value;
     // console.log("currentObj[fieldParts[fieldParts.length - 1]]",currentObj[fieldParts[fieldParts.length - 1]])
-
+    console.log("Value currentObj", currentObj["default_mint_value"])
+    console.log("Value", value)
     if (value === "string") {
       if (type !== "originAttributes") {
         currentObj["default_mint_value"] = {
           string_attribute_value: { value: "" },
         };
+        console.log("Value currentObj", currentObj["default_mint_value"])
       }
+      // if (newData[index].data_type !== 'number' || newData[index].value !== '123') {
+      //   currentObj.hasConflict = true;
+      // } else {
+      //   currentObj.hasConflict = false;
+      // }
+    // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
+
+
       setSelectedItem("string");
     } else if (value === "number") {
       if (type !== "originAttributes") {
@@ -95,6 +109,24 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
       setSelectedItem("boolean");
     }
   };
+
+  const handleCellChange2 = (index, field, value) => {
+    // ทำการตรวจสอบค่า value ที่คุณต้องการ
+    const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
+    
+    if (!isValid) {
+      // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
+    } else {
+      setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
+    }
+  
+    if (isValid) {
+      // บันทึกข้อมูลเมื่อค่าถูกต้อง
+    }
+  };
+  
+  
+
 
   useEffect(() => {
     console.log("---?");
@@ -157,6 +189,16 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
     // setIsData([...isData, newRow]);
     // console.log(isData)
   };
+
+  const handelDel = (index: number) => {
+    data.splice(index, 1);
+    setIsData(data);
+  }
+
+  const handelErrValue = (e) => {
+    console.log("kkkk ==>",e)
+  }
+  
   console.log(data);
 
   return (
@@ -196,7 +238,6 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
         <PlusSquareIcon onClick={() => addDataTable()} />
       </div>
       <div className="w-full max-h-[320px] flex justify-center items-center overflow-scroll">
-        ()
         {data.length === 0 ? (
           <div className="h-full">
             <p>NO DATA</p>
@@ -257,9 +298,14 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                 data.map((item, index) => (
                   <tr
                     key={index}
-                    className={`border border-white bg-[#B9BAC2] ${
-                      editableRow === index ? "bg-blue-200" : ""
-                    }`}
+                  //   className={`border border-white bg-[#B9BAC2] 
+                  //   ${
+                  //     editableRow === index ? "bg-blue-200" : ""
+                  //   }`
+                  // }
+                  className={`border border-white 
+                  ${item.hasConflict ? 'bg-red-500' : 'bg-[#B9BAC2]'}
+                  ${editableRow === index ? "bg-blue-200" : ""}`}
                   >
                     <td
                       className="border border-white"
@@ -317,6 +363,7 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                       <td
                         className="border border-white"
                         contentEditable={editableRow === index}
+                        // onChange={(e) => handelErrValue(e.target.innerText)}
                         onBlur={(e) =>
                           handleCellChange(
                             index,
@@ -343,7 +390,7 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                     )}
                     <th className="border border-white  ">
                       <Flex>
-                        <DeleteIcon />
+                        <DeleteIcon onClick={() => handelDel(index)}/>
                         {editableRow === index ? (
                           <img
                             src={saveIcon}
