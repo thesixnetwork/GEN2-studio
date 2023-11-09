@@ -9,7 +9,8 @@ import DraftActionPreviewCard from "../component/DraftActionPreviewCard";
 import { CircularProgress } from "@mui/material";
 import { useParams } from 'react-router-dom';
 import GobackButton from "../component/GobackButton";
-
+import DraftActionCard from "../component/DraftActionCard";
+import DraftCreateNewAction from "../component/DraftCreateNewAction";
 
 const DraftActions = () => {
   const [actions, setActions] = useState([]);
