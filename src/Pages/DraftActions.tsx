@@ -7,15 +7,11 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { saveSCHEMA_CODE } from "../helpers/AuthService";
 import DraftActionPreviewCard from "../component/DraftActionPreviewCard";
 import { CircularProgress } from "@mui/material";
-<<<<<<< HEAD
-import { useParams } from 'react-router-dom';
-import GobackButton from "../component/GobackButton";
-
-=======
 import { useParams } from "react-router-dom";
 import DraftCreateNewAction from "../component/DraftCreateNewAction";
 import DraftActionCard from "../component/DraftActionCard";
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
+import GobackButton from "../component/GobackButton";
+
 
 const DraftActions = () => {
   const [actions, setActions] = useState([]);
@@ -24,15 +20,18 @@ const DraftActions = () => {
   const [loading, setLoading] = useState(true);
   const { schema_revision } = useParams();
   const [isCreateNewAction, setIsCreacteNewAction] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
 
   const handleActionClick = (data) => {
     setIsCreacteNewAction(false);
+    setIsSelected(false);
     setSelectedAction(data);
     console.log(data);
+    setIsSelected(true);
   };
 
-  const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${schema_revision}`;
+  const findSchemaCode = async () => {
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -62,11 +61,11 @@ const DraftActions = () => {
 
   const createNewAction = () => {
     setIsCreacteNewAction(true);
-    FindSchemaCode();
+    findSchemaCode();
   };
 
   useEffect(() => {
-    FindSchemaCode();
+    findSchemaCode();
     saveSCHEMA_CODE(schema_revision);
   }, []);
 
@@ -83,10 +82,11 @@ const DraftActions = () => {
               <DraftMenu
                 menu="actions"
                 schemaCode={schema_revision}
+                next={true}
               ></DraftMenu>
             </div>
             <div className="h-[83%] flex items-center justify-center">
-              <div className="w-[45%] h-[80%] border-2 border-r rounded-l-xl border-white overflow-scroll">
+              <div className="w-[35%] h-[80%] border-2 border-r rounded-l-xl border-white overflow-scroll">
                 <h1 className="text-2xl p-4">Actions</h1>
                 {loading === true ? (
                   <div className="flex justify-center items-center">
@@ -101,7 +101,7 @@ const DraftActions = () => {
                 ) : (
                   <div className="grid grid-cols-2 gap-4 px-4 pb-6">
                     <div
-                      className="border border-white max-w-64 h-24 flex justify-center items-center text-3xl hover:bg-opacity-20 hover:bg-white cursor-pointer"
+                      className="border border-white max-w-48 h-24 flex justify-center items-center text-3xl hover:bg-opacity-20 hover:bg-white cursor-pointer"
                       onClick={createNewAction}
                     >
                       +
@@ -118,13 +118,14 @@ const DraftActions = () => {
                             index={index}
                             data={data}
                             allAction={actions}
+                            isSelected={isSelected}
                           />
                         </div>
                       ))}
                   </div>
                 )}
               </div>
-              <div className="w-[45%] h-[80%] border-2 border-l rounded-r-xl border-white overflow-scroll pb-6">
+              <div className="w-[55%] h-[80%] border-2 border-l rounded-r-xl border-white overflow-scroll pb-6">
                 <h1 className="text-2xl p-4">Code Preview</h1>
                 <div className="flex justify-center mx-6 ">
                   {isCreateNewAction && (

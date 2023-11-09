@@ -7,7 +7,7 @@ import jwt_decode from 'jwt-decode';
 
 // cryptoService.--------------------------------------------------------
 
-const secretKey = 'b0f4ccdf-525d-473c-9315-a0907095e0c5';
+const secretKey = import.meta.env.VITE_APP_SECRET_KEY;
 
 export const encryptWithAES = (text : string) => {
   const cipherText = CryptoJS.AES.encrypt(text, secretKey).toString();

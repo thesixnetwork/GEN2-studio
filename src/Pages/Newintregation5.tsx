@@ -139,7 +139,7 @@ const NewIntregation5 = () => {
     };
 
     const handleFormsubmit = async () => {
-        const apiUrl = 'https://six-gen2-studio-backend-traffic-workers-oxdveggapq-as.a.run.app/schema/create_schema_info'; // Replace with your API endpoint
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/create_schema_info`; // Replace with your API endpoint
         const requestData = {
             "schema_name": `${text[0].value}`,
             "status": "Draft",
@@ -211,7 +211,7 @@ const NewIntregation5 = () => {
         // const updatedText = [...text];
         // updatedText[0].duplicate = true;
         // setisLoading(true)
-        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
         const params = {
 
         };
@@ -248,7 +248,7 @@ const NewIntregation5 = () => {
 
     const UpdateSchemaInfo = () => {
 
-        const apiUrl = 'https://six-gen2-studio-backend-traffic-workers-oxdveggapq-as.a.run.app/schema/set_schema_info'; // Replace with your API endpoint
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`; // Replace with your API endpoint
         const requestData = {
             "payload": {
                 "schema_info": {
@@ -308,7 +308,7 @@ const NewIntregation5 = () => {
         const updatedText = [...text];
         updatedText[0].duplicate = true;
         setisLoading(true)
-        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/validate_schema_code'; // Replace with your API endpoint
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/validate_schema_code`; // Replace with your API endpoint
         const params = {
             schema_code: `${text[0].value}`,
         };

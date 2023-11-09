@@ -46,7 +46,9 @@ const DraftDeployment = () => {
   const { schema_revision } = useParams();
   const navigate = useNavigate();
   const getOriginAttributFromContract = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/list_draft`; // Replace with your API endpoint
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/list_draft`; // Replace with your API endpoint
     const params = {};
 
     const headers = {
@@ -85,7 +87,7 @@ const DraftDeployment = () => {
   // let isAccounts:Account
 
   const [rpcEndpoint, setRpcEndpoint] = useState(
-    "https://rpc2.fivenet.sixprotocol.net:443"
+    `${import.meta.env.VITE_APP_RPC2_ENDPOINT_SIX_FIVENET}`
   );
 
   const getAccount = async () => {
@@ -98,7 +100,9 @@ const DraftDeployment = () => {
 
   const get_schema_info = async () => {
     const schema_info = await axios.get(
-      `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${schema_revision}`,
+      `${
+        import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+      }schema/get_schema_info/${schema_revision}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -167,33 +171,33 @@ const DraftDeployment = () => {
           ``
         );
         console.log("tx-----", txResponse);
-        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
+        const apiUrl = `${
+          import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+        }schema/set_schema_info`;
         const requestData = {
-          "payload": {
-            "schema_code": schema_revision,
-            "status": "Testnet",
-            "current_state": "7"
-          }
-        }
-          ;
-
-        await axios.post(apiUrl, requestData, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-            // Add any other headers your API requires
+          payload: {
+            schema_code: schema_revision,
+            status: "Testnet",
+            current_state: "7",
           },
-        })
-          .then(response => {
-            console.log('API Response Deploy :', response.data);
-            console.log(requestData)
+        };
+        await axios
+          .post(apiUrl, requestData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, // Set the content type to JSON
+              // Add any other headers your API requires
+            },
+          })
+          .then((response) => {
+            console.log("API Response Deploy :", response.data);
+            console.log(requestData);
             // You can handle the API response here
           })
-          .catch(error => {
-            console.error('API Error:', error);
+          .catch((error) => {
+            console.error("API Error:", error);
             // Handle errors here
           });
-
 
         await Swal.fire({
           position: "center",
@@ -223,64 +227,12 @@ const DraftDeployment = () => {
   }, [isFalse]);
 
   return (
-    // <Box style={{
-    //     width: '100%',            // w-full
-    //     height: '100%',           // h-full
-    //     position: 'fixed',        // fixed
-    //     display: 'flex',          // flex
-    //     justifyContent: 'center',  // justify-center
-    //     alignItems: 'center',     // items-center
-    // }}
-    //     className='bg-gradient-24  from-white to-[#7A8ED7]'
-    // >
-    //     <Box p={6} width={"90%"} height={'80%'} className='bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl shadow-lg shadow-black/20 dark:shadow-black/40'>
-    //         <Box display={"flex"} flexWrap={"wrap"} justifyContent={'center'}>
-    //             <Box display={"flex"} p={20} width={"100%"} height={'100%'}>
-    //                 <Box display={{ disply: "flex" }} width={'70%'}>
-    //                     <Text style={{ fontSize: '48px' }}> Deployment </Text>
-    //                     <Divider style={{ backgroundColor: '#D9D9D9', height: '2px' }} />
-    //                 </Box>
-    //                 <Box width={'30%'} display={'flex'} justifyContent={'center'}>
-    //                     <Box>
-    //                         <Conectwalet></Conectwalet>
-    //                     </Box>
-    //                 </Box>
-    //             </Box>
-    //             {!schemaInfo && (<Flex  pt={130}>
-    //                 <Text color="error" style={{ fontSize: '78px' }}>NO SCHEMA INFO</Text>
-    //             </Flex>)}
-
-    //             {schemaInfo &&
-    //                 <Box width={"100%"} height={'100%'} pt={60}>
-    //                     <Flex justifyContent={'space-evenly'}>
-    //                         <Flex onClick={() => HandlerDeploySchemaCode()} flexWrap={'wrap'} height={'350px'} maxW={'350px'} className=' border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer'>
-    //                             <Flex padding={'30px'} w={'100%'} justifyContent={'center'}>
-    //                                 <img src={imgTestnet} ></img>
-    //                             </Flex>
-    //                             <Flex w={'100%'} justifyContent={'center'}>
-    //                                 <p className='text-white text-2xl hover:text-[#d2d3d7] duration-500 '>Deploy to Testnet</p>
-    //                             </Flex>
-    //                         </Flex >
-    //                         <Flex onClick={() => HandlerDeploySchemaCode()} flexWrap={'wrap'} height={'350px'} maxW={'350px'} className=' border rounded-2xl flex justify-center items-center hover:scale-105 duration-500 cursor-pointer'>
-    //                             <Flex padding={'30px'} w={'100%'} justifyContent={'center'}>
-    //                                 <img src={imgMainnet} ></img>
-    //                             </Flex>
-    //                             <Flex w={'100%'} justifyContent={'center'}>
-    //                                 <p className='text-white text-2xl hover:text-[#d2d3d7] duration-500 '>Deploy To Mainnet</p>
-    //                             </Flex>
-    //                         </Flex >
-    //                     </Flex>
-    //                 </Box>
-    //             }
-    //         </Box>
-    //     </Box>
-    // </Box>
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className=" relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className=" w-full h-full">
             <div className="flex justify-between">
-              <DraftMenu menu="deployment"></DraftMenu>
+              <DraftMenu menu="deployment" next={true}></DraftMenu>
             </div>
             <div className="h-[83%] flex items-center justify-center">
               {loading ? (
@@ -374,11 +326,12 @@ const DraftDeployment = () => {
               </div>
             </div>
           </div>
-          <div className=' absolute left-0 bottom-2'>
-            <GobackButton BackPage={`/draft/actions/${schema_revision}`}></GobackButton>
+          <div className=" absolute left-0 bottom-2">
+            <GobackButton
+              BackPage={`/draft/actions/${schema_revision}`}
+            ></GobackButton>
           </div>
         </div>
-
       </div>
     </div>
   );

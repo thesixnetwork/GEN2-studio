@@ -3,13 +3,9 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-<<<<<<< HEAD
 
 import { useState, DragEvent, useRef, useCallback } from "react";
 
-=======
-import { useState, DragEvent, useRef, } from "react";
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -29,10 +25,6 @@ import ReactFlow, {
 import "reactflow/dist/base.css";
 import { Factory } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
-<<<<<<< HEAD
-
-=======
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
@@ -79,17 +71,12 @@ const BasicFlow = () => {
       textUpdate: InputNode,
     };
   }, []);
+  const[selectedAttribute, setSelectedAttribute] = useState("");
 
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
-<<<<<<< HEAD
-  const { setCenter, project } = useReactFlow();
-  
-  const [createFirstNode, setCreateFirstNode] = useState(true);
-=======
   const { setCenter } = useReactFlow();
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
 
   const nodeWidthAndHeight = {
     width: 150,
@@ -488,6 +475,7 @@ const BasicFlow = () => {
 
       setEdges([...edges, ...newEdges]);
       updatedNodes.push(leftNode, rightNode, leftBottomNode, rightBottomNode);
+      setSelectedAttribute("none")
     }
     setNodes(updatedNodes);
   }, [nodes[0].data.value]);
@@ -588,7 +576,7 @@ const BasicFlow = () => {
   };
 
   const saveAction = async () => {
-    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
     const requestData = {
       "payload": {
         "schema_code": getSCHEMA_CODE(),
@@ -658,14 +646,14 @@ const BasicFlow = () => {
             </ReactFlow>
           </div>
         </div>
-
         <div>
           <div className="flex justify-center" onClick={async () => { await saveAction();  navigate("/newintregation/beginer") }}>
             <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
+            <button onClick={()=>console.log(selectedAttribute)}>ccc</button>
           </div>
         </div>
       </div>
-      <Flowbar selectedAttribute="none"></Flowbar>
+      <Flowbar selectedAttribute={selectedAttribute} actionName={getActionName()}></Flowbar>
     </div>
   );
 };

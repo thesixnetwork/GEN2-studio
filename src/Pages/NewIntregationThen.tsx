@@ -4,13 +4,57 @@ import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
 import ActionTypeCard from "../component/ActionTypeCard";
-import { getActionName } from "../helpers/AuthService";
+import DraftActionThenPreview from "../component/DraftActionThenPreview";
+import axios from "axios";
+import {
+  getAccessTokenFromLocalStorage,
+  getSCHEMA_CODE,
+  getActionName,
+} from "../helpers/AuthService";
+import { CircularProgress } from "@mui/material";
 
 const NewIntregationThen = () => {
   const [isShow, setIsShow] = useState(false);
-  useEffect(()=>{
-    console.log("ActionName:",getActionName())
-  },[])
+  const [actions, setActions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const findSchemaCode = async () => {
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const params = {};
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
+    await axios
+      .get(apiUrl, {
+        params: params,
+        headers: headers,
+      })
+      .then((response) => {
+        console.log(
+          "Response:",
+          response.data.data.schema_info.schema_info.onchain_data.actions
+        );
+        // find action name from param.action_name which action have same name with respond then setActions
+        const actions =
+          response.data.data.schema_info.schema_info.onchain_data.actions.filter(
+            (action) => action.name === getActionName()
+          );
+        setActions(actions);
+        console.log("->>>", actions);
+        setLoading(false);
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error("Error:", error);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    findSchemaCode();
+  }, []);
 
   return (
     <div className="w-full flex justify-center ">
@@ -24,14 +68,29 @@ const NewIntregationThen = () => {
               </div>
               <Conectwalet></Conectwalet>
             </div>
-            <div className=" w-full flex flex-col items-center justify-center gap-20 min-h-[89.1%]">
-              <div className="flex gap-x-20">
-                <ActionTypeCard type="update" draft={false}/>
-                <ActionTypeCard type="transfer" draft={false}/>
+            <div className=" w-full flex flex-col items-center justify-center gap-10 min-h-[89.1%]">
+              {loading ? (
+                <CircularProgress
+                  className=" text-white"
+                  sx={{
+                    width: 300,
+                    color: "white",
+                  }}
+                ></CircularProgress>
+              ) : (
+                <>
+                  {actions !== undefined && (
+                    <DraftActionThenPreview actions={actions} />
+                  )}
+              <div className="flex gap-x-10">
+                <ActionTypeCard type="update" draft={false} />
+                <ActionTypeCard type="transfer" draft={false} />
               </div>
               <div>
-                <ActionTypeCard type="transform" draft={false}/>
+                <ActionTypeCard type="transform" draft={false} />
               </div>
+                </>
+              )}
             </div>
           </div>
         </div>

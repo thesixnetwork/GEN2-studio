@@ -40,7 +40,9 @@ const DraftActionPreviewCard = ({ data, param }) => {
   };
 
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${param.schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -91,8 +93,9 @@ const DraftActionPreviewCard = ({ data, param }) => {
   };
 
   const saveEditedDesc = async () => {
-    const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions";
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_actions`;
     const requestData = {
       payload: {
         schema_code: param,
@@ -183,7 +186,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
               ) : (
                 <span>
                   {data.desc !== undefined &&
-                    convertStringIfTooLong(data.desc, 50)}
+                    convertStringIfTooLong(data.desc, 70)}
                 </span>
               )}
             </Tooltip>
@@ -211,7 +214,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
                 />
               </button>
               <Tooltip title={data.when}>
-                <span>{convertStringIfTooLong(data.when, 50)}</span>
+                <span>{convertStringIfTooLong(data.when, 70)}</span>
               </Tooltip>
             </Link>
           </div>
@@ -224,21 +227,38 @@ const DraftActionPreviewCard = ({ data, param }) => {
                 <div className="flex items-center">
                   <Link
                     to={
-                      data.then[index].startsWith("meta.SetImage")
-                        ? `/draft/actions/edit/then/${
+                      data.then[index].startsWith(
+                        "meta.SetImage(meta.ReplaceAllString"
+                      )
+                        ? `/draft/actions/edit/then/transform/dynamic/${
                             data.name
                           }/${convertToBase64(data.then[index])}/${param}`
+                        : data.then[index].startsWith("meta.SetImage")
+                        ? `/draft/actions/edit/then/transform/static/${
+                            data.name
+                          }/${convertToBase64(data.then[index])}/${param}`
+                        : data.then[index].startsWith("meta.TransferNumber")
+                        ? `/draft/actions/edit/then/transfer/${data.name}/${data.then[index]}/${param}`
+                        : data.then[index].startsWith("meta.SetString") ||
+                          data.then[index].startsWith("meta.SetBoolean") ||
+                          data.then[index].startsWith("meta.SetNumber") ||
+                          data.then[index].startsWith("meta.SetFloat")
+                        ? `/draft/actions/edit/then/attribute/${data.name}/${data.then[index]}/${param}`
                         : `/draft/actions/edit/then/${data.name}/${data.then[index]}/${param}`
                     }
                   >
-                    <img
-                      src={editIcon}
-                      alt="edit"
-                      className="w-4 h-4 mr-1 duration-300 hover:scale-125"
-                    />
+                    <div className="min-w-4 min-h-4">
+                      <img
+                        src={editIcon}
+                        alt="edit"
+                        className="w-4 h-4 mr-1 duration-300 hover:scale-125"
+                      />
+                    </div>
                   </Link>
                   <Tooltip title={item}>
-                    <span>{convertStringIfTooLong(item, 42)}</span>
+                      <span>
+                        {convertStringIfTooLong(item, 60)}
+                      </span>
                   </Tooltip>
                 </div>
               </li>

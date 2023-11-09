@@ -64,7 +64,7 @@ const DynamicNode = (props: CircleNodeProps) => {
   };
 
   const fetchData = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -127,10 +127,8 @@ const DynamicNode = (props: CircleNodeProps) => {
     const asyncFetchData = async () => {
       await fetchData();
     };
-    if (props.data.showType === "attributeNode") {
-      asyncFetchData();
-      console.log("fetching")
-    }
+    asyncFetchData();
+    console.log("fetching");
   }, [props.data.showType]);
 
   useEffect(() => {
@@ -161,7 +159,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           type="text"
           name=""
           id=""
-          className="w-16 rounded-full"
+          className="w-16 rounded-full pl-1"
           onChange={(e) => {
             onChange(e);
           }}
@@ -274,7 +272,7 @@ const DynamicNode = (props: CircleNodeProps) => {
                     : props.data.showType === "andNode"
                     ? "bg-[#6865A5]"
                     : props.data.showType === "equalNode"
-                    ? "bg-[#0041d0]"
+                    ? "bg-[#7da4f7]"
                     : props.data.showType === "notEqualNode"
                     ? "bg-[#ff0072]"
                     : props.data.showType === "moreThanNode"

@@ -3,9 +3,7 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-
 import { useState, DragEvent, useRef } from "react";
-
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -28,6 +26,7 @@ import Flowbar from "../component/ReactFlow/Then/Flowbar";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
+
 
 import NormalButton from "../component/NormalButton";
 import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
@@ -80,13 +79,13 @@ const BasicFlow = () => {
   const [redraw, setRedraw] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
-  // const nodeWidthAndHeight = {
-  //   width: 150,
-  //   height: 57,
-  //   width_input: 151.2,
-  //   height_input: 35.2,
-  //   grid_padding: 60,
-  // };
+  const nodeWidthAndHeight = {
+    width: 150,
+    height: 57,
+    width_input: 151.2,
+    height_input: 35.2,
+    grid_padding: 60,
+  };
 
   const onConnect = (params: Connection | Edge) =>
     setEdges((eds) => addEdge(params, eds));
@@ -542,7 +541,7 @@ const BasicFlow = () => {
 
   const [actionName, setactionName] = useState("")
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
     const params = {
     };
     const headers = {
@@ -568,7 +567,7 @@ const BasicFlow = () => {
 
 
   const saveAction = async () => {
-    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
     const requestData = {
       "payload": {
         "schema_code": getSCHEMA_CODE(),
@@ -649,7 +648,7 @@ const BasicFlow = () => {
           <button onClick={()=>console.log(edges)}>log edges</button>
         </div>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
+      <Flowbar selectedAttribute={selectedAttribute} actionName={getActionName()}></Flowbar>
     </div>
   );
 };

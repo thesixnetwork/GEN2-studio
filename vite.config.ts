@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-
 // https://vitejs.dev/config/
 // import { resolve, join } from 'path'
 // import * as fs from 'fs';
@@ -38,6 +37,7 @@ export default defineConfig({
       crypto: 'crypto-js',
     },
   },
+  
   // build: {
   //   outDir,
   //   emptyOutDir: true,
@@ -49,3 +49,4 @@ export default defineConfig({
   // }
   
 })
+

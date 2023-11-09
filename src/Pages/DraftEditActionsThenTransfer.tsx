@@ -101,6 +101,7 @@ const BasicFlow = () => {
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
+  const [selectedAttribute, setSelectedAttribute] = useState("");
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -305,7 +306,7 @@ const BasicFlow = () => {
     }
   };
 
-  const createToAmountNodes = () =>{
+  const createToAmountNodes = () => {
     const positionLeftNode = {
       x: nodes[0].position.x - nodeWidthAndHeight.width,
       y:
@@ -436,11 +437,12 @@ const BasicFlow = () => {
     setEdges([...edges, ...newEdges]);
     updatedNodes.push(leftNode, rightNode, leftBottomNode, rightBottomNode);
     setNodes(updatedNodes);
-  }
-  
+  };
 
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${param.schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -629,30 +631,31 @@ const BasicFlow = () => {
   const saveAction = async () => {
     actionThenArr[actionThenIndex] = metaData;
     console.log("arr= ", actionThenArr);
-    const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
-      let requestData;
-      if (isCreateNewAction) {
-        requestData = {
-          payload: {
-            schema_code: param.schema_revision,
-            update_then: false,
-            name: param.action_name,
-  
-            then: [...actionThenArr, metaData]
-          },
-        };
-      } else {
-         requestData = {
-          payload: {
-            schema_code: param.schema_revision,
-            update_then: false,
-            name: param.action_name,
-  
-            then: actionThenArr,
-          },
-        };
-      }
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_actions`;
+    let requestData;
+    if (isCreateNewAction) {
+      requestData = {
+        payload: {
+          schema_code: param.schema_revision,
+          update_then: false,
+          name: param.action_name,
+
+          then: [...actionThenArr, metaData],
+        },
+      };
+    } else {
+      requestData = {
+        payload: {
+          schema_code: param.schema_revision,
+          update_then: false,
+          name: param.action_name,
+
+          then: actionThenArr,
+        },
+      };
+    }
 
     await axios
       .post(apiUrl, requestData, {
@@ -682,187 +685,187 @@ const BasicFlow = () => {
     const tempNodeArray = [];
     const tempEdgeArray = [];
     const processNode = (node, parentNode = null, parentPositionY = 0) => {
-        const nodeId = tempNodeArray.length + 1;
+      const nodeId = tempNodeArray.length + 1;
 
-        const newNode = {
-            width: 150,
-            height: 57,
-            id: nodeId.toString(),
-            type: "customInputNode",
-            position: { x: 0, y: parentPositionY },
-            draggable: false,
-            data: {
-                showType: "",
-                id: nodeId.toString(),
-                parentNode: parentNode,
-                label: { x: 0, y: parentPositionY },
-                value: "",
-                dataType: "",
-            },
-            positionAbsolute: { x: 0, y: parentPositionY },
+      const newNode = {
+        width: 150,
+        height: 57,
+        id: nodeId.toString(),
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY },
+        draggable: false,
+        data: {
+          showType: "",
+          id: nodeId.toString(),
+          parentNode: parentNode,
+          label: { x: 0, y: parentPositionY },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
+
+      tempNodeArray.push(newNode);
+
+      if (node.attributeName) {
+        newNode.data.showType = "selectAttributeNode";
+        newNode.data.value = node.attributeName.value;
+        newNode.data.dataType = node.attributeName.dataType;
+      }
+
+      if (node.value1) {
+        const toNode = {
+          width: 150,
+          height: 57,
+          id: (nodeId + 1).toString(),
+          type: "customInputNode",
+          position: { x: -150, y: parentPositionY + 150 },
+          draggable: false,
+          data: {
+            showType: "toNode",
+            id: (nodeId + 1).toString(),
+            parentNode: nodeId.toString(),
+            label: { x: 0, y: parentPositionY + 150 },
+            value: "toNode",
+            dataType: "toNode",
+          },
         };
 
-        tempNodeArray.push(newNode);
-
-        if (node.attributeName) {
-            newNode.data.showType = "selectAttributeNode";
-            newNode.data.value = node.attributeName.value;
-            newNode.data.dataType = node.attributeName.dataType;
+        if (node.value1.type === "param_function") {
+          const paramNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 2).toString(),
+            type: "customInputNode",
+            position: { x: -150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "paramNode",
+              id: (nodeId + 2).toString(),
+              parentNode: (nodeId + 1).toString(),
+              label: { x: -150, y: parentPositionY + 300 },
+              value: node.value1.attributeName.value,
+              dataType: node.value1.attributeName.dataType,
+            },
+          };
+          tempNodeArray.push(toNode, paramNode);
+        } else {
+          const attributeNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 2).toString(),
+            type: "customInputNode",
+            position: { x: -150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "attributeNode",
+              id: (nodeId + 2).toString(),
+              parentNode: (nodeId + 1).toString(),
+              label: { x: -150, y: parentPositionY + 300 },
+              value: node.value1.attributeName.value,
+              dataType: node.value1.attributeName.dataType,
+            },
+          };
+          tempNodeArray.push(toNode, attributeNode);
         }
 
-        if (node.value1) {
-            const toNode = {
-                width: 150,
-                height: 57,
-                id: (nodeId + 1).toString(),
-                type: "customInputNode",
-                position: { x: -150, y: parentPositionY + 150 },
-                draggable: false,
-                data: {
-                    showType: "toNode",
-                    id: (nodeId + 1).toString(),
-                    parentNode: nodeId.toString(),
-                    label: { x: 0, y: parentPositionY + 150 },
-                    value: "toNode",
-                    dataType: "toNode",
-                },
-            };
+        const edge = {
+          id: `e${nodeId}-${nodeId + 1}`,
+          source: nodeId.toString(),
+          target: (nodeId + 1).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
+        const edge2 = {
+          id: `e${nodeId + 1}-${nodeId + 2}`,
+          source: (nodeId + 1).toString(),
+          target: (nodeId + 2).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
 
-            if (node.value1.type === "param_function") {
-                const paramNode = {
-                    width: 150,
-                    height: 57,
-                    id: (nodeId + 2).toString(),
-                    type: "customInputNode",
-                    position: { x: -150, y: parentPositionY + 300 },
-                    draggable: false,
-                    data: {
-                        showType: "paramNode",
-                        id: (nodeId + 2).toString(),
-                        parentNode: (nodeId + 1).toString(),
-                        label: { x: -150, y: parentPositionY + 300 },
-                        value: node.value1.attributeName.value,
-                        dataType: node.value1.attributeName.dataType,
-                    },
-                };
-                tempNodeArray.push(toNode, paramNode);
-            } else {
-                const attributeNode = {
-                    width: 150,
-                    height: 57,
-                    id: (nodeId + 2).toString(),
-                    type: "customInputNode",
-                    position: { x: -150, y: parentPositionY + 300 },
-                    draggable: false,
-                    data: {
-                        showType: "attributeNode",
-                        id: (nodeId + 2).toString(),
-                        parentNode: (nodeId + 1).toString(),
-                        label: { x: -150, y: parentPositionY + 300 },
-                        value: node.value1.attributeName.value,
-                        dataType: node.value1.attributeName.dataType,
-                    },
-                };
-                tempNodeArray.push(toNode, attributeNode);
-            }
+        tempEdgeArray.push(edge, edge2);
+      }
 
-            const edge = {
-                id: `e${nodeId}-${nodeId + 1}`,
-                source: nodeId.toString(),
-                target: (nodeId + 1).toString(),
-                animated: true,
-                style: { stroke: "#FFAA9A" },
-                type: "smoothstep",
-            };
-            const edge2 = {
-                id: `e${nodeId + 1}-${nodeId + 2}`,
-                source: (nodeId + 1).toString(),
-                target: (nodeId + 2).toString(),
-                animated: true,
-                style: { stroke: "#FFAA9A" },
-                type: "smoothstep",
-            };
+      if (node.value2) {
+        const amountNode = {
+          width: 150,
+          height: 57,
+          id: (nodeId + 3).toString(),
+          type: "customInputNode",
+          position: { x: 150, y: parentPositionY + 150 },
+          draggable: false,
+          data: {
+            showType: "amountNode",
+            id: (nodeId + 3).toString(),
+            parentNode: nodeId.toString(),
+            label: { x: 0, y: parentPositionY + 150 },
+            value: node.attributeName.value,
+            dataType: node.attributeName.dataType,
+          },
+        };
 
-            tempEdgeArray.push(edge, edge2);
+        if (node.value2.type === "param_function") {
+          const paramNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 4).toString(),
+            type: "customInputNode",
+            position: { x: 150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "paramNode",
+              id: (nodeId + 4).toString(),
+              parentNode: (nodeId + 3).toString(),
+              label: { x: 150, y: parentPositionY + 300 },
+              value: node.value2.attributeName.value,
+              dataType: node.value2.attributeName.dataType,
+            },
+          };
+          tempNodeArray.push(amountNode, paramNode);
+        } else {
+          const valueNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 4).toString(),
+            type: "customInputNode",
+            position: { x: 150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "valueNode",
+              id: (nodeId + 4).toString(),
+              parentNode: (nodeId + 3).toString(),
+              label: { x: 150, y: parentPositionY + 300 },
+              value: node.value2.attributeName.value,
+              dataType: node.value2.attributeName.dataType,
+            },
+          };
+          tempNodeArray.push(amountNode, valueNode);
         }
 
-        if (node.value2) {
-            const amountNode = {
-                width: 150,
-                height: 57,
-                id: (nodeId + 3).toString(),
-                type: "customInputNode",
-                position: { x: 150, y: parentPositionY + 150 },
-                draggable: false,
-                data: {
-                    showType: "amountNode",
-                    id: (nodeId + 3).toString(),
-                    parentNode: nodeId.toString(),
-                    label: { x: 0, y: parentPositionY + 150 },
-                    value: node.attributeName.value,
-                    dataType: node.attributeName.dataType,
-                },
-            };
+        const edge = {
+          id: `e${nodeId}-${nodeId + 3}`,
+          source: nodeId.toString(),
+          target: (nodeId + 3).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
+        const edge2 = {
+          id: `e${nodeId + 3}-${nodeId + 4}`,
+          source: (nodeId + 3).toString(),
+          target: (nodeId + 4).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
 
-            if (node.value2.type === "param_function") {
-                const paramNode = {
-                    width: 150,
-                    height: 57,
-                    id: (nodeId + 4).toString(),
-                    type: "customInputNode",
-                    position: { x: 150, y: parentPositionY + 300 },
-                    draggable: false,
-                    data: {
-                        showType: "paramNode",
-                        id: (nodeId + 4).toString(),
-                        parentNode: (nodeId + 3).toString(),
-                        label: { x: 150, y: parentPositionY + 300 },
-                        value: node.value2.attributeName.value,
-                        dataType: node.value2.attributeName.dataType,
-                    },
-                };
-                tempNodeArray.push(amountNode, paramNode);
-            } else {
-                const valueNode = {
-                    width: 150,
-                    height: 57,
-                    id: (nodeId + 4).toString(),
-                    type: "customInputNode",
-                    position: { x: 150, y: parentPositionY + 300 },
-                    draggable: false,
-                    data: {
-                        showType: "valueNode",
-                        id: (nodeId + 4).toString(),
-                        parentNode: (nodeId + 3).toString(),
-                        label: { x: 150, y: parentPositionY + 300 },
-                        value: node.value2.attributeName.value,
-                        dataType: node.value2.attributeName.dataType,
-                    },
-                };
-                tempNodeArray.push(amountNode, valueNode);
-            }
+        tempEdgeArray.push(edge, edge2);
+      }
 
-            const edge = {
-                id: `e${nodeId}-${nodeId + 3}`,
-                source: nodeId.toString(),
-                target: (nodeId + 3).toString(),
-                animated: true,
-                style: { stroke: "#FFAA9A" },
-                type: "smoothstep",
-            };
-            const edge2 = {
-                id: `e${nodeId + 3}-${nodeId + 4}`,
-                source: (nodeId + 3).toString(),
-                target: (nodeId + 4).toString(),
-                animated: true,
-                style: { stroke: "#FFAA9A" },
-                type: "smoothstep",
-            };
-
-            tempEdgeArray.push(edge, edge2);
-        }
-
-        return nodeId;
+      return nodeId;
     };
 
     processNode(outputObj);
@@ -870,8 +873,7 @@ const BasicFlow = () => {
     setNodes(tempNodeArray);
     setEdges(tempEdgeArray);
     return tempNodeArray;
-};
-
+  };
 
   useEffect(() => {
     saveSCHEMA_CODE(param.schema_revision);
@@ -893,7 +895,8 @@ const BasicFlow = () => {
       createFirstNode &&
       !isDraft
     ) {
-      createToAmountNodes()
+      createToAmountNodes();
+      setSelectedAttribute("none")
     }
   }, [nodes[0].data.value]);
 
@@ -923,11 +926,12 @@ const BasicFlow = () => {
         const index = actionThenArr.indexOf(param.meta_function);
         console.log("--: ", index);
         setActionThenIndex(index);
+        setSelectedAttribute("none")
       }
 
-      if(param.meta_function === "create-new-action"){
-        setIsCreateNewAction(true)
-        }
+      if (param.meta_function === "create-new-action") {
+        setIsCreateNewAction(true);
+      }
 
       console.log("actionThenArr: ", actionThenArr);
     }
@@ -972,12 +976,24 @@ const BasicFlow = () => {
               <Controls position="top-left" />
               <MiniMap position="top-right"></MiniMap>
             </ReactFlow>
-            <button onClick={() => console.log(nodes)}>log node</button>
-            <button onClick={() => console.log(edges)}>log edges</button>
           </div>
         </div>
 
-        <div>
+        <div className="flex gap-x-5 justify-center">
+          <div
+            className="flex justify-center"
+            onClick={() => {
+              navigate(
+                `/draft/actions/edit/then/${param.action_name}/${param.meta_function}/${param.schema_revision}`
+              );
+            }}
+          >
+            <NormalButton
+              BorderRadius={0}
+              FontSize={32}
+              TextTitle={"BACK"}
+            ></NormalButton>
+          </div>
           <div
             className="flex justify-center"
             onClick={async () => {
@@ -993,7 +1009,7 @@ const BasicFlow = () => {
           </div>
         </div>
       </div>
-      <Flowbar selectedAttribute="none"></Flowbar>
+      <Flowbar selectedAttribute={selectedAttribute} actionName={param.action_name}></Flowbar>
     </div>
   );
 };
@@ -1006,33 +1022,14 @@ export default function DraftEditActionsTransfer() {
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div className="mt-[20px] flex flex-col items-center justify-center">
+            <div className="h-full flex flex-col items-center justify-center">
+              
               <ReactFlowProvider>
                 <BasicFlow />
               </ReactFlowProvider>
             </div>
           </div>
-          <Tooltip title={"help"}>
-            <div
-              onClick={() => {
-                setIsShow(true);
-              }}
-              className=" z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[750px] ml-[1180px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
-            >
-              ?
-            </div>
-          </Tooltip>
         </div>
-        {isShow && (
-          <div
-            className="absolute duration-500"
-            onClick={() => {
-              setIsShow(!isShow);
-            }}
-          >
-            <Darkbg></Darkbg>
-          </div>
-        )}
       </div>
     </div>
   );
