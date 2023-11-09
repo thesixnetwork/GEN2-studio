@@ -175,6 +175,16 @@ export default function Newintregation9() {
 
     }
     const handleSave = () => {
+        if (isError) {
+            Swal.fire({
+              title: "At least 1 attribute must be adde or check for errors.",
+              // html: "At least 1 attribute must be added.",
+              // showCloseButton: true, // เพิ่มปุ่มปิด
+              showConfirmButton: true,
+              timerProgressBar: true,
+            });
+            return;
+          }
         saveOnchainCollectionAttributes()
         setSave(true);
         searchError()
@@ -203,9 +213,9 @@ export default function Newintregation9() {
                 }
             },
             "default_mint_value": {
-                // "string_attribute_value": {
-                //     "value": ""
-                // }
+                "string_attribute_value": {
+                    "value": ""
+                }
             },
             "hidden_overide": false,
             "hidden_to_marketplace": false
@@ -265,6 +275,27 @@ export default function Newintregation9() {
             element.scrollIntoView({ behavior: 'smooth' });
         }
     };
+
+    const [isError, setIsError] = useState(true);
+
+  useEffect(() => {
+    handCheckIsError();
+  }, [text]);
+  const handCheckIsError = () => {
+    const hasEmptyNameOrValue = text.some(
+      (x) =>
+        x["name"] === "" ||
+        x["data_type"] === "" ||
+        x["display_option"]["opensea"]["trait_type"] === "" ||
+        !x["default_mint_value"]
+    );
+
+    if (hasEmptyNameOrValue || !Array.isArray(text) || text.length === 0) {
+      setIsError(true);
+    } else {
+      setIsError(false);
+    }
+  };
 
     return (
         <div className="w-full flex justify-center ">
