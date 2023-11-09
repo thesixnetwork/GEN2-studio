@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getAccessTokenFromLocalStorage } from '../helpers/AuthService';
 import axios from 'axios';
 import DraftOrigindataCard from '../component/DraftOrigindataCard';
-import NormalButton from '../component/NormalButton';
+
 import GobackButton from '../component/GobackButton';
 
 function DraftEditOriginData() {
@@ -59,26 +59,6 @@ function DraftEditOriginData() {
                                 ></DraftOrigindataCard>
                             )}
                         </div>
-                        {loading && (
-                            <div className="  h-[7%] mt-4 items-center w-full flex justify-center gap-x-8">
-                                <div className="w-32" onClick={() => { setSave(!Save) }} >
-                                    <NormalButton
-                                        TextTitle="SAVE"
-                                        BorderRadius={0}
-                                        FontSize={24}
-                                    ></NormalButton>
-                                </div>
-                                <div className="w-32" onClick={() => { setDiscard(!Discard) }} >
-                                    <NormalButton
-                                        TextTitle="DISCARD"
-                                        BorderRadius={0}
-                                        FontSize={24}
-                                    ></NormalButton>
-                                </div>
-
-                            </div>
-
-                        )}
                         <div className=' absolute left-0 bottom-2'>
                             <GobackButton BackPage='/'></GobackButton>
                         </div>

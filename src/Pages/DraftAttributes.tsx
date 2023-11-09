@@ -91,29 +91,6 @@ const DraftAttributes = () => {
         "status": "Draft",
         "current_state": "0"
       }
-<<<<<<< HEAD
-    }
-      ;
-
-    await axios.post(apiUrl, requestData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-        // Add any other headers your API requires
-      },
-    })
-      .then(response => {
-        console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
-        console.log("Request :", requestData)
-        // You can handle the API response here
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Attributes saved",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-=======
     };
     if (Object.values(isSave).every(attribute => attribute === true)) {
       await axios.post(apiUrl, requestData, {
@@ -122,7 +99,6 @@ const DraftAttributes = () => {
           'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
           // Add any other headers your API requires
         },
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
       })
         .then(response => {
           console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
@@ -159,11 +135,8 @@ const DraftAttributes = () => {
 
   }
 
-<<<<<<< HEAD
-=======
   console.log("data ===>",data)
   
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
   useEffect(() => {
     FindSchemaCode();
   }, []);
@@ -219,11 +192,7 @@ const DraftAttributes = () => {
                   FontSize={24}
                 ></NormalButton>
               </div>
-<<<<<<< HEAD
-              <div className="w-32" onClick={() => console.log(originAttributes)} >
-=======
               <div className="w-32" onClick={FindSchemaCode} >
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
                 <NormalButton
                   TextTitle="DISCARD"
                   BorderRadius={0}
