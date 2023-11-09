@@ -46,7 +46,9 @@ const DraftDeployment = () => {
   const { schema_revision } = useParams();
   const navigate = useNavigate();
   const getOriginAttributFromContract = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/list_draft`; // Replace with your API endpoint
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/list_draft`; // Replace with your API endpoint
     const params = {};
 
     const headers = {
@@ -85,7 +87,9 @@ const DraftDeployment = () => {
   // let isAccounts:Account
 
   const [rpcEndpoint, setRpcEndpoint] = useState(
-    "https://rpc2.fivenet.sixprotocol.net:443"
+    `${
+      import.meta.env.VITE_APP_RPC2_ENDPOINT_SIX_FIVENET
+    }`
   );
 
   const getAccount = async () => {
@@ -98,7 +102,9 @@ const DraftDeployment = () => {
 
   const get_schema_info = async () => {
     const schema_info = await axios.get(
-      `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${schema_revision}`,
+      `${
+        import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+      }schema/get_schema_info/${schema_revision}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -167,7 +173,9 @@ const DraftDeployment = () => {
           ``
         );
         console.log("tx-----", txResponse);
-        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
+        const apiUrl = `${
+          import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+        }schema/set_schema_info`;
         const requestData = {
           "payload": {
             "schema_code": schema_revision,

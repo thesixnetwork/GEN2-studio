@@ -14,34 +14,6 @@ function DraftEditOriginData() {
     const [Discard, setDiscard] = useState(false)
     const [Save, setSave] = useState(false)
 
-    // const FindSchemaCode = async () => {
-    //     const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${schema_revision}`;
-    //     const params = {};
-    //     const headers = {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-    //     };
-    //     await axios
-    //         .get(apiUrl, {
-    //             params: params,
-    //             headers: headers,
-    //         })
-    //         .then((response) => {
-    //             console.log("SchemaInFo :", response.data.data.schema_info)
-    //             setSchemaInFo(response.data.data.schema_info)
-    //             setLoading(true)
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error:", error);
-    //         });
-    // };
-
-    // useEffect(() => {
-    //     FindSchemaCode();
-    // }, [])
-
-
-
     return (
         <div className="w-full flex justify-center ">
             <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">

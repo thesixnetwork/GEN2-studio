@@ -697,7 +697,9 @@ const BasicFlow = () => {
   };
 
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -737,7 +739,9 @@ const BasicFlow = () => {
 
   const saveAction = async () => {
     const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
+      `${
+        import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+      }schema/set_actions`; 
     const requestData = {
       payload: {
         schema_code: getSCHEMA_CODE(),

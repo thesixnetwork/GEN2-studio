@@ -20,17 +20,18 @@ export default function Newintregation9() {
     const [action, setAction] = React.useState([]);
 
     const FindSchemaCode = async () => {
-        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+        const apiUrl = `${
+            import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+          }schema/get_schema_info/${getSCHEMA_CODE()}`;
         const params = {
         };
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
         }
-        // Make a GET request with parameters
         await axios.get(apiUrl, {
-            params: params, // Pass parameters as an object
-            headers: headers, // Pass headers as an object
+            params: params, 
+            headers: headers, 
         })
             .then((response) => {
                 // Handle successful response here

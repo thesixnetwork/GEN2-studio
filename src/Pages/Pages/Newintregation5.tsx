@@ -141,7 +141,9 @@ const NewIntregation5 = () => {
     };
 
     const handleFormsubmit = async () => {
-        const apiUrl = 'https://six-gen2-studio-backend-traffic-workers-oxdveggapq-as.a.run.app/schema/create_schema_info'; // Replace with your API endpoint
+        const apiUrl = `${
+            import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+          }schema/create_schema_info`; 
         const requestData = {
             "schema_name": `${text[0].value}`,
             "status": "Draft",
@@ -153,53 +155,25 @@ const NewIntregation5 = () => {
         axios.post(apiUrl, requestData, {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-                // Add any other headers your API requires
+                'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  
             },
         })
             .then(response => {
                 console.log('API Response:', response.data);
                 saveSCHEMA_CODE(response.data.data.schema_code);
-                // console.log(requestData)
-                // You can handle the API response here
+
             })
             .catch(error => {
                 console.error('API Error:', error);
-                // Handle errors here
             });
     }
-
-    //-------------------------------------------Refresh token test---------------------------------------------------//
-    // const handleFormsubmitI = async () => {
-    //     const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/auth/refreshToken'; // Replace with your API endpoint
-    //     const requestData = {
-    //         "refresh_token": `${getRefreshTokenFromLocalStorage()}`,
-    //     };
-    //     axios.post(apiUrl, requestData, {
-    //         headers: {
-    //             // Set the content type to JSON
-    //             'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-    //             // Add any other headers your API requires
-    //         },
-    //     })
-    //         .then(response => {
-    //             console.log('API Response from refresh :', response.data);
-    //             saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token)
-    //             const accessToken = getAccessTokenFromLocalStorage();
-    //             const refreshToken = getRefreshTokenFromLocalStorage();
-    //             console.log("New Access: ", accessToken)
-    //             console.log("New Refresh: ", refreshToken)
-    //         })
-    //         .catch(error => {
-    //             console.error('API Error:', error);
-    //             // Handle errors here
-    //         });
-    // }
     const GethistoryFormSchemaCode = async () => {
         // const updatedText = [...text];
         // updatedText[0].duplicate = true;
         setIsLoadingHistory(true)
-        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+        const apiUrl = `${
+            import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+          }schema/get_schema_info/${getSCHEMA_CODE()}`; 
         const params = {
         };
         const headers = {

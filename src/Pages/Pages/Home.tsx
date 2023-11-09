@@ -42,7 +42,9 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [loadingTestnet, setLoadingTestnet] = useState(false);
     const getOriginAttributFromContract = async () => {
-        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/list_draft`;
+        const apiUrl = `${
+            import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+          }schema/list_draft`;
         const params = {};
 
         const headers = {
@@ -66,7 +68,9 @@ const Home = () => {
     };
 
     const getDataTestnet = async () => {
-        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/list_testnet`;
+        const apiUrl = `${
+            import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+          }schema/list_testnet`;
         const params = {};
 
         const headers = {
@@ -92,7 +96,7 @@ const Home = () => {
 
                 await arr_schema_name.forEach(async (schema_name: string) => {
                     try {
-                        const apiUrl = `https://api1.fivenet.sixprotocol.net/thesixnetwork/sixnft/nftmngr/nft_collection/${schema_name}`;
+                        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SIX_FIVENET}thesixnetwork/sixnft/nftmngr/nft_collection/${schema_name}`;
                         const params = {};
                         const headers = {
                             "Content-Type": "application/json",

@@ -440,7 +440,9 @@ const BasicFlow = () => {
   
 
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${param.schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -630,7 +632,9 @@ const BasicFlow = () => {
     actionThenArr[actionThenIndex] = metaData;
     console.log("arr= ", actionThenArr);
     const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
+      `${
+        import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+      }schema/set_actions`; 
       let requestData;
       if (isCreateNewAction) {
         requestData = {
@@ -658,8 +662,7 @@ const BasicFlow = () => {
       .post(apiUrl, requestData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, // Set the content type to JSON
-          // Add any other headers your API requires
+          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, 
         },
       })
       .then((response) => {
@@ -668,11 +671,9 @@ const BasicFlow = () => {
           response.data
         );
         console.log("Request :", requestData);
-        // You can handle the API response here
       })
       .catch((error) => {
         console.error("API Error:", error);
-        // Handle errors here
       });
   };
 

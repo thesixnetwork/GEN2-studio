@@ -43,7 +43,9 @@ const DraftAttributes = () => {
   const { schema_revision } = useParams();
 
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${schema_revision}`;
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -83,7 +85,9 @@ const DraftAttributes = () => {
 
   const saveData = async () => {
 
-    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_schema_info`;
     const requestData = {
       "payload": {
         "schema_info": data,

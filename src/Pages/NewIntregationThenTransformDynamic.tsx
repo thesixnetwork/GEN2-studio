@@ -47,7 +47,7 @@ const NewIntregationThenTransformDynamic = () => {
   };
 
   const convertMetaData = (imgFormat: string, postfix: string) => {
-    return `meta.SetImage(meta.ReplaceAllString(meta.GetImage(),'${imgFormat}','${imgFormat}${postfix}'))`;
+    return `meta.SetImage(meta.ReplaceAllString(meta.GetImage(),'${imgFormat}','${postfix}${imgFormat}'))`;
   };
 
   const saveAction = async () => {

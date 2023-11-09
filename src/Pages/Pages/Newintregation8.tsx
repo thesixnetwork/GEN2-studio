@@ -109,7 +109,9 @@ export default function Newintregation8() {
     }
 
     const saveOnchainCollectionAttributes = async () => {
-        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
+        const apiUrl = `${
+            import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+          }schema/set_schema_info`; 
         const requestData = {
             "payload": {
                 "schema_info": {
@@ -262,7 +264,9 @@ export default function Newintregation8() {
         // const updatedText = [...text];
         // updatedText[0].duplicate = true;
         setIsLoadingHistory(true)
-        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+        const apiUrl = `${
+            import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+          }schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
         const params = {
         };
         const headers = {
