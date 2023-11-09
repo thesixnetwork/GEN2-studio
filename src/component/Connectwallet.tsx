@@ -41,13 +41,16 @@ const Conectwalet = () => {
   const [chainId, setChainId] = useState("fivenet");
   const [token, setToken] = useState("usix");
   const [rpcEndpoint, setRpcEndpoint] = useState(
-    "https://rpc1.fivenet.sixprotocol.net/"
+    import.meta.env.VITE_APP_RPC1_ENDPOINT_SIX_FIVENET
   );
   const [exponent, setExponent] = useState(1e6);
 
   const [cosmosAddress, setCosmosAddress] = useState("");
 
   const [copied, setCopied] = useState(false);
+
+  const message = import.meta.env.VITE_APP_SIGN_MESSAGE
+
 
   const navigate = useNavigate();
 
@@ -119,14 +122,14 @@ const Conectwalet = () => {
         const signedMessage = await offlineSigner.keplr.signArbitrary(
           chainId,
           cosmosAddress,
-          "My Message"
+          message
         );
         // console.log(signedMessage.signature);
         // console.log(signedMessage.pub_key);
         const verified = await offlineSigner.keplr.verifyArbitrary(
           chainId,
           cosmosAddress,
-          "My Message",
+          message,
           signedMessage
         );
         console.log("verified= ", verified);
@@ -161,15 +164,15 @@ const Conectwalet = () => {
     const signedMessage = await offlineSigner.keplr.signArbitrary(
       chainId,
       cosmosAddress,
-      "My Message"
+      message
     );
     console.log(signedMessage)
     // DB request
-    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/auth/login'; // Replace with your API endpoint
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}auth/login`; // Replace with your API endpoint
     const requestData = {
       "channel": "Keply",
       "ssoID": `${keplrAccounts[0].address}`,
-      "messagge": "My Message",
+      "messagge": message,
       "signature": `${signedMessage.signature}`
     };
     console.log(signedMessage)
@@ -199,7 +202,7 @@ const Conectwalet = () => {
     dispatch(setLoading(false));
     dispatch(setisloggin(true))
   }
-
+  console.log(">>", message)
   return (
     <div className="w-[266px] h-[95px] border-[1px] border-white rounded-xl px-[12px] py-[9px] flex justify-center items-center">
       {walletcounterReducer.loading ? (

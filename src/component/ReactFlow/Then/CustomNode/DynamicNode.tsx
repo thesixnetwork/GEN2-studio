@@ -69,7 +69,7 @@ const DynamicNode = (props: CircleNodeProps) => {
   };
 
   const fetchData = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -167,13 +167,11 @@ const DynamicNode = (props: CircleNodeProps) => {
     const asyncFetchData = async () => {
       await fetchData();
     };
-    if(props.data.showType === "selectAttributeNode" || props.data.showType === "attributeNode"){
       asyncFetchData();
-    }
+  
   }, []);
 
   useEffect(() => {
-    if(props.data.showType === "selectAttributeNode" || props.data.showType === "attributeNode"){
 
       setSelectAttributeValue(
         {
@@ -181,7 +179,6 @@ const DynamicNode = (props: CircleNodeProps) => {
           dataType: props.data.dataType,
         }
         )
-      }
     console.log("Select Attribute Value:", selectAttributeValue, props.data.value);
   }, [ props.data.value]);
 
@@ -319,7 +316,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           type="text"
           name=""
           id=""
-          className="w-16 rounded-full"
+          className="w-16 rounded-full pl-1"
           onChange={(e) => {
             onChange(e);
           }}

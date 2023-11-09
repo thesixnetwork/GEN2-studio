@@ -1,11 +1,5 @@
-import React, { useEffect, useMemo } from "react";
-import { Tooltip } from "@mui/material";
-import Conectwalet from "../component/Connectwallet";
-import Stepper2 from "../component/Stepper2";
-import Darkbg from "../component/Alert/Darkbg";
-import NextPageButton from "../component/NextPageButton";
-import { useState, DragEvent, useRef, useCallback } from "react";
-import Help from "../component/Alert/Help";
+import  { useEffect, useMemo } from "react";
+import { useState, DragEvent, useRef } from "react";
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -25,10 +19,8 @@ import ReactFlow, {
 import "reactflow/dist/base.css";
 import {
   Factory,
-  MetaFunction,
 } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
-import Customnode from "../component/node/Customnode";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
 
 import { useParams } from "react-router-dom";
@@ -36,23 +28,13 @@ import parser_then from "../function/ConvertMetadataToObject/action_then";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 
-import {
-  Tree,
-  adjustParents,
-  adjustTreePosition,
-  drawTree,
-  generateTreeFromReactFlow,
-} from "../function/auto-layout";
 import NormalButton from "../component/NormalButton";
 import {
   getAccessTokenFromLocalStorage,
-  getActionName,
-  getSCHEMA_CODE,
   saveSCHEMA_CODE,
 } from "../helpers/AuthService";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { set } from "lodash";
 
 const initialNodes: Node[] = [
   {
@@ -97,10 +79,8 @@ const BasicFlow = () => {
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
   const { setCenter, project } = useReactFlow();
-  const [redraw, setRedraw] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
-  const [actionName, setactionName] = useState("");
   const [actionData, setActionData] = useState();
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
@@ -765,7 +745,7 @@ const BasicFlow = () => {
   };
 
   const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${param.schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -790,7 +770,7 @@ const BasicFlow = () => {
     console.log("-->", (actionThenArr[actionThenIndex] = metaData));
     console.log("arr= ", actionThenArr);
     const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
+      `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
       let requestData
       if (isCreateNewAction) {
       requestData = {
@@ -913,12 +893,23 @@ const BasicFlow = () => {
           </div>
         </div>
 
-        <div>
+        <div className="flex gap-x-5 justify-center">
+        <div
+            className="flex justify-center"
+            onClick={
+              ()=>{navigate(`/draft/actions/edit/then/${param.action_name}/${param.meta_function}/${param.schema_revision}`)}
+            }
+          >
+            <NormalButton
+              BorderRadius={0}
+              FontSize={32}
+              TextTitle={"BACK"}
+            ></NormalButton>
+          </div>
           <div
             className="flex justify-center"
             onClick={async () => {
               await saveAction();
-              console.log(metaData);
               navigate(`/draft/actions/${param.schema_revision}`);
             }}
           >
@@ -929,16 +920,8 @@ const BasicFlow = () => {
             ></NormalButton>
           </div>
         </div>
-        <button onClick={() => console.log(nodes)}>log</button>
-        <button onClick={() => console.log(edges)}>log edges</button>
-        <button onClick={() => console.log("D-->", selectedAttribute)}>
-          log metaData
-        </button>
-        <button onClick={() => console.log("A-->", param.meta_function)}>
-          AAA
-        </button>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
+      <Flowbar selectedAttribute={selectedAttribute} actionName={param.action_name}></Flowbar>
     </div>
   );
 };

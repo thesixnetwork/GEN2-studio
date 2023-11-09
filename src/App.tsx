@@ -54,8 +54,9 @@ import DraftEditOriginData from './Pages/DraftEditOriginData.tsx';
 export const ABCDE = () => {
   console.log("ABC")
 }
+// import dotenv from "dotenv";
 
-
+// dotenv.config({ path: path.resolve(__dirname, "../.env") });
 const router = createBrowserRouter([
   {
     path: "/",
@@ -200,7 +201,7 @@ function App() {
   const [chainId, setChainId] = useState("fivenet");
   const [token, setToken] = useState("usix");
   const [rpcEndpoint, setRpcEndpoint] = useState(
-    "https://rpc1.fivenet.sixprotocol.net/"
+    import.meta.env.VITE_APP_RPC1_ENDPOINT_SIX_FIVENET
   );
   const [exponent, setExponent] = useState(1e6);
 
@@ -256,7 +257,7 @@ function App() {
 
   setTimeout(() => {
     if (isAccessTokenExpired()) {
-      const apiUrl = 'https://six-gen2-studio-backend-traffic-workers-oxdveggapq-as.a.run.app/auth/refreshToken'; // Replace with your API endpoint
+      const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`; // Replace with your API endpoint
       const requestData = {
         "refresh_token": `${getRefreshTokenFromLocalStorage()}`,
       };

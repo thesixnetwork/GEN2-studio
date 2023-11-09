@@ -1,14 +1,16 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { styled } from "@mui/material";
+import { styled, Tooltip } from "@mui/material";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import dotenv from "dotenv";
+import path from "path";
+// dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-const DraftActionCard = ({ index, data, allAction }) => {
-  const [actions, setActions] = useState(allAction);
+const DraftActionCard = ({ index, data, allAction, isSelected }) => {
   const { schema_revision } = useParams();
   const Delete = styled(ClearIcon)({
     borderRadius: "16px",
@@ -20,6 +22,14 @@ const DraftActionCard = ({ index, data, allAction }) => {
       transform: "scale(1.2)",
     },
   });
+
+  const convertStringIfTooLong = (str, length) => {
+    if (str.length > length) {
+      return str.substring(0, length) + "...";
+    } else {
+      return str;
+    }
+  };
 
   const handleDelete = async () => {
     Swal.fire({
@@ -39,8 +49,9 @@ const DraftActionCard = ({ index, data, allAction }) => {
   };
 
   const saveAction = async () => {
-    const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info";
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_schema_info`;
     const requestData = {
       payload: {
         schema_info: {
@@ -68,8 +79,12 @@ const DraftActionCard = ({ index, data, allAction }) => {
         );
         console.log("Request :", requestData);
         Swal.fire("Deleted!", "Your action has been deleted.", "success");
-        console.log(">",response.data.data.update_schema.schema_info.onchain_data.actions)
-        allAction = response.data.data.update_schema.schema_info.onchain_data.actions;
+        console.log(
+          ">",
+          response.data.data.update_schema.schema_info.onchain_data.actions
+        );
+        allAction =
+          response.data.data.update_schema.schema_info.onchain_data.actions;
       })
       .catch((error) => {
         console.error("API Error:", error);
@@ -77,26 +92,31 @@ const DraftActionCard = ({ index, data, allAction }) => {
   };
 
   return (
-    <div className="border border-white max-w-64 h-24 cursor-pointer hover:bg-opacity-20 hover:bg-white p-2">
-      <div className="flex justify-between">
+    <button
+      className={`flex flex-col items-start border border-white max-w-48 w-48 h-24 cursor-pointer hover:bg-opacity-20 hover:bg-white p-2 focus:bg-white focus:bg-opacity-20`}
+    >
+      <div className="flex w-full justify-between">
         <div className="flex">
           <p className="text-md">Name:&nbsp;</p>
           <span className="text-md underline text-gray-300 decoration-gray-300">
-            {data.name}
+            <Tooltip title={data.name}>
+              {convertStringIfTooLong(data.name, 8)}
+            </Tooltip>
           </span>
         </div>
-
         <div onClick={handleDelete}>
           <Delete />
         </div>
       </div>
-      <div className="flex">
+      <div className="flex flex-col items-start">
         <p className="text-md">Description:&nbsp;</p>
-        <span className="text-md underline text-gray-300 decoration-gray-300">
-          {data.desc}
-        </span>
+        <p className="text-md underline text-gray-300 decoration-gray-300">
+          <Tooltip title={data.desc}>
+            {convertStringIfTooLong(data.desc, 18)}
+          </Tooltip>
+        </p>
       </div>
-    </div>
+    </button>
   );
 };
 

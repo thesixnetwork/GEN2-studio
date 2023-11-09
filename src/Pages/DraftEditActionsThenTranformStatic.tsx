@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Tooltip } from "@mui/material";
+import  { useEffect, useState } from "react";
 
 import EastIcon from "@mui/icons-material/East";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NormalButton from "../component/NormalButton";
 import {
   getAccessTokenFromLocalStorage,
-  getActionName,
-  getSCHEMA_CODE,
+
 } from "../helpers/AuthService";
 import axios from "axios";
 
@@ -21,17 +19,15 @@ const DraftEditActionsThenTranformStatic = () => {
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
-  const convertToBase64 = (str) => {
-    return btoa(str);
-  };
+
 
   const convertFromBase64 = (str) => {
     console.log("str: ", str);
     return atob(str);
   };
   
-  const FindSchemaCode = async () => {
-    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
+  const findSchemaCode = async () => {
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${param.schema_revision}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -86,7 +82,7 @@ const DraftEditActionsThenTranformStatic = () => {
   };
 
   useEffect(() => {
-    FindSchemaCode();
+    findSchemaCode();
   }, []);
 
   useEffect(() => {
@@ -134,7 +130,7 @@ const DraftEditActionsThenTranformStatic = () => {
     actionThenArr[actionThenIndex] = convertMetaData(imgSource);
     console.log(actionThenArr);
     const apiUrl =
-      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
+      `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
       let requestData
       if (isCreateNewAction) {
         requestData = {

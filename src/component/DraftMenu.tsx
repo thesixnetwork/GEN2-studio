@@ -2,7 +2,7 @@ import Conectwalet from "./Connectwallet";
 import NormalButton from "./NormalButton";
 import { Link } from "react-router-dom";
 
-const DraftMenu = ({ menu,schemaCode }) => {
+const DraftMenu = ({ menu,schemaCode,next }) => {
   console.log(menu);
   console.log(schemaCode)
 
@@ -20,7 +20,7 @@ const DraftMenu = ({ menu,schemaCode }) => {
               : "Draft: Actions"}
           </h1>
           <div className="h-full flex items-end pb-2">
-            {menu === "deployment" ? null : (
+            {menu === "deployment" || !next || next === "then" ? null : (
               <Link
                 to={
                   menu === "attributes"
@@ -39,6 +39,21 @@ const DraftMenu = ({ menu,schemaCode }) => {
                 ></NormalButton>
               </Link>
             )}
+            {!next || next === "then" ? ( <Link
+                to={
+                  menu === "actions"
+                    ? `/draft/actions/${schemaCode}`
+                    : next === "then" ? 
+                    `/draft/actions/${schemaCode}`
+                    : "/"
+                }
+              >
+                <NormalButton
+                  TextTitle="BACK"
+                  BorderRadius={0}
+                  FontSize={24}
+                ></NormalButton>
+              </Link>) : null }
           </div>
         </div>
         <Conectwalet></Conectwalet>

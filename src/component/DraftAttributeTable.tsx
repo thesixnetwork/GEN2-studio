@@ -6,10 +6,19 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import narrowIcon from "../pic/draft-narrow-menu.png";
 import { PlusSquareIcon, DeleteIcon } from "@chakra-ui/icons";
-
+import AspectRatioIcon from "@mui/icons-material/AspectRatio";
 import { Box, Flex } from "@chakra-ui/react";
+import { styled } from "@mui/material";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 
-const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
+const DraftAttributeTable = ({
+  type,
+  data,
+  expand,
+  setIsSave,
+  whichExpand,
+  setWhichExpand,
+}) => {
   const param = useParams();
   const [isData, setIsData] = useState(data);
 
@@ -17,6 +26,27 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
   const [editableRow, setEditableRow] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
 
+  const Expand = styled(AspectRatioIcon)({
+    cursor: "pointer",
+    transition: "transform 0.3s",
+
+    "&:hover": {
+      transform: "scale(1.2)",
+    },
+  });
+
+  const Collapse = styled(CloseFullscreenIcon)({
+    cursor: "pointer",
+    transition: "transform 0.3s",
+
+    "&:hover": {
+      transform: "scale(1.2)",
+    },
+  });
+
+  const handleExpand = () => {
+    setWhichExpand(type);
+  };
   const handleEditClick = (index) => {
     setIsEdit(true);
     if (type === "originAttributes") {
@@ -96,8 +126,6 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
     }
   };
 
-
-
   useEffect(() => {
     console.log("---?");
   }, [type, data]);
@@ -168,37 +196,32 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
       } border-2 border-white rounded-xl`}
     >
       <div className="flex w-full justify-between p-3">
-        <p className="text-xl">
-          {type === "originAttributes"
-            ? "Origin Attributes"
-            : type === "collectionAttributes"
-            ? "Collection Attributes"
-            : type === "tokenAttributes"
-            ? "Token Attributes"
-            : null}
-        </p>
+        <div className="flex items-center justify-center">
+          <p className="text-xl">
+            {type === "originAttributes"
+              ? "Origin Attributes"
+              : type === "collectionAttributes"
+              ? "Collection Attributes"
+              : type === "tokenAttributes"
+              ? "Token Attributes"
+              : null}
+          </p>
+          <PlusSquareIcon
+            sx={{ cursor: "pointer" }}
+            onClick={() => addDataTable()}
+          />
+        </div>
         {expand === true ? (
-          <Link to={`/draft/attributes/${param.schema_revision}`}>
-            <img
-              src={narrowIcon}
-              alt="narrow-menu"
-              className="w-4 h-4 cursor-pointer hover:scale-125 duration-300"
-            />
-          </Link>
+          <div onClick={() => setWhichExpand("none")}>
+            <Collapse />
+          </div>
         ) : (
-          <Link to={`/draft/attributes/${type}/${param.schema_revision}`}>
-            <img
-              src={expandIcon}
-              alt="expand-menu"
-              className="w-4 h-4 cursor-pointer hover:scale-125 duration-300"
-            />
-          </Link>
+          <div onClick={() => handleExpand()}>
+            <Expand />
+          </div>
         )}
-        {/* <button onClick={() => console.log(data)}>log</button> */}
-        <PlusSquareIcon onClick={() => addDataTable()} />
       </div>
       <div className="w-full max-h-[320px] flex justify-center items-center overflow-scroll">
-
         {data.length === 0 ? (
           <div className="h-full">
             <p>NO DATA</p>
@@ -269,10 +292,14 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                       onBlur={(e) =>
                         handleCellChange(index, "name", e.target.innerText)
                       }
+                      onDoubleClick={() => handleEditClick(index)}
                     >
                       {item.name}
                     </td>
-                    <td className="border border-white">
+                    <td
+                      className="border border-white"
+                      onDoubleClick={() => handleEditClick(index)}
+                    >
                       <div className="flex justify-evenly">
                         {["string", "number", "boolean"].map((type) => (
                           <button
@@ -287,7 +314,7 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                               }
                             }}
                             id={type}
-                            className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                            className={` cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
                               item.data_type === type
                                 ? "bg-[#D9D9D975]"
                                 : "bg-transparent"
@@ -312,6 +339,7 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                           e.target.innerText
                         )
                       }
+                      onDoubleClick={() => handleEditClick(index)}
                     >
                       {item.display_option.opensea.trait_type}
                     </td>
@@ -319,6 +347,7 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                       <td
                         className="border border-white"
                         contentEditable={editableRow === index}
+                        onDoubleClick={() => handleEditClick(index)}
                         onBlur={(e) =>
                           handleCellChange(
                             index,
@@ -343,7 +372,9 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                               .value}
                       </td>
                     )}
-                    <th className="border border-white  ">
+                    <td className="border border-white  "
+                                          onDoubleClick={() => handleEditClick(index)}
+                                          >
                       <Flex>
                         <DeleteIcon />
                         {editableRow === index ? (
@@ -362,23 +393,7 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                           />
                         )}
                       </Flex>
-                      {/* <PlusSquareIcon/>
-                      {editableRow === index ? (
-                        <img
-                        src={saveIcon}
-                        alt="save"
-                        className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
-                        onClick={handleSaveClick}
-                        />
-                        ) : (
-                          <img
-                          src={editIcon}
-                          alt="edit"
-                          className="w-4 h-4 cursor-pointer m-auto  hover:scale-125 duration-300"
-                          onClick={() => handleEditClick(index)}
-                        />
-                      )} */}
-                    </th>
+                    </td>
                   </tr>
                 ))}
             </tbody>
