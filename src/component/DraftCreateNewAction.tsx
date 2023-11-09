@@ -16,6 +16,7 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import RedAleart from "./Alert/RedAleart";
+import Swal from "sweetalert2";
 
 const DraftCreateNewAction = ( {actions,setActions}) => {
   const [actionNameValue, setActionNameValue] = useState("");
@@ -58,9 +59,21 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
         console.log(">>",response.data)
         console.log(">>>",response.data.data.schema_info.schema_info.onchain_data.actions)
         setActions([...actions,response.data.data.schema_info.schema_info.onchain_data.actions[response.data.data.schema_info.schema_info.onchain_data.actions.length-1]])
+        Swal.fire({
+          icon: "success",
+          title: "Create Action Success!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       })
       .catch((error) => {
         console.error("API Error:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Something Went Wrong!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       });
   };
 
