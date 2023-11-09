@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Tooltip } from "@mui/material";
 
 import Add from "../pic/Group 40.png";
@@ -37,6 +37,10 @@ const DraftAttributes = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState()
   const [isSave, setIsSave] = useState({"originattributes":true,"collectionattributes":true,"tokenattributes":true});
+  // const [isCheckErrorName, setIsCheckErrorName] = useState(false);
+  const isCheckErrorName = useRef(false);
+
+  
 
   const { schema_revision } = useParams();
 
@@ -81,6 +85,17 @@ const DraftAttributes = () => {
 
   const saveData = async () => {
 
+    if(isCheckErrorName.current){
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Plase check errors again",
+        showConfirmButton: true,
+      });
+
+      return;
+    }
+
     const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info';
     const requestData = {
       "payload": {
@@ -99,8 +114,8 @@ const DraftAttributes = () => {
         },
       })
         .then(response => {
-          console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
-          console.log("Request :",requestData)
+          // console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
+          // console.log("Request :",requestData)
           // You can handle the API response here
            Swal.fire({
             position: "center",
@@ -133,7 +148,7 @@ const DraftAttributes = () => {
 
   }
 
-  console.log("data ===>",data)
+  // console.log("data ===>",data)
   
   useEffect(() => {
     FindSchemaCode();
@@ -155,12 +170,14 @@ const DraftAttributes = () => {
                       expand={false}
                       data={data.origin_data.origin_attributes}
                       setIsSave={setIsSave}
+                      isCheckErrorName={isCheckErrorName}
                       />
                     <DraftAttributeTable
                       type="collectionAttributes"
                       expand={false}
                       data={data.onchain_data.nft_attributes}
                       setIsSave={setIsSave}
+                      isCheckErrorName={isCheckErrorName}
                       />
                   </div>
                   <DraftAttributeTable
@@ -168,6 +185,7 @@ const DraftAttributes = () => {
                     expand={false}
                     data={data.onchain_data.token_attributes}
                     setIsSave={setIsSave}
+                    isCheckErrorName={isCheckErrorName}
                   />
                 </div>
               ) : (

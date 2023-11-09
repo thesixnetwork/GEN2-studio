@@ -6,18 +6,67 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import narrowIcon from "../pic/draft-narrow-menu.png";
 import { PlusSquareIcon, DeleteIcon } from "@chakra-ui/icons";
+import { ItokenAttributes } from "../types/Nftmngr";
 
 import { Box, Flex } from "@chakra-ui/react";
 
-const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
+const DraftAttributeTable = ({
+  type,
+  data,
+  expand,
+  setIsSave,
+  isCheckErrorName,
+}) => {
+  interface IerrorName {
+    isIndex: number;
+  }
+
   const param = useParams();
   const [isData, setIsData] = useState(data);
 
   const [selectedItem, setSelectedItem] = useState("");
+  const [selectedItem2, setSelectedItem2] = useState("");
   const [editableRow, setEditableRow] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [errorRows, setErrorRows] = useState([]);
+  const [isErrorObj, setIsErrorObj] = useState(false);
+  const [errorName, setErrorName] = useState<IerrorName[]>([]);
+  const [errorMessag, setErrorMessage] = useState("");
+  const [errorInRows, setErrorInRows] = useState(isData);
 
+  function containsSpecialChars(str: string) {
+    const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+    return specialChars.test(str);
+  }
+
+  function containsSpace(str: string) {
+    const specialChars = / /;
+    return specialChars.test(str);
+  }
+
+  function containsUppercase(str: string) {
+    return /[A-Z]/.test(str);
+  }
+
+  function containsSame(str: string) {
+    // const result = await data.filter((x: ItokenAttributes) => x.name === str);
+    for (let index = 0; index < data.length; index++) {
+      const x = data[index];
+      if (x.name === str) {
+        // console.log("same true")
+        return true;
+      }
+    return false;
+
+    }
+    // console.log(result.length)
+    // if (result.length > 1) {
+    //   console.log("same true")
+    //   return true;
+    // }
+    // console.log("same false")
+
+    // return false;
+  }
 
   const handleEditClick = (index) => {
     setIsEdit(true);
@@ -26,8 +75,8 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
         ...prevState,
         originattributes: false,
       }));
-      console.log("index", index)
-      console.log("index", data[index])
+      // console.log("index", index);
+      // console.log("index", data[index]);
     } else if (type === "collectionAttributes") {
       setIsSave((prevState) => ({
         ...prevState,
@@ -64,8 +113,171 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
     setEditableRow(null);
   };
 
+  const handelErrValue = async (value: string, index: number) => {
+    const newData = [...errorInRows];
+    const currentObj = newData[index];
+    currentObj.hasConflict = false;
+    // console.log("kkkk22222 ==>", currentObj["default_mint_value"]);
+    // console.log("kkkk22222 ==>", index);
+    if (currentObj["default_mint_value"]["string_attribute_value"]) {
+      const isError = await checkValueAndDataType(value, "string");
+      if (isError) {
+        currentObj.hasConflict = true;
+      }
+      // console.log("isErrorString ==>", isError);
+    } else if (currentObj["default_mint_value"]["number_attribute_value"]) {
+      const isError = await checkValueAndDataType(value, "number");
+      if (isError) {
+        currentObj.hasConflict = true;
+      }
+      // console.log("isError ==>", isError);
+      // console.log("isError ==>", value);
+    } else if (currentObj["default_mint_value"]["boolean_attribute_value"]) {
+      const isError = await checkValueAndDataType(value, "boolean");
+      if (isError) {
+        currentObj.hasConflict = true;
+      }
+      // console.log("isError ==>", isError);
+    }
+  };
+
+  const checkValueAndDataType = async (str: string, data_type: string) => {
+    if (data_type === "string") {
+      if (str === "true" || str === "false") {
+        return "Value is not of type string";
+      }
+
+      // if (!/^[a-z]*$/.test(str) && typeof str === "string") {
+      //   if (str.includes(".")) {
+      //     return "Value is not of type string";
+      //   }
+      //   return "Value is not of type string";
+      // }
+      return false;
+    }
+
+    if (data_type === "number") {
+      if (!str && str != "0") {
+        return "Value is not of type number";
+      }
+
+      if (str === "true" || str === "false") {
+        return "Value is not of type number";
+      }
+
+      if (!/^[0-9]*$/.test(str) && typeof str === "string") {
+        if (str.includes(".")) {
+          return "Value is not of type number";
+        }
+        // console.log("number 111223");
+        return "Value is not of type number";
+      }
+      return false;
+    }
+
+    if (data_type === "boolean") {
+      if (str.toString() !== "true" && str.toString() !== "false") {
+        return "Value is not of type boolean";
+      }
+      return false;
+    }
+
+    return;
+  };
+
+  const checkErrorValueName = async (str: string, index: number) => {
+    if (!str) {
+      const data = {
+        isIndex: index,
+      };
+      console.log("!!!!!str ==>",str)
+
+      setErrorName([...errorName, data]);
+      setErrorMessage("Not Availible");
+    } else if (await containsSame(str)) {
+      const data = {
+        isIndex: index,
+      };
+      console.log("Not Same ==>",str)
+      setErrorName([...errorName, data]);
+      setErrorMessage("Not Same");
+    } else if (containsSpecialChars(str)) {
+      const data = {
+        isIndex: index,
+      };
+      console.log("Sp Chars ==>",str)
+
+      setErrorName([...errorName, data]);
+      setErrorMessage("Sp Chars");
+    } else if (containsSpace(str)) {
+      const data = {
+        isIndex: index,
+      };
+      console.log("Space ==>",str)
+
+      setErrorName([...errorName, data]);
+      setErrorMessage("Space");
+    } else if (containsUppercase(str)) {
+      const data = {
+        isIndex: index,
+      };
+      setErrorName([...errorName, data]);
+      setErrorMessage("Uppercase");
+    } else {
+      const result = errorName.filter((x: IerrorName) => x.isIndex !== index);
+      setErrorName(result);
+    }
+  };
+
+  // console.log(errorName)
+  const checkErrorNameObj = async (obj: ItokenAttributes[]) => {
+    // obj.map((x: ItokenAttributes, index: number) => {
+    for (let index = 0; index < obj.length; index++) {
+        const x = obj[index];
+      // console.log("x.name",x.name)
+      if (!x.name) {
+        const data = {
+          isIndex: index,
+        };
+        setErrorName([...errorName, data]);
+        setErrorMessage("Not Availible");
+      } else if (await containsSame(x.name)) {
+        const data = {
+          isIndex: index,
+        };
+        setErrorName([...errorName, data]);
+        setErrorMessage("Not Same");
+      } else if (containsSpecialChars(x.name)) {
+        const data = {
+          isIndex: index,
+        };
+        setErrorName([...errorName, data]);
+        setErrorMessage("Sp Chars");
+      } else if (containsSpace(x.name)) {
+        const data = {
+          isIndex: index,
+        };
+      // console.log("x.name Space",x.name)
+
+        setErrorName([...errorName, data]);
+        setErrorMessage("Space");
+      } else if (containsUppercase(x.name)) {
+        const data = {
+          isIndex: index,
+        };
+        setErrorName([...errorName, data]);
+        setErrorMessage("Uppercase");
+      } else {
+        // console.log("x.name errorName",containsSpace(x.name))
+
+        const result = errorName.filter((x: IerrorName) => x.isIndex !== index);
+        setErrorName(result);
+      }
+    };
+  };
+
   const handleCellChange = (index, field, value) => {
-    console.log(`item.data_type ${index}: ${value}`);
+    // console.log(`item.data_type ${index}: ${value}`);
     const newData = [...data];
     const fieldParts = field.split(".");
 
@@ -75,23 +287,25 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
     }
     currentObj[fieldParts[fieldParts.length - 1]] = value;
     // console.log("currentObj[fieldParts[fieldParts.length - 1]]",currentObj[fieldParts[fieldParts.length - 1]])
-    console.log("Value currentObj", currentObj["default_mint_value"])
-    console.log("Value", value)
+    // console.log("Value currentObj", currentObj["default_mint_value"])
+    // console.log("Value", value)
+    // console.log("Value", value)
+    // console.log(errorInRows)
+
     if (value === "string") {
       if (type !== "originAttributes") {
         currentObj["default_mint_value"] = {
           string_attribute_value: { value: "" },
         };
-        console.log("Value currentObj", currentObj["default_mint_value"])
+        // console.log("Value currentObj", currentObj["default_mint_value"])
       }
       // if (newData[index].data_type !== 'number' || newData[index].value !== '123') {
       //   currentObj.hasConflict = true;
       // } else {
       //   currentObj.hasConflict = false;
       // }
-    // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
-
-
+      // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
+      // handelErrValue(value,index)
       setSelectedItem("string");
     } else if (value === "number") {
       if (type !== "originAttributes") {
@@ -108,38 +322,63 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
       }
       setSelectedItem("boolean");
     }
+
+    // handelErrValue(value,index)
   };
 
   const handleCellChange2 = (index, field, value) => {
     // ทำการตรวจสอบค่า value ที่คุณต้องการ
-    const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
-    
-    if (!isValid) {
-      // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
-    } else {
-      setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
-    }
-  
-    if (isValid) {
-      // บันทึกข้อมูลเมื่อค่าถูกต้อง
+    // const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
+    const newData = [...data];
+    // const fieldParts = field.split(".");
+
+    const currentObj = newData[index];
+    // console.log("handleCellChange2 ===>", currentObj);
+    // console.log("field ===>", field);
+    if (field === "boolean") {
+      if (value) {
+        currentObj["default_mint_value"] = {
+          boolean_attribute_value: { value: true },
+        };
+        setSelectedItem2("true");
+      } else {
+        currentObj["default_mint_value"] = {
+          boolean_attribute_value: { value: false },
+        };
+        setSelectedItem2("false");
+      }
+    } else if (field === "number") {
+      // console.log("currentObj[default_mint_value]", currentObj["data_type"]);
+
+      if (value.includes(".")) {
+        currentObj["data_type"] = "float";
+        currentObj["default_mint_value"] = {
+          float_attribute_value: { value: value },
+        };
+        setSelectedItem2("float");
+      } else {
+        currentObj["data_type"] = "number";
+        currentObj["default_mint_value"] = {
+          number_attribute_value: { value: parseInt(value) },
+        };
+        setSelectedItem2("number");
+      }
     }
   };
-  
-  
-
 
   useEffect(() => {
-    console.log("---?");
-  }, [type, data]);
+    if (errorName.length > 0) {
+      isCheckErrorName.current = true;
+    } else {
+      isCheckErrorName.current = false;
+    }
+  }, [errorName]);
 
   const addDataTable = async () => {
-    // let newRow
-    // console.log("OriginAtt =>",OriginAtt)
-    // const newRow = OriginAtt
     if (type === "originAttributes") {
       const newRow = {
         name: "",
-        data_type: "",
+        data_type: "string",
         required: false,
         display_value_field: "",
         display_option: {
@@ -187,19 +426,33 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
     }
     // data.push(newRow);
     // setIsData([...isData, newRow]);
-    // console.log(isData)
   };
 
   const handelDel = (index: number) => {
     data.splice(index, 1);
     setIsData(data);
-  }
+  };
 
-  const handelErrValue = (e) => {
-    console.log("kkkk ==>",e)
-  }
-  
-  console.log(data);
+  const handleErrorName = (index: number) => {
+    const findError = errorName.filter((x: IerrorName) => x.isIndex === index);
+    if (!findError || !Array.isArray(findError) || !findError.length) {
+      return false;
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await checkErrorNameObj(data);
+      // ทำอย่างอื่นที่คุณต้องการในนี้
+    };
+
+    fetchData();
+  }, [isErrorObj]);
+
+  // const handleCheckValue = (text: string, index: number) => {
+  // };
+  // console.log(data);
 
   return (
     <div
@@ -298,16 +551,16 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                 data.map((item, index) => (
                   <tr
                     key={index}
-                  //   className={`border border-white bg-[#B9BAC2] 
-                  //   ${
-                  //     editableRow === index ? "bg-blue-200" : ""
-                  //   }`
-                  // }
-                  className={`border border-white 
-                  ${item.hasConflict ? 'bg-red-500' : 'bg-[#B9BAC2]'}
+                    //   className={`border border-white bg-[#B9BAC2]
+                    //   ${
+                    //     editableRow === index ? "bg-blue-200" : ""
+                    //   }`
+                    // }
+                    className={`border border-white 
+
                   ${editableRow === index ? "bg-blue-200" : ""}`}
                   >
-                    <td
+                    {/* <td
                       className="border border-white"
                       contentEditable={editableRow === index}
                       onBlur={(e) =>
@@ -315,6 +568,32 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                       }
                     >
                       {item.name}
+                    </td> */}
+                    <td className="border border-white">
+                      <div
+                        className={`flex justify-evenly ${
+                          handleErrorName(index)
+                            ? "border-[1px] border-red-500 w-[100%]"
+                            : ""
+                        }`}
+                      >
+                        {/* {console.log(item.default_mint_value)} */}
+                        <input
+                          type="text"
+                          defaultValue={item.name}
+                          onChange={(e) => {
+                            if (isEdit) {
+                              // console.log(e.target.value);
+                              // console.log(item.default_mint_value)
+                              handleCellChange(index, "name", e.target.value);
+                              checkErrorValueName(e.target.value, index);
+                            }
+                          }}
+                          // onBlur={fetchError}
+                          className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[100%]"
+                          placeholder="Add name here"
+                        />
+                      </div>
                     </td>
                     <td className="border border-white">
                       <div className="flex justify-evenly">
@@ -332,7 +611,8 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                             }}
                             id={type}
                             className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                              item.data_type === type
+                              item.data_type === type ||
+                              (item.data_type === "float" && type === "number")
                                 ? "bg-[#D9D9D975]"
                                 : "bg-transparent"
                             }`}
@@ -359,38 +639,143 @@ const DraftAttributeTable = ({ type, data, expand, setIsSave }) => {
                     >
                       {item.display_option.opensea.trait_type}
                     </td>
-                    {type === "originAttributes" ? null : (
-                      <td
-                        className="border border-white"
-                        contentEditable={editableRow === index}
-                        // onChange={(e) => handelErrValue(e.target.innerText)}
-                        onBlur={(e) =>
-                          handleCellChange(
-                            index,
-                            item.data_type === "number"
-                              ? "default_mint_value.number_attribute_value.value"
-                              : item.data_type === "float"
-                              ? "default_mint_value.float_attribute_value.value"
-                              : item.data_type === "boolean"
-                              ? "default_mint_value.boolean_attribute_value.value"
-                              : "default_mint_value.string_attribute_value.value",
-                            e.target.innerText
-                          )
-                        }
-                      >
-                        {item.data_type === "number"
-                          ? item.default_mint_value.number_attribute_value.value
-                          : item.data_type === "float"
-                          ? item.default_mint_value.float_attribute_value.value
-                          : item.data_type === "boolean"
-                          ? item.default_mint_value.boolean_attribute_value.value.toString()
-                          : item.default_mint_value.string_attribute_value
-                              .value}
-                      </td>
-                    )}
+                    {type !== "originAttributes" &&
+                      item.data_type === "string" && (
+                        <td
+                          className={`border ${
+                            item.hasConflict ? "border-red-500" : "border-white"
+                          }`}
+                          contentEditable={editableRow === index}
+                          // onChange={() => handleCheckValue("dd",index)}
+                          onBlur={(e) => {
+                            handleCellChange(
+                              index,
+                              item.data_type === "number"
+                                ? "default_mint_value.number_attribute_value.value"
+                                : item.data_type === "float"
+                                ? "default_mint_value.float_attribute_value.value"
+                                : item.data_type === "boolean"
+                                ? "default_mint_value.boolean_attribute_value.value"
+                                : "default_mint_value.string_attribute_value.value",
+                              e.target.innerText
+                            );
+                            handelErrValue(e.target.innerText, index);
+                          }}
+                        >
+                          {item.data_type === "number"
+                            ? item.default_mint_value.number_attribute_value
+                                .value
+                            : item.data_type === "float"
+                            ? item.default_mint_value.float_attribute_value
+                                .value
+                            : item.data_type === "boolean"
+                            ? item.default_mint_value.boolean_attribute_value.value.toString()
+                            : item.default_mint_value.string_attribute_value
+                                .value}
+                        </td>
+                      )}
+
+                    {type !== "originAttributes" &&
+                      item.data_type === "boolean" && (
+                        <div className="flex justify-evenly">
+                          {["true", "false"].map((type) => (
+                            <button
+                              key={type}
+                              onClick={(e) => {
+                                // {console.log("e.currentTarget.id ", JSON.parse(e.currentTarget.id) )}
+                                if (isEdit) {
+                                  handleCellChange2(
+                                    index,
+                                    "boolean",
+                                    JSON.parse(e.currentTarget.id)
+                                  );
+                                }
+                              }}
+                              id={type}
+                              className={`cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                                item.default_mint_value.boolean_attribute_value
+                                  .value === JSON.parse(type)
+                                  ? "bg-[#D9D9D975]"
+                                  : "bg-transparent"
+                              }`}
+                            >
+                              {/* {console.log(
+                                "item.default_mint_va",
+                                item.default_mint_value.boolean_attribute_value
+                                  .value === true
+                              )} */}
+                              {type === "true" ? "yes" : "no"}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                    {type !== "originAttributes" &&
+                      item.data_type === "number" && (
+                        <div className="flex justify-evenly">
+                          {/* {console.log(item.default_mint_value)} */}
+                          <input
+                            type="number"
+                            step="0.10"
+                            defaultValue={
+                              item.data_type === "number"
+                                ? item.default_mint_value.number_attribute_value
+                                    .value
+                                : item.default_mint_value.float_attribute_value
+                                    .value
+                            }
+                            onChange={(e) => {
+                              if (isEdit) {
+                                // console.log(e.target.value);
+                                // console.log(item.default_mint_value)
+                                handleCellChange2(
+                                  index,
+                                  "number",
+                                  e.target.value
+                                );
+                              }
+                            }}
+                            // onBlur={fetchError}
+                            className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
+                            placeholder="Add trait type here"
+                          />
+                        </div>
+                      )}
+
+                    {type !== "originAttributes" &&
+                      item.data_type === "float" && (
+                        <div className="flex justify-evenly">
+                          {/* {console.log(item.default_mint_value)} */}
+                          <input
+                            type="number"
+                            step="0.10"
+                            defaultValue={
+                              item.data_type === "number"
+                                ? item.default_mint_value.number_attribute_value
+                                    .value
+                                : item.default_mint_value.float_attribute_value
+                                    .value
+                            }
+                            onChange={(e) => {
+                              if (isEdit) {
+                                // console.log(e.target.value);
+                                // console.log(item.default_mint_value)
+                                handleCellChange2(
+                                  index,
+                                  "number",
+                                  e.target.value
+                                );
+                              }
+                            }}
+                            // onBlur={fetchError}
+                            className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
+                            placeholder="Add trait type here"
+                          />
+                        </div>
+                      )}
                     <th className="border border-white  ">
                       <Flex>
-                        <DeleteIcon onClick={() => handelDel(index)}/>
+                        <DeleteIcon onClick={() => handelDel(index)} />
                         {editableRow === index ? (
                           <img
                             src={saveIcon}
