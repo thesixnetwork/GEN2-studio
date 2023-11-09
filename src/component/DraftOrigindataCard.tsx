@@ -11,6 +11,7 @@ import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthS
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { createTheme } from '@mui/material';
+import NormalButton from './NormalButton';
 
 interface ComponentProps {
     Title: string[]
@@ -24,6 +25,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
     // console.log("Info :", Props.Info)
     const [loading, setLoading] = useState(false)
     const [isInputDisabledOriginChain, setisInputDisabledOriginChain] = useState(true)
+    const [isInputDisabledCollectionData, setisInputDisabledCollectionData] = useState(true)
     const [schemaInfo, setschemaInfo] = useState({})
     const [FirstschemaInfo, setFirstschemaInfo] = useState({})
     const [selectedNetwork, setSelectedNetwork] = useState('1');
@@ -39,10 +41,10 @@ function DraftOrigindataCard(Props: ComponentProps) {
     const handleRefresh = () => {
         window.location.reload();
     };
-          
+
     const DISCARD = () => {
-        // setschemaInfo(FirstschemaInfo);
-        console.log("FirstschemaInfo :", FirstschemaInfo)
+        setschemaInfo(FirstschemaInfo);
+        console.log("schemaInfo :", FirstschemaInfo)
         // console.log("schemaInfo :", schemaInfo)
         // setschemaInfo((prevState) => {
         //     const newState = { ...prevState };
@@ -56,14 +58,12 @@ function DraftOrigindataCard(Props: ComponentProps) {
     // console.log("schemaInfo :",schemaInfo.schema_info)
 
 
-    useEffect(() => {
-        DISCARD()
-        handleResetDefault()
-    }, [Props.Discard])
+    
 
     const saveData = async () => {
         
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`;
+
         const requestData = {
             "payload": {
                 "schema_info": schemaInfo.schema_info,
@@ -105,14 +105,14 @@ function DraftOrigindataCard(Props: ComponentProps) {
             });
     }
 
-    useEffect(() => {
-        // setData((prevState) => ({
-        //     ...prevState,
-        //     "name": schemaInfo.collectionname,
-        // }));
-        console.log("Props.Save :", Props.Save)
-        saveData()
-    }, [Props.Save])
+    // useEffect(() => {
+    //     // setData((prevState) => ({
+    //     //     ...prevState,
+    //     //     "name": schemaInfo.collectionname,
+    //     // }));
+    //     console.log("Props.Save :", Props.Save)
+    //     saveData()
+    // }, [Props.Save])
 
     // useEffect(() => {
 
@@ -170,7 +170,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
 
     useEffect(() => {
         FindSchemaCode();
-    },[])
+    }, [])
 
     const handleNetworkChange = (event) => {
         // Add your condition here
@@ -227,7 +227,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
         <div className=' w-full flex flex-col justify-center items-center'>
             <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
                 <div
-                    onClick={() => setisInputDisabledOriginChain(!isInputDisabledOriginChain)}
+                    onClick={() => setisInputDisabledCollectionData(!isInputDisabledCollectionData)}
                     className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
                     <EditIcon></EditIcon>
                 </div>
@@ -243,7 +243,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 onChange={(e) => {
                                     handleChangeValue(e, "schema_info.schema_name");
                                 }}
-                                className={` w-[20%]  bg-transparent text-[14px] border-[1px] border-none placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                                className={` w-[20%]  bg-transparent text-[14px] border-[1px] border-none placeholder-gray-300  p-1 focus:outline-none focus:scale-105 duration-500 `}
                             ></input>
                         </div>
                         <div className=' flex  justify-start items-end mt-5'>
@@ -251,11 +251,11 @@ function DraftOrigindataCard(Props: ComponentProps) {
                             <input
                                 value={schemaInfo.schema_info.name}
                                 type="text"
-                                disabled={isInputDisabledOriginChain}
+                                disabled={isInputDisabledCollectionData}
                                 onChange={(e) => {
                                     handleChangeValue(e, "schema_info.schema_info.name");
                                 }}
-                                className={` w-[30%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                                className={` w-[30%] bg-transparent text-[14px] border-[1px] ${isInputDisabledCollectionData ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105  w-[140px]`}
                             ></input>
                         </div>
                         <div className=' flex  justify-start items-end mt-5'>
@@ -263,11 +263,11 @@ function DraftOrigindataCard(Props: ComponentProps) {
                             <input
                                 value={schemaInfo.schema_info.description}
                                 type="text"
-                                disabled={isInputDisabledOriginChain}
+                                disabled={isInputDisabledCollectionData}
                                 onChange={(e) => {
                                     handleChangeValue(e, "schema_info.schema_info.description");
                                 }}
-                                className={`w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                                className={`w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledCollectionData ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105  w-[140px]`}
                             ></input>
                         </div>
                     </div>
@@ -314,7 +314,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 onChange={(e) => {
                                     handleChangeValue(e, "schema_info.origin_data.origin_contract_address");
                                 }}
-                                className={` w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                                className={` w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 w-[140px]`}
                             ></input>
                         </div>
                         <div className=' flex  justify-start items-end mt-5'>
@@ -326,11 +326,29 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 onChange={(e) => {
                                     handleChangeValue(e, "schema_info.origin_data.origin_base_uri");
                                 }}
-                                className={` w-[70%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-500 w-[140px]`}
+                                className={` w-[70%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 w-[140px]`}
                             ></input>
                         </div>
                     </div>
                 )}
+            </div>
+
+            <div className="  h-[7%] mt-4 items-center w-full flex justify-center gap-x-8">
+                <div className="w-32" onClick={() => { saveData() }} >
+                    <NormalButton
+                        TextTitle="SAVE"
+                        BorderRadius={0}
+                        FontSize={24}
+                    ></NormalButton>
+                </div>
+                <div className="w-32" onClick={() => { DISCARD()}} >
+                    <NormalButton
+                        TextTitle="DISCARD"
+                        BorderRadius={0}
+                        FontSize={24}
+                    ></NormalButton>
+                </div>
+
             </div>
         </div>
     )

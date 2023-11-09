@@ -121,7 +121,7 @@ export default function AttributeBox(props: MyComponentProps) {
     }
 
 
-    const handleChange = (e, fieldPath) => {
+    const handleChange = (text, fieldPath) => {
         const updatedText = [...props.text];
         const fieldPathArray = fieldPath.split('.'); // Split the fieldPath into an array of nested properties
 
@@ -131,7 +131,8 @@ export default function AttributeBox(props: MyComponentProps) {
         }
 
         const lastField = fieldPathArray[fieldPathArray.length - 1];
-        target[lastField] = e.target.value;
+        
+        target[lastField] = text;
 
         // console.log("TEXT:",updatedText[props.index]);
         props.setText(updatedText);
@@ -154,7 +155,7 @@ export default function AttributeBox(props: MyComponentProps) {
             setErrorMessage("Not Availible")
             setIser(true)
         }
-        else if (!props.text[props.index].data_type){
+        else if (!props.text[props.index].data_type) {
             setErrorMessage("Need Data Type");
             setIser(true)
         }
@@ -203,7 +204,7 @@ export default function AttributeBox(props: MyComponentProps) {
         if (!e.target.value) {
             setErrorMessage("Not Availible")
             setIser(true)
-        } 
+        }
         else if (containsSame(e.target.value)) {
             setErrorMessage("Name can't be same")
             setIser(true)
@@ -231,7 +232,7 @@ export default function AttributeBox(props: MyComponentProps) {
         if (!e.target.value) {
             setErrorMessage("Not Availible")
             setIser(true)
-        } else if (!props.text[props.index].data_type){
+        } else if (!props.text[props.index].data_type) {
             setErrorMessage("Need Data Type");
             setIser(true)
 
@@ -523,7 +524,9 @@ export default function AttributeBox(props: MyComponentProps) {
                         type="text"
                         value={props.Name}
                         onChange={async (e) => {
-                            await handleChange(e, "name");
+                            const inputText = e.target.value;
+                            const lowercaseText = inputText.toLowerCase();
+                            await handleChange(lowercaseText, "name");
                             await CheckErrorI(e);
                             await CheckT();
 
@@ -537,7 +540,7 @@ export default function AttributeBox(props: MyComponentProps) {
                     Data type :&ensp;{" "}
                     <div className="flex w-[160px] justify-between">
                         <div
-                            onClick={(e) => { changeBgColorButton(e); checkErrorIII();  }}
+                            onClick={(e) => { changeBgColorButton(e); checkErrorIII(); }}
                             // onMouseLeave={() => fetchError()}
                             id="string"
                             className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${props.text[props.index].data_type === 'string' ? 'bg-[#D9D9D975]' : 'bg-transparent'}`}
@@ -570,7 +573,7 @@ export default function AttributeBox(props: MyComponentProps) {
                         type="text"
                         value={props.TraitType}
                         onChange={(e) => {
-                            handleChange(e, "display_option.opensea.trait_type");
+                            handleChange(e.target.value, "display_option.opensea.trait_type");
                             checkErrorII(e)
                         }}
                         // onBlur={fetchError}

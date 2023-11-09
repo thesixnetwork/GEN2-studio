@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Tooltip } from "@mui/material";
+import { CircularProgress, Tooltip } from "@mui/material";
 
 import Add from "../pic/Group 40.png";
 
@@ -18,6 +18,7 @@ import axios from "axios";
 
 const NewIntregation7 = () => {
 
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [isShow, setIsShow] = useState(false);
   const [save, setSave] = useState(false);
   const navigate = useNavigate();
@@ -125,7 +126,7 @@ const NewIntregation7 = () => {
   }
 
   const handleSave = async () => {
-    
+
     setSave(true);
     searchError()
     setTimeout(() => {
@@ -139,7 +140,7 @@ const NewIntregation7 = () => {
   const handleCreateAttribute = () => {
     const newAttribute = {
       "name": "",
-      "data_type": "",
+      "data_type": "string",
       "required": false,
       "display_value_field": "",
       "display_option": {
@@ -155,7 +156,7 @@ const NewIntregation7 = () => {
       "hidden_overide": false,
       "hidden_to_marketplace": false
     };
-    setText([...text,newAttribute]);
+    setText([...text, newAttribute]);
   };
 
   const [helpStep, sethelpStep] = useState(0)
@@ -180,10 +181,10 @@ const NewIntregation7 = () => {
       "payload": {
         "schema_info": {
           "origin_data": {
-            "origin_attributes": text     
+            "origin_attributes": text
           }
         },
-        "schema_code":getSCHEMA_CODE() ,
+        "schema_code": getSCHEMA_CODE(),
         "status": "Draft",
         "current_state": "3"
       }
@@ -199,7 +200,7 @@ const NewIntregation7 = () => {
     })
       .then(response => {
         console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
-        console.log("Request :",requestData)
+        console.log("Request :", requestData)
         // You can handle the API response here
       })
       .catch(error => {
@@ -237,10 +238,10 @@ const NewIntregation7 = () => {
         //   traitType: attribute.display_option.opensea.trait_type,
         //   Error: "",
         // }));
-
-        if(response.data.data.origin_attributes === undefined){
+        // console.log(response.data)
+        if (response.data.data.origin_attributes === undefined) {
           setText([])
-        }else{
+        } else {
           setText(response.data.data.origin_attributes);
           console.log("Text :", response.data.data.origin_attributes)
         }
@@ -251,10 +252,53 @@ const NewIntregation7 = () => {
       });
   }
 
-  useEffect(() => {
-    getOriginAttributFromContract()
+  // useEffect(() => {
+  //   getOriginAttributFromContract()
 
-  }, [])
+  // }, [])
+
+  const GethistoryFormSchemaCode = async () => {
+    // const updatedText = [...text];
+    // updatedText[0].duplicate = true;
+    setIsLoadingHistory(true)
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const params = {
+    };
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+    }
+    // Make a GET request with parameters
+    await axios.get(apiUrl, {
+      params: params, // Pass parameters as an object
+      headers: headers, // Pass headers as an object
+    })
+      .then( async (response) => {
+        console.log('Response:', response.data.data);
+        if (response.data.data.schema_info.schema_info.origin_data.origin_attributes.length === 0) {
+         await getOriginAttributFromContract()
+        } else {
+          setText(response.data.data.schema_info.schema_info.origin_data.origin_attributes);
+        }
+        // const updatedText = [...text];
+        // updatedText[0].value = response.data.data.schema_info.schema_name;
+        // updatedText[1].value = response.data.data.schema_info.schema_info.name;
+        // updatedText[2].value = response.data.data.schema_info.schema_info.description;
+        // console.log(text)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    setIsLoadingHistory(false)
+  }
+
+
+  useEffect(() => {
+    console.log("SCHEMACODE:", getSCHEMA_CODE())
+    if (getSCHEMA_CODE()) {
+      GethistoryFormSchemaCode();
+    }
+  }, []);
 
   // useEffect(() => {
   //   document.getElementById("plus").style.zIndex = "0";
@@ -296,48 +340,61 @@ const NewIntregation7 = () => {
               <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
             </div>
             <div className="w-full h-[80%] overflow-scroll flex  justify-start relative">
-              <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-3   absolute ">
-                {text !==undefined && text.map((item, index) => (
-                  <AttributeBox
-                    Title={["abc", "123", "Y/N"]}
-                    Name={item.name}
-                    DataType={item.data_type}
-                    TraitType={item.display_option.opensea.trait_type}
-                    // Value={null}   .display_option.opensea.trait_type
-                    text={text}
-                    setText={setText}
-                    key={index}
-                    index={index}
-                    save={save}
-                    setSave={setSave}
-                    isShow={isShow}
-                    setIsShow={setIsShow}
-                    helpStep={helpStep}
-                  // Enum={Enum}
-                  // setEnum={setEnum}
-                  />
-                ))}
-                <div
-                  id="plus"
-                  onClick={handleCreateAttribute}
-                  className="w-[267px] h-[187px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
-                >
-                  <img src={Add}></img>
-                  {isShow && helpStep === 3 && (
-                    <div className="">
-                      <AlertCard
-                        BG={1}
-                        ML={-0}
-                        MT={-240}
-                        Width={266}
-                        Height={140}
-                        heaDer={`Add attributes`}
-                        detailsText="You can add more attributes than the original on your origin base uri if you want"
-                      ></AlertCard>
-                    </div>
-                  )}
+              {!isLoadingHistory &&
+                <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-3   absolute ">
+                  {text !== undefined && text.map((item, index) => (
+                    <AttributeBox
+                      Title={["abc", "123", "Y/N"]}
+                      Name={item.name}
+                      DataType={item.data_type}
+                      TraitType={item.display_option.opensea.trait_type}
+                      // Value={null}   .display_option.opensea.trait_type
+                      text={text}
+                      setText={setText}
+                      key={index}
+                      index={index}
+                      save={save}
+                      setSave={setSave}
+                      isShow={isShow}
+                      setIsShow={setIsShow}
+                      helpStep={helpStep}
+                    // Enum={Enum}
+                    // setEnum={setEnum}
+                    />
+                  ))}
+                  <div
+                    id="plus"
+                    onClick={handleCreateAttribute}
+                    className="w-[267px] h-[187px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
+                  >
+                    <img src={Add}></img>
+                    {isShow && helpStep === 3 && (
+                      <div className="">
+                        <AlertCard
+                          BG={1}
+                          ML={-0}
+                          MT={-240}
+                          Width={266}
+                          Height={140}
+                          heaDer={`Add attributes`}
+                          detailsText="You can add more attributes than the original on your origin base uri if you want"
+                        ></AlertCard>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              }
+              {isLoadingHistory &&
+                <div className=' w-full h-full flex justify-center items-center scale-[500%]'>
+                  <CircularProgress className=" text-white" sx={{
+                    width: 1000,
+                    color: 'white',
+                  }}
+                  ></CircularProgress>
+                </div>
+              }
+
+
             </div>
             <div className='  flex justify-start  absolute left-0 bottom-0 '>
               <div className={``}>

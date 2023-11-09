@@ -7,9 +7,7 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { saveSCHEMA_CODE } from "../helpers/AuthService";
 import DraftActionPreviewCard from "../component/DraftActionPreviewCard";
 import { CircularProgress } from "@mui/material";
-import { useParams } from "react-router-dom";
-import DraftCreateNewAction from "../component/DraftCreateNewAction";
-import DraftActionCard from "../component/DraftActionCard";
+import { useParams } from 'react-router-dom';
 import GobackButton from "../component/GobackButton";
 
 

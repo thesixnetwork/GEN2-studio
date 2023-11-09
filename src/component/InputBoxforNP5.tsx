@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import RedAleart from './Alert/RedAleart';
+import { getSCHEMA_CODE } from '../helpers/AuthService';
+import { border } from '@chakra-ui/react';
 
 interface MyComponentProps {
 
@@ -35,6 +37,8 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     const [errorMessage, setErrorMessage] = useState("Error message")
     const [iser, setIser] = useState(false)
     const [inputValue, setInputValue] = useState(props.text[props.index].value);
+    const [isDisabled,setIsDisabled] = useState(false)
+    console.log("inputValue :", inputValue)
 
     useEffect(() => {
         setInputValue(props.text[props.index].value);
@@ -50,7 +54,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     };
 
     function containsSpecialChars(str) {
-        const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/;
+        const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,<>\/?~]/;
         return specialChars.test(str);
     }
 
@@ -127,11 +131,18 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         }
     }, [, props.Next])
 
+    useEffect(()=>{
+        if(getSCHEMA_CODE() && (props.index===0)){
+            setIsDisabled(true)
+        }
+    },[])
+
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>
             <div className=' w-4/5 flex justify-start items-center '>
                 <p className='font-bold text-[24px] w-2/5 mr-[5%]'>{props.text[props.index].Name}</p>
                 <input
+                    disabled={isDisabled}
                     value={inputValue}
                     type="text"
                     // onChange={handleInputschemaCode}
@@ -145,7 +156,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                         console.log(props.text)
                     }}
                     placeholder={props.text[props.index].placeholder}
-                    className={` placeholder-slate-300 bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1 focus:outline-none focus:scale-105 duration-1000`}>
+                    className={` placeholder-slate-300 bg-transparent text-[24px] border-[1px] ${isDisabled ? 'border-none' : ' border-[#D9D9D9DD]'} border-dashed p-1 focus:outline-none focus:scale-105 duration-1000`}>
                 </input>
                 <div className={`w-[15px] h-[15px]  ${props.text[props.index].require ? 'bg-[#D9D9D9]' : 'bg-transparent'} rounded-full absolute border top-2 right-2`}></div>
             </div>
