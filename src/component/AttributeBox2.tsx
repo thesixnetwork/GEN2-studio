@@ -198,16 +198,16 @@ export default function AttributeBox(props: MyComponentProps) {
       setErrorMessage("Not Availible");
       setIser(true);
     } else if (containsSame(str)) {
-      setErrorMessage("Not Same");
+      setErrorMessage("Name can't be same");
       setIser(true);
     } else if (containsSpecialChars(str)) {
-      setErrorMessage("Sp Chars");
+      setErrorMessage("Special characters are not allowed");
       setIser(true);
     } else if (containsSpace(str)) {
-      setErrorMessage("Space");
+      setErrorMessage("Space are not allowed");
       setIser(true);
     } else if (containsUppercase(str)) {
-      setErrorMessage("Uppercase");
+      setErrorMessage("Uppercase are not allowed");
       setIser(true);
     } else {
       setIser(false);
@@ -240,16 +240,16 @@ export default function AttributeBox(props: MyComponentProps) {
       setErrorMessage("Not Availible");
       setIser(true);
     } else if (containsSame(e.target.value)) {
-      setErrorMessage("Not Same");
+      setErrorMessage("Name can't be same");
       setIser(true);
     } else if (containsSpecialChars(updatedText[props.index].name)) {
-      setErrorMessage("Sp Chars");
+      setErrorMessage("Special characters are not allowed");
       setIser(true);
     } else if (containsSpace(updatedText[props.index].name)) {
-      setErrorMessage("Space");
+      setErrorMessage("Space are not allowed");
       setIser(true);
     } else if (containsUppercase(updatedText[props.index].name)) {
-      setErrorMessage("Uppercase");
+      setErrorMessage("Uppercase are not allowed");
       setIser(true);
     } else {
       setIser(false);
@@ -261,7 +261,7 @@ export default function AttributeBox(props: MyComponentProps) {
       setErrorMessage("Not Availible");
       setIser(true);
     } else if (containsSpace(e.target.value)) {
-      setErrorMessage("Space");
+      setErrorMessage("Space are not allowed");
       setIser(true);
     } else {
       setIser(false);
@@ -280,21 +280,21 @@ export default function AttributeBox(props: MyComponentProps) {
       return
 
     } else if (containsSame(props.text[props.index].name)) {
-      setErrorMessage("Not Same");
+      setErrorMessage("Name can't be same");
       setIser(true);
       return
 
     } else if (containsSpecialChars(props.text[props.index].name)) {
-      setErrorMessage("Sp Chars");
+      setErrorMessage("Special characters are not allowed");
       setIser(true);
       return
 
     } else if (containsSpace(props.text[props.index].name)) {
-      setErrorMessage("Space");
+      setErrorMessage("Space are not allowed");
       setIser(true);
       return
     } else if (containsUppercase(props.text[props.index].name)) {
-      setErrorMessage("Uppercase");
+      setErrorMessage("Uppercase are not allowed");
       setIser(true);
       return
     }
@@ -401,7 +401,7 @@ export default function AttributeBox(props: MyComponentProps) {
   const SavecheckErrorII = async (str: string) => {
     setIser(false);
     if (containsSpace(str)) {
-      setErrorMessage("Space");
+      setErrorMessage("Space are not allowed");
       setIser(true);
     } else if (
       props.text[props.index]["default_mint_value"]["_attribute_value"]
@@ -852,7 +852,7 @@ export default function AttributeBox(props: MyComponentProps) {
             placeholder="Add trait type here"
           />
         </div>
-        <div className="flex text-[14px] items-center">
+        <div className="flex text-[14px] items-center h-8">
           Value :&ensp;{" "}
           {props.text[props.index]["default_mint_value"][
             "string_attribute_value"
@@ -916,7 +916,7 @@ export default function AttributeBox(props: MyComponentProps) {
                   checkErrorIII();
                 }}
                 id="Icon4"
-                className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                className={`cursor-pointer hover:scale-110 duration-500 w-16 h-8  flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
                   selectedItemValue === "Icon4" ? "bg-[#D9D9D975]" : "bg-transparent"
                 }`}
               >
@@ -928,7 +928,7 @@ export default function AttributeBox(props: MyComponentProps) {
                 checkErrorIII();
               }}
               id="Icon5"
-              className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+              className={`cursor-pointer hover:scale-110 duration-500 w-16 h-8  flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
                 selectedItemValue === "Icon5" ? "bg-[#D9D9D975]" : "bg-transparent"
               }`}
             >
