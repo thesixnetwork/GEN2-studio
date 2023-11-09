@@ -156,39 +156,39 @@ const router = createBrowserRouter([
   },
   {
     path: "/draft/deployment/:schema_revision",
-    element: <DraftDeployment/>
+    element: <DraftDeployment />
   },
   {
     path: "/draft/actions/edit/when/:action_name/:meta_function/:schema_revision",
-    element: <DraftEditActionsWhen/>
+    element: <DraftEditActionsWhen />
   },
   {
     path: "/draft/actions/edit/then/:action_name/:meta_function/:schema_revision",
-    element: <DraftEditActionsThen/>
+    element: <DraftEditActionsThen />
   },
   {
     path: "/draft/actions/edit/then/attribute/:action_name/:meta_function/:schema_revision",
-    element: <DraftEditActionsThenAttribute/>
+    element: <DraftEditActionsThenAttribute />
   },
   {
     path: "/draft/actions/edit/then/transform/:action_name/:meta_function/:schema_revision",
-    element: <DraftEditActionsThenTransform/>
+    element: <DraftEditActionsThenTransform />
   },
   {
     path: "/draft/actions/edit/then/transfer/:action_name/:meta_function/:schema_revision",
-    element: <DraftEditActionsThenTransfer/>
+    element: <DraftEditActionsThenTransfer />
   },
   {
     path: "/draft/actions/edit/then/transform/static/:action_name/:meta_function/:schema_revision",
-    element: <DraftEditActionsThenTranformStatic/>
+    element: <DraftEditActionsThenTranformStatic />
   },
   {
     path: "/draft/actions/edit/then/transform/dynamic/:action_name/:meta_function/:schema_revision",
-    element: <DraftEditActionsThenTranformDynamic/>
+    element: <DraftEditActionsThenTranformDynamic />
   },
   {
     path: "/testto",
-    element: <Testto/>
+    element: <Testto />
   },
 ]);
 
@@ -243,10 +243,8 @@ function App() {
 
   useEffect(() => {
     if (!(getAccessTokenFromLocalStorage() == null)) {
-
       console.log("have access token")
       HandlerKeplrConnect();
-
     }
   }, [])
 
@@ -255,9 +253,12 @@ function App() {
 
   }, [cosmosAddress]);
 
-  setTimeout(() => {
-    if (isAccessTokenExpired()) {
-      const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`; // Replace with your API endpoint
+  const [refreshTokenNumber,setRefreshTokenNumber]= useState(0)
+  const RefreshToken = () => {
+    setTimeout(() => {
+      // console.log("isAccessTokenExpired : ",isAccessTokenExpired())
+
+      const apiUrl =  `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}auth/refreshToken`
       const requestData = {
         "refresh_token": `${getRefreshTokenFromLocalStorage()}`,
       };
@@ -275,13 +276,22 @@ function App() {
           const refreshToken = getRefreshTokenFromLocalStorage();
           console.log("New Access: ", accessToken)
           console.log("New Refresh: ", refreshToken)
+          setRefreshTokenNumber(refreshTokenNumber+1)
         })
         .catch(error => {
           console.error('API Error:', error);
           // Handle errors here
         });
-    }
-  }, 300000);
+
+    }, 600000);
+  }
+
+
+
+  useEffect(() => {
+    RefreshToken()
+    
+  }, [,refreshTokenNumber])
 
 
 

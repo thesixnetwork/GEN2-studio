@@ -52,28 +52,24 @@ const DraftAttributes = () => {
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/set_schema_info`;
     const requestData = {
-      payload: {
-        schema_info: data,
-        schema_code: schema_revision,
-        status: "Draft",
-        current_state: "0",
-      },
+      "payload": {
+        "schema_info": data,
+        "schema_code": schema_revision,
+        "status": "Draft",
+        "current_state": "0"
+      }
     };
-    if (Object.values(isSave).every((attribute) => attribute === true)) {
-      await axios
-        .post(apiUrl, requestData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, // Set the content type to JSON
-            // Add any other headers your API requires
-          },
-        })
-        .then((response) => {
-          console.log(
-            "API Response saveOriginContractAddressAndOriginBaseURI :",
-            response.data
-          );
-          console.log("Request :", requestData);
+    if (Object.values(isSave).every(attribute => attribute === true)) {
+      await axios.post(apiUrl, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
+          // Add any other headers your API requires
+        },
+      })
+        .then(response => {
+          console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
+          console.log("Request :",requestData)
           // You can handle the API response here
           Swal.fire({
             position: "center",
@@ -102,8 +98,10 @@ const DraftAttributes = () => {
         showConfirmButton: true,
       });
     }
-  };
 
+  }
+
+  
   useEffect(() => {
     FindSchemaCode();
   }, []);
@@ -206,7 +204,7 @@ const DraftAttributes = () => {
                   FontSize={24}
                 ></NormalButton>
               </div>
-              <div className="w-32" onClick={FindSchemaCode}>
+              <div className="w-32" onClick={FindSchemaCode} >
                 <NormalButton
                   TextTitle="RESET"
                   BorderRadius={0}
