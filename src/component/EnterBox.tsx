@@ -233,7 +233,7 @@ export default function
                                 id='1'
                                 type="text"
                                 autoFocus
-                                className={`bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
+                                className={`bg-transparent text-[14px] border-[1px]  focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
                                 placeholder={""}
                                 onChange={async (e) => {
                                     await handleChange(e, "name");
@@ -269,7 +269,7 @@ export default function
                             <input
                                 type="text"
                                 autoFocus
-                                className={`bg-transparent text-[14px] border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
+                                className={`bg-transparent text-[14px] border-[1px]  focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
                                 placeholder={""}
                                 onChange={async (e) => {
                                     await handleChange(e, "description");

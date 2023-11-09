@@ -550,11 +550,10 @@ export default function AttributeBox(props: MyComponentProps) {
   //     //(props.errorObj);
   // };
 
-  const [selectedItem, setSelectedItem] = useState("");
+  
 
   const changeBgColorButton = async (e) => {
-    const itemId = e.target.id;
-    await setSelectedItem(itemId);
+  
     await handleChangeIcon(e);
     props.setIsShow(false);
   };
@@ -567,17 +566,17 @@ export default function AttributeBox(props: MyComponentProps) {
     console.log("updatedText[]",props.text[props.index]["default_mint_value"]);
     console.log("e.target.id]",e.target.id);
     // //(typeof e.target.id)
-    if (e.target.id == "Icon0") {
+    if (e.target.id == "string") {
       updatedText[props.index]["data_type"] = "string";
       updatedText[props.index]["default_mint_value"] = {
         string_attribute_value: { value: props.text[props.index]["default_mint_value"]["string_attribute_value"]?.value || props.text[props.index]["default_mint_value"]["_attribute_value"]?.value},
       };
-    } else if (e.target.id == "Icon1") {
+    } else if (e.target.id == "number") {
       updatedText[props.index]["data_type"] = "number";
       updatedText[props.index]["default_mint_value"] = {
         number_attribute_value: { value: props.text[props.index]["default_mint_value"]["number_attribute_value"]?.value || props.text[props.index]["default_mint_value"]["_attribute_value"]?.value },
       };
-    } else if (e.target.id == "Icon2") {
+    } else if (e.target.id == "boolean") {
       updatedText[props.index]["data_type"] = "boolean";
       if(props.text[props.index]["default_mint_value"]["boolean_attribute_value"]){
         console.log(222)
@@ -682,9 +681,9 @@ export default function AttributeBox(props: MyComponentProps) {
                 console.log("props.text",props.text[props.index]["default_mint_value"]["string_attribute_value"]["value"]);
               }}
               // onMouseLeave={() => fetchError()}
-              id="Icon0"
+              id="string"
               className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                selectedItem === "Icon0" ? "bg-[#D9D9D975]" : "bg-transparent"
+                props.DataType === "string" ? "bg-[#D9D9D975]" : "bg-transparent"
               }`}
             >
               {props.Title[0]}
@@ -695,9 +694,9 @@ export default function AttributeBox(props: MyComponentProps) {
                 checkErrorIII();
               }}
               // onMouseLeave={() => fetchError()}
-              id="Icon1"
+              id="number"
               className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                selectedItem === "Icon1" ? "bg-[#D9D9D975]" : "bg-transparent"
+                props.DataType === "number" ? "bg-[#D9D9D975]" : "bg-transparent"
               }`}
             >
               {props.Title[1]}
@@ -708,9 +707,9 @@ export default function AttributeBox(props: MyComponentProps) {
                 checkErrorIII();
               }}
               // onMouseLeave={() => fetchError()}
-              id="Icon2"
+              id="boolean"
               className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                selectedItem === "Icon2" ? "bg-[#D9D9D975]" : "bg-transparent"
+                props.DataType === "boolean" ? "bg-[#D9D9D975]" : "bg-transparent"
               }`}
             >
               {props.Title[2]}
@@ -738,14 +737,7 @@ export default function AttributeBox(props: MyComponentProps) {
           Value :&ensp;{" "}
           <input
             type="text"
-            // value={
-            //   props.text[props.index]["default_mint_value"][
-            //     "string_attribute_value"
-            //   ]?.value ||
-            //   props.text[props.index]["default_mint_value"][
-            //     `${props.text[props.index].data_type}_attribute_value`
-            //   ]?.value
-            // }
+            value={props.Value}
             onChange={(e) => {
               console.log(props.State);
             //   console.log("eeee =>", e.target.value);

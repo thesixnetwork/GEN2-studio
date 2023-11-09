@@ -11,6 +11,7 @@ import Help from '../component/Alert/Help';
 import EnterBoxII from '../component/EnterBox copy';
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import axios from 'axios';
+import GobackButton from '../component/GobackButton';
 
 
 export default function Newintregation9() {
@@ -55,7 +56,7 @@ export default function Newintregation9() {
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
-                <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
+                <div className=' relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='w-full h-full px-[20px]'>
                         <div>
                             <Stepper2 ActiveStep={6}></Stepper2>
@@ -88,12 +89,17 @@ export default function Newintregation9() {
                             <div  >
                                 <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={24}></NormalButton>
                             </div>
-                            <div onClick={()=>{navigate("/")}} >
+                            <div onClick={() => { navigate("/") }} >
                                 <NormalButton TextTitle="NEXT" BorderRadius={0} FontSize={24}></NormalButton>
                             </div>
                             <div onClick={() => { setIsShow(!isShow) }}>
                                 <Help></Help>
                             </div>
+                        </div>
+                    </div>
+                    <div className='  flex justify-start  absolute left-0 bottom-0 '>
+                        <div className={``}>
+                            <GobackButton BackPage='/newintregation/9'></GobackButton>
                         </div>
                     </div>
                 </div>

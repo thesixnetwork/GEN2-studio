@@ -7,15 +7,9 @@ import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { saveSCHEMA_CODE } from "../helpers/AuthService";
 import DraftActionPreviewCard from "../component/DraftActionPreviewCard";
 import { CircularProgress } from "@mui/material";
-<<<<<<< HEAD
 import { useParams } from 'react-router-dom';
 import GobackButton from "../component/GobackButton";
 
-=======
-import { useParams } from "react-router-dom";
-import DraftCreateNewAction from "../component/DraftCreateNewAction";
-import DraftActionCard from "../component/DraftActionCard";
->>>>>>> b9e419a10224ff84e7072daa4faa545495bf2ead
 
 const DraftActions = () => {
   const [actions, setActions] = useState([]);

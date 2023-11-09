@@ -46,7 +46,6 @@ const ACTION_NAME= "";
 export const saveTokensToLocalStorage = (accessToken: string, refreshToken: string) => {
   const encryptedAccessToken = encryptWithAES(accessToken);
   const encryptedRefreshToken = encryptWithAES(refreshToken);
-  console.log("EncryptedAccessToken:",encryptedAccessToken)
   localStorage.setItem(ACCESS_TOKEN_KEY, encryptedAccessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, encryptedRefreshToken);
 };
@@ -99,6 +98,7 @@ export const isAccessTokenExpired = () => {
   }
 
   const decodedToken = jwt_decode(accessToken);
+  // console.log("decodedToken : ",decodedToken)
   const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
 
   return decodedToken.exp < currentTime;

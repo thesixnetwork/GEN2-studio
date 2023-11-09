@@ -24,7 +24,10 @@ import {
 import { useAppDispatch } from "../store/store";
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, getSCHEMA_CODE, saveSCHEMA_CODE, saveTokensToLocalStorage } from '../helpers/AuthService'
 import { ABCDE } from '../App'
+
+import Swal from 'sweetalert2'
 //Redux
+
 
 
 const NewIntregation5 = () => {
@@ -60,6 +63,7 @@ const NewIntregation5 = () => {
     ]);
 
     const [isLoading, setisLoading] = useState(false)
+    const [isLoadingHistory, setIsLoadingHistory] = useState(false)
     const [isValidate, setisValidate] = useState(false)
     const [Next, setNext] = useState(false)
     const navigate = useNavigate();
@@ -71,8 +75,6 @@ const NewIntregation5 = () => {
     const [isSpace1, setisSpace1] = useState(false)
     const [isSpace2, setisSpace2] = useState(false)
     const [isDuplicateShemaCode, setisDuplicateShemaCode] = useState(false);
-
-
 
 
     const handleInputschemaCode = (e) => {
@@ -165,20 +167,6 @@ const NewIntregation5 = () => {
                 console.error('API Error:', error);
                 // Handle errors here
             });
-
-        // axios.get("https://six-gen2-studio-backend-api-gateway-1w6bfx2j.an.gateway.dev/api/helloworld", {
-        //     headers: {
-        //         // Add any headers your API requires for the GET request
-        //     },
-        // })
-        //     .then(response => {
-        //         console.log('API Response:', response);
-        //         // You can handle the API response here
-        //     })
-        //     .catch(error => {
-        //         console.error('API Error:', error);
-        //         // Handle errors here
-        //     });
     }
 
     //-------------------------------------------Refresh token test---------------------------------------------------//
@@ -210,10 +198,9 @@ const NewIntregation5 = () => {
     const GethistoryFormSchemaCode = async () => {
         // const updatedText = [...text];
         // updatedText[0].duplicate = true;
-        // setisLoading(true)
+        setIsLoadingHistory(true)
         const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
         const params = {
-
         };
         const headers = {
             'Content-Type': 'application/json',
@@ -226,16 +213,17 @@ const NewIntregation5 = () => {
         })
             .then((response) => {
                 console.log('Response:', response.data);
-                console.log(text)
+
                 const updatedText = [...text];
                 updatedText[0].value = response.data.data.schema_info.schema_name;
                 updatedText[1].value = response.data.data.schema_info.schema_info.name;
                 updatedText[2].value = response.data.data.schema_info.schema_info.description;
+                console.log(text)
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
-        setisLoading(false)
+        setIsLoadingHistory(false)
     }
 
 
@@ -247,19 +235,17 @@ const NewIntregation5 = () => {
     }, []);
 
     const UpdateSchemaInfo = () => {
-
         const apiUrl = 'https://six-gen2-studio-backend-traffic-workers-oxdveggapq-as.a.run.app/schema/set_schema_info'; // Replace with your API endpoint
         const requestData = {
             "payload": {
                 "schema_info": {
                     "name": `${text[1].value}`,
-                    "code": "schema_code + version = schema_code_v2", //`${text[0].value}`,//
                     "description": `${text[2].value}`,
-                    "owner": "0xNFT......."
+                    "owner": walletcounterReducer.cosmosaddress,
                 },
-                "schema_code": `${text[0].value}`,
+                "schema_code": getSCHEMA_CODE(),
                 "status": "Draft",
-                "current_state": "1" 
+                "current_state": "1"
             }
         };
 
@@ -271,8 +257,10 @@ const NewIntregation5 = () => {
             },
         })
             .then(response => {
-                console.log('API Response:', response.data);
-                saveSCHEMA_CODE(response.data.data.schema_code);
+                console.log('API Response UpdateSchemaInfo:', response.data);
+                console.log("requestData :" , requestData)
+                navigate('/newintregation/6')
+
                 // console.log(requestData)
                 // You can handle the API response here
             })
@@ -283,25 +271,36 @@ const NewIntregation5 = () => {
     }
 
     const handleNext = () => {
-        setNext(true);
-        console.log("DUPLICATE :", text[0].duplicate)
-        if (text[0].duplicate) {
-            handleFormsubmit();
-        }
-        else if (!text[0].duplicate && getSCHEMA_CODE() === text[0].value) {
-            UpdateSchemaInfo();
-        }
-
-        const allErrorsTrue = text.every(item => item.Error === true);
-
-        if (allErrorsTrue) {
-            navigate('/newintregation/6')
-            console.log("All errors are true.");
+        if (!getSCHEMA_CODE()) {
+            Swal.fire({
+                title: 'Are you sure to create ?',
+                text: "You won't be able to duplicate this Schema code!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#7A8ED7',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, create '
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Create Complete!',
+                        'Your Schema code has been Created.',
+                        'success'
+                    )
+                    setNext(true);
+                    handleFormsubmit();
+                    const allErrorsTrue = text.every(item => item.Error === true);
+                    if (allErrorsTrue) {
+                        navigate('/newintregation/6')
+                    } else {
+                        setisError(true)
+                    }
+                }
+            })
         } else {
-            console.log("Not all errors are true.");
-            setisError(true)
+            UpdateSchemaInfo()
+            
         }
-
     }
 
     const FindSchemaCode = async () => {
@@ -349,32 +348,41 @@ const NewIntregation5 = () => {
                             </div>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
-                        <div className=' flex flex-col justify-between items-center py-[5%] h-4/6 relative '>
-                            {text.map((item, index) => (
-                                <InputBoxforNP5
-                                    Next={Next}
-                                    index={index}
-                                    text={text}
-                                    setisError={setisError}
-                                    isDuplicateShemaCode={isDuplicateShemaCode}
-                                    setisDuplicateShemaCode={setisDuplicateShemaCode}
-                                    FindSchemaCode={FindSchemaCode}
-                                    InitialData={[text[0].value, text[1].value, text[2].value]}
-                                >
-                                </InputBoxforNP5>
-                            ))}
-                            {isLoading &&
-                                <div className=' absolute ml-[52%] mt-[4%] scale-50'>
-                                    <CircularProgress className=" text-white" sx={{
-                                        width: 100,
-                                        color: 'white',
-                                    }}
-                                    ></CircularProgress>
-                                </div>
-                            }
-
-
-                        </div>
+                        {!isLoadingHistory &&
+                            <div className=' flex flex-col justify-between items-center py-[5%] h-4/6 relative '>
+                                {text.map((item, index) => (
+                                    <InputBoxforNP5
+                                        Next={Next}
+                                        index={index}
+                                        text={text}
+                                        setisError={setisError}
+                                        isDuplicateShemaCode={isDuplicateShemaCode}
+                                        setisDuplicateShemaCode={setisDuplicateShemaCode}
+                                        FindSchemaCode={FindSchemaCode}
+                                        InitialData={[text[0].value, text[1].value, text[2].value]}
+                                    >
+                                    </InputBoxforNP5>
+                                ))}
+                                {isLoading &&
+                                    <div className=' absolute ml-[52%] mt-[4%] scale-50'>
+                                        <CircularProgress className=" text-white" sx={{
+                                            width: 100,
+                                            color: 'white',
+                                        }}
+                                        ></CircularProgress>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        {isLoadingHistory &&
+                            <div className=' w-full h-full flex justify-center items-center scale-[500%]'>
+                                <CircularProgress className=" text-white" sx={{
+                                    width: 1000,
+                                    color: 'white',
+                                }}
+                                ></CircularProgress>
+                            </div>
+                        }
                         <div className=' w-full flex justify-start  '>
                             <div className={``}>
                                 <GobackButton BackPage='/newintregation/4'></GobackButton>
