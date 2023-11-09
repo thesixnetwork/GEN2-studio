@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import Swal from "sweetalert2";
 
@@ -22,7 +22,7 @@ const DraftAttributes = () => {
   });
   const [whichExpand, setWhichExpand] = useState("none");
   const { schema_revision } = useParams();
-
+  const isCheckErrorName = useRef(false);
   const findSchemaCode = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
@@ -48,6 +48,16 @@ const DraftAttributes = () => {
   };
 
   const saveData = async () => {
+    if(isCheckErrorName.current){
+      await Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Plase check errors again",
+        showConfirmButton: true,
+      });
+
+      return;
+    }
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/set_schema_info`;
@@ -128,6 +138,7 @@ const DraftAttributes = () => {
                         setIsSave={setIsSave}
                         whichExpand={whichExpand}
                         setWhichExpand={setWhichExpand}
+                        isCheckErrorName={isCheckErrorName}
                       />
                       <DraftAttributeTable
                         type="collectionAttributes"
@@ -136,6 +147,8 @@ const DraftAttributes = () => {
                         setIsSave={setIsSave}
                         whichExpand={whichExpand}
                         setWhichExpand={setWhichExpand}
+                        isCheckErrorName={isCheckErrorName}
+
                       />
                     </div>
                     <DraftAttributeTable
@@ -145,6 +158,7 @@ const DraftAttributes = () => {
                       setIsSave={setIsSave}
                       whichExpand={whichExpand}
                       setWhichExpand={setWhichExpand}
+                      isCheckErrorName={isCheckErrorName}
                     />
                   </>
                 ) : whichExpand === "originAttributes" ? (

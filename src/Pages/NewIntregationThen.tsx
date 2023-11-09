@@ -84,9 +84,9 @@ const NewIntregationThen = () => {
                     <DraftActionThenPreview actions={actions}/>
                   )}
                   <div className="flex gap-x-10">
-                    <ActionTypeCard type="update" draft={true} />
-                    <ActionTypeCard type="transfer" draft={true} />
-                    <ActionTypeCard type="transform" draft={true} />
+                    <ActionTypeCard type="update" draft={false} />
+                    <ActionTypeCard type="transfer" draft={false} />
+                    <ActionTypeCard type="transform" draft={false} />
                   </div>
 
                 </div>

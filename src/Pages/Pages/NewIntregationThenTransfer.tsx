@@ -3,7 +3,7 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import { useState, DragEvent, useRef } from "react";
+import { useState, DragEvent, useRef, } from "react";
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -18,7 +18,7 @@ import ReactFlow, {
   MiniMap,
   useReactFlow,
   NodeChange,
-  NodeOrigin
+  NodeOrigin,
 } from "reactflow";
 import "reactflow/dist/base.css";
 import { Factory } from "../function/ConvertObjectToMetadata/Factory";
@@ -27,11 +27,10 @@ import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 
-
 import NormalButton from "../component/NormalButton";
+import { useNavigate } from "react-router-dom";
 import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const initialNodes: Node[] = [
   {
@@ -54,7 +53,6 @@ const getId = () => `${id++}`;
 
 const nodeOrigin: NodeOrigin = [0.5, 0.5];
 
-
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
@@ -75,10 +73,8 @@ const BasicFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
-  const { setCenter, project } = useReactFlow();
-  const [redraw, setRedraw] = useState(false);
-  const [selectedAttribute, setSelectedAttribute] = useState("");
-  const [createFirstNode, setCreateFirstNode] = useState(true);
+  const { setCenter } = useReactFlow();
+
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -225,7 +221,11 @@ const BasicFlow = () => {
           console.log("f**k");
           updatedNodes.push(node);
         } else {
-          if (type !== "valueNode" && type !== "paramNode" && type !== "attributeNode") {
+          if (
+            type !== "valueNode" &&
+            type !== "paramNode" &&
+            type !== "attributeNode"
+          ) {
             const onAddNodeId = getId();
 
             const onAddNodePosition = {
@@ -292,22 +292,7 @@ const BasicFlow = () => {
 
     const x = (minMax.minX + minMax.maxX) / 2;
     const y = (minMax.minY + minMax.maxY) / 2;
-    let zoom = 1;
-    if (nodes.length == 2) {
-      zoom = 0.9;
-    }
-    if (nodes.length == 3) {
-      zoom = 0.8;
-    }
-    if (nodes.length >= 4) {
-      zoom = 0.7;
-    }
-    if (nodes.length >= 6) {
-      zoom = 0.6;
-    }
-    if (nodes.length >= 8) {
-      zoom = 0.4;
-    }
+    const zoom = 1;
     setCenter(x, y, { zoom, duration: 1000 });
   };
 
@@ -357,160 +342,209 @@ const BasicFlow = () => {
   }, [nodes, setNodes]);
 
   useEffect(() => {
-    setSelectedAttribute(nodes[0].data.dataType);
-    if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
-      setCreateFirstNode(false);
-      const onAddId = getId();
-      const nodeOnAdd = {
-        id: onAddId,
-        position: { x: 0, y: 150 },
+    if (nodes[0].data.value && nodes.length < 2) {
+      const positionLeftNode = {
+        x: nodes[0].position.x - nodeWidthAndHeight.width,
+        y:
+          nodes[0].position.y +
+          nodeWidthAndHeight.height +
+          nodeWidthAndHeight.grid_padding,
+      };
+      const positionRightNode = {
+        x: nodes[0].position.x + nodeWidthAndHeight.width,
+        y:
+          nodes[0].position.y +
+          nodeWidthAndHeight.height +
+          nodeWidthAndHeight.grid_padding,
+      };
+      const positionLeftBottomNode = {
+        x: nodes[0].position.x - nodeWidthAndHeight.width,
+        y:
+          (nodes[0].position.y +
+            nodeWidthAndHeight.height +
+            nodeWidthAndHeight.grid_padding) *
+          2,
+      };
+      const positionRightBottomNode = {
+        x: nodes[0].position.x + nodeWidthAndHeight.width,
+        y:
+          (nodes[0].position.y +
+            nodeWidthAndHeight.height +
+            nodeWidthAndHeight.grid_padding) *
+          2,
+      };
+      const leftId = getId();
+      const rightId = getId();
+      const leftBottomId = getId();
+      const rightBottomId = getId();
+
+      const leftNode = {
+        id: leftId,
+        position: positionLeftNode,
+        type: "customInputNode",
+        data: {
+          showType: "toNode",
+          label: positionLeftNode,
+          id: leftId,
+          parentNode: nodes[0].id,
+          width: nodeWidthAndHeight.width,
+          height: nodeWidthAndHeight.height,
+        },
+        draggable: false,
+      };
+      const rightNode = {
+        id: rightId,
+        position: positionRightNode,
+        type: "customInputNode",
+        data: {
+          showType: "amountNode",
+          label: positionRightNode,
+          id: rightId,
+          parentNode: nodes[0].id,
+          width: nodeWidthAndHeight.width,
+          height: nodeWidthAndHeight.height,
+        },
+        draggable: false,
+      };
+      const leftBottomNode = {
+        id: leftBottomId,
+        position: positionLeftBottomNode,
         type: "customInputNode",
         data: {
           showType: "addNode",
-          label: { x: 0, y: 100 },
-          id: onAddId,
-          parentNode: 1,
+          label: positionLeftBottomNode,
+          id: leftBottomId,
+          parentNode: leftId,
+          width: nodeWidthAndHeight.width,
+          height: nodeWidthAndHeight.height,
+        },
+        draggable: false,
+      };
+      const rightBottomNode = {
+        id: rightBottomId,
+        position: positionRightBottomNode,
+        type: "customInputNode",
+        data: {
+          showType: "addNode",
+          label: positionRightBottomNode,
+          id: rightBottomId,
+          parentNode: rightId,
+          width: nodeWidthAndHeight.width,
+          height: nodeWidthAndHeight.height,
         },
         draggable: false,
       };
 
-      const edgesOnAdd = [
+      const newEdges = [
         {
-          id: `e1-${onAddId}`,
-          source: "1",
-          target: onAddId,
+          id: `e1-${leftId}`,
+          source: nodes[0].id,
+          target: leftId,
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        },
+        {
+          id: `e1-${rightId}`,
+          source: nodes[0].id,
+          target: rightId,
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        },
+        {
+          id: `e${leftId}-${leftBottomId}`,
+          source: leftId,
+          target: leftBottomId,
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        },
+        {
+          id: `e${rightId}-${rightBottomId}`,
+          source: rightId,
+          target: rightBottomId,
           animated: true,
           style: { stroke: "#FFAA9A" },
           type: "smoothstep",
         },
       ];
 
-      setNodes([...nodes, nodeOnAdd]);
-      setEdges([...edges, ...edgesOnAdd]);
+      setEdges([...edges, ...newEdges]);
+      updatedNodes.push(leftNode, rightNode, leftBottomNode, rightBottomNode);
     }
+    setNodes(updatedNodes);
   }, [nodes[0].data.value]);
-
-  useEffect(() => {
-    if (createFirstNode) {
-      console.log("yo");
-    }
-  }, [createFirstNode]);
 
   const getDataFromNode = () => {
     const transformData = (nodes) => {
       const result = {};
 
       for (let i = 0; i < nodes.length; i++) {
-        for (let j = 0; j < nodes.length; j++) {
-          if (
-            nodes[i].id === nodes[j].data.parentNode &&
-            nodes[i].data.showType === "setNode" &&
-            nodes[j].data.showType === "valueNode"
-          ) {
-            nodes[j].data.isSet = true;
-          } else if (
-            nodes[i].id === nodes[j].data.parentNode &&
-            (nodes[i].data.showType === "increaseNode" ||
-              nodes[i].data.showType === "decreaseNode") &&
-            nodes[j].data.showType === "valueNode"
-          ) {
-            nodes[j].data.isSet = false;
-          }
+        if (nodes[i].data.showType === "valueNode") {
+          nodes[i].data.dataType = nodes[0].data.dataType;
+          console.log("1", nodes[i].data.dataType);
         }
 
-        if (nodes[i].data.showType === "valueNode") {
-          nodes[i].data.dataType = nodes[0].data.dataType
+        if (nodes[i].data.showType === "paramNode") {
+          nodes[i].data.dataType = nodes[0].data.dataType;
           console.log("1", nodes[i].data.dataType);
         }
 
         if (nodes[i].data.showType === "selectAttributeNode") {
-          console.log("x");
           result.type = "meta_function";
-          result.functionName =
-            nodes[i].data.dataType === "float"
-              ? "SetFloat"
-              : nodes[i].data.dataType === "number"
-                ? "SetNumber"
-                : nodes[i].data.dataType === "boolean"
-                  ? "SetBoolean"
-                  : "SetString";
+          result.functionName = "TransferNumber";
           result.attributeName = {
             type: "constant",
             dataType: "string",
             value: nodes[i].data.value,
           };
         } else if (
-          nodes[i].data.showType === "increaseNode" ||
-          nodes[i].data.showType === "decreaseNode" ||
-          nodes[i].data.showType === "addNode"
+          nodes[i].data.showType === "valueNode" ||
+          nodes[i].data.showType === "attributeNode"
         ) {
-          result.value1 = {
-            type:
-              nodes[i].data.showType === "addNode"
-                ? "addNode"
-                : "math_operation",
-            value:
-              nodes[i].data.showType === "increaseNode"
-                ? "+"
-                : nodes[i].data.showType === "decreaseNode"
-                  ? "-"
-                  : "=",
-            left: {
-              type: "meta_function",
-              functionName:
-                result.functionName === "SetFloat"
-                  ? "GetFloat"
-                  : result.functionName === "SetNumber"
-                    ? "GetNumber"
-                    : result.functionName === "SetBoolean"
-                      ? "GetBoolean"
-                      : "GetString",
-              attributeName: {
-                type: "constant",
-                dataType: "string",
-                value: result.attributeName.value,
-              },
-            },
-            right: {},
-          };
-        } else if (
-          nodes[i].data.showType === "valueNode" &&
-          nodes[i].data.isSet === true
-        ) {
-          result.value1 = {
-            type: "constant",
-            dataType: nodes[i].data.dataType,
-            value: nodes[i].data.value,
-          };
-        } else if (
-          nodes[i].data.showType === "valueNode" &&
-          nodes[i].data.isSet === false
-        ) {
-          result.value1.right = {
-            type: "constant",
-            dataType: nodes[i].data.dataType,
-            value: nodes[i].data.value,
-          };
+          {
+            nodes[i].id === "4"
+              ? (result.value1 = {
+                  type: "meta_function",
+                  functionName: "GetString",
+                  attributeName: {
+                    type: "constant",
+                    dataType: "string",
+                    value: nodes[i].data.value,
+                  },
+                })
+              : (result.value2 = {
+                  type: "meta_function",
+                  functionName: "GetNumber",
+                  attributeName: {
+                    type: "constant",
+                    dataType: "string",
+                    value: nodes[i].data.value,
+                  },
+                });
+          }
         } else if (nodes[i].data.showType === "paramNode") {
-          result.value1 = {
-            type: "param_function",
-            functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
-            attributeName: {
-              type: "constant",
-              dataType: nodes[i].data.dataType,
-              value: nodes[i].data.value,
-            }
-
-          };
-        } else if (nodes[i].data.showType === "attributeNode") {
-          result.value1 = {
-            type: "meta_function",
-            functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
-            attributeName: {
-              type: "constant",
-              dataType: nodes[i].data.dataType,
-              value: nodes[i].data.value,
-            }
+          {
+            nodes[i].id === "4"
+              ? (result.value1 = {
+                  type: "param_function",
+                  functionName: "GetString",
+                  attributeName: {
+                    type: "constant",
+                    dataType: "string",
+                    value: nodes[i].data.value,
+                  },
+                })
+              : (result.value2 = {
+                  type: "param_function",
+                  functionName: "GetNumber",
+                  attributeName: {
+                    type: "constant",
+                    dataType: "string",
+                    value: nodes[i].data.value,
+                  },
+                });
           }
         }
       }
@@ -520,7 +554,6 @@ const BasicFlow = () => {
     };
 
     const object = Factory.createObject(transformData(nodes)).toString();
-    console.log("--->obj", transformData(nodes))
     setMetaData(object);
     return object;
   };
@@ -538,36 +571,8 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
-
-  const [actionName, setactionName] = useState("")
-  const FindSchemaCode = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
-    const params = {
-    };
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-    }
-    // Make a GET request with parameters
-    await axios.get(apiUrl, {
-      params: params, // Pass parameters as an object
-      headers: headers, // Pass headers as an object
-    })
-      .then((response) => {
-        // Handle successful response here
-        console.log('Response:', response.data);
-        setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name)
-
-      })
-      .catch((error) => {
-        // Handle errors here
-        console.error('Error:', error);
-      });
-  }
-
-
   const saveAction = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions'; // Replace with your API endpoint
     const requestData = {
       "payload": {
         "schema_code": getSCHEMA_CODE(),
@@ -596,9 +601,7 @@ const BasicFlow = () => {
 
   }
 
-  useEffect(() => {
-    FindSchemaCode()
-  }, [])
+
 
   const navigate = useNavigate();
 
@@ -641,25 +644,26 @@ const BasicFlow = () => {
         </div>
 
         <div>
-          <div className="flex justify-center" onClick={async () => { await saveAction()  ; console.log(metaData) ;navigate("/newintregation/beginer") }}>
+          <div className="flex justify-center" onClick={async () => { await saveAction();  navigate("/newintregation/beginer") }}>
             <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
           </div>
         </div>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute} actionName={getActionName()}></Flowbar>
+      <Flowbar selectedAttribute="none"></Flowbar>
     </div>
   );
 };
 
-export default function NewIntregationThenAttribute() {
+export default function NewIntregationThenTransfer() {
   const [isShow, setIsShow] = React.useState(false);
+ 
 
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div className="flex justify-between">
+            <div className="flex justify-between ">
               <div>
                 <Stepper2 ActiveStep={6}></Stepper2>
                 <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>

@@ -1,7 +1,7 @@
 import Box from "../component/Box";
 
 import React, { useEffect, useState } from "react";
-import { Tooltip } from "@mui/material";
+import { CircularProgress, Tooltip } from "@mui/material";
 
 import Add from "../pic/Group 40.png";
 
@@ -23,6 +23,7 @@ import {
 import axios from "axios";
 
 export default function Newintregation8() {
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [isShow, setIsShow] = useState(false);
   const [save, setSave] = useState(false);
   const navigate = useNavigate();
@@ -103,9 +104,8 @@ export default function Newintregation8() {
   };
 
   const saveOnchainCollectionAttributes = async () => {
-    const apiUrl = `${
-      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
-    }schema/set_schema_info`;
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+      }schema/set_schema_info`;
     const requestData = {
       payload: {
         schema_info: {
@@ -189,7 +189,7 @@ export default function Newintregation8() {
   const handleCreateAttribute = () => {
     const newAttribute = {
       name: "",
-      data_type: "",
+      data_type: "string",
       required: false,
       display_value_field: "",
       display_option: {
@@ -284,6 +284,47 @@ export default function Newintregation8() {
     }
   };
 
+  const GethistoryFormSchemaCode = async () => {
+    // const updatedText = [...text];
+    // updatedText[0].duplicate = true;
+    setIsLoadingHistory(true)
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const params = {
+    };
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+    }
+    // Make a GET request with parameters
+    await axios.get(apiUrl, {
+      params: params, // Pass parameters as an object
+      headers: headers, // Pass headers as an object
+    })
+      .then(async (response) => {
+        console.log('Response:', response.data.data);
+
+        setText(response.data.data.schema_info.schema_info.onchain_data.nft_attributes);
+
+        // const updatedText = [...text];
+        // updatedText[0].value = response.data.data.schema_info.schema_name;
+        // updatedText[1].value = response.data.data.schema_info.schema_info.name;
+        // updatedText[2].value = response.data.data.schema_info.schema_info.description;
+        console.log(text)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    setIsLoadingHistory(false)
+  }
+
+
+  useEffect(() => {
+    console.log("SCHEMACODE:", getSCHEMA_CODE())
+    if (getSCHEMA_CODE()) {
+      GethistoryFormSchemaCode();
+    }
+  }, []);
+
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
@@ -294,47 +335,61 @@ export default function Newintregation8() {
               <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
             </div>
             <div className="w-full h-[700px] overflow-scroll flex  justify-start relative">
-              <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
-                {text.map((item, index) => (
-                  <AttributeBox2
-                    State={4}
-                    Title={["abc", "123", "Y/N"]}
-                    Name={item.name}
-                    DataType={item.data_type}
-                    TraitType={item.display_option.opensea.trait_type}
-                    Value={null}
-                    text={text}
-                    setText={setText}
-                    key={index}
-                    index={index}
-                    save={save}
-                    setSave={setSave}
-                    isShow={isShow}
-                    setIsShow={setIsShow}
-                    helpStep={helpStep}
-                  />
-                ))}
-                <div
-                  id="plus"
-                  onClick={handleCreateAttribute}
-                  className="w-[267px] h-[227px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
-                >
-                  <img src={Add}></img>
-                  {isShow && helpStep === 3 && (
-                    <div className="">
-                      <AlertCard
-                        BG={1}
-                        ML={-180}
-                        MT={-300}
-                        Width={266}
-                        Height={140}
-                        heaDer={`Add attributes`}
-                        detailsText="You can add more attributes than the original on your origin base uri if you want"
-                      ></AlertCard>
-                    </div>
-                  )}
+              {!isLoadingHistory &&
+                <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
+                  {text.map((item, index) => (
+                    <AttributeBox2
+                      State={4}
+                      Title={["abc", "123", "Y/N"]}
+                      Name={item.name}
+                      DataType={item.data_type}
+                      TraitType={item.display_option.opensea.trait_type}
+                      Value={null}
+                      text={text}
+                      setText={setText}
+                      key={index}
+                      index={index}
+                      save={save}
+                      setSave={setSave}
+                      isShow={isShow}
+                      setIsShow={setIsShow}
+                      helpStep={helpStep}
+                    />
+                  ))}
+                  <div
+                    id="plus"
+                    onClick={handleCreateAttribute}
+                    className="w-[267px] h-[227px] flex justify-center items-center bg-transparent border border-white rounded-xl p-3 hover:scale-105 cursor-pointer duration-300  "
+                  >
+                    <img src={Add}></img>
+                    {isShow && helpStep === 3 && (
+                      <div className="">
+                        <AlertCard
+                          BG={1}
+                          ML={-180}
+                          MT={-300}
+                          Width={266}
+                          Height={140}
+                          heaDer={`Add attributes`}
+                          detailsText="You can add more attributes than the original on your origin base uri if you want"
+                        ></AlertCard>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+
+              }
+              {isLoadingHistory &&
+                <div className=' w-full h-full flex justify-center items-center scale-[500%]'>
+                  <CircularProgress className=" text-white" sx={{
+                    width: 1000,
+                    color: 'white',
+                  }}
+                  ></CircularProgress>
+                </div>
+              }
+
+
             </div>
           </div>
           <div className="w-2/6 h-5/6 flex flex-col items-end justify-between   ">

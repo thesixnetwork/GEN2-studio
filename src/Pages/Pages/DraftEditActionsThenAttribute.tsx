@@ -3,7 +3,9 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import { useState, DragEvent, useRef } from "react";
+import NextPageButton from "../component/NextPageButton";
+import { useState, DragEvent, useRef, useCallback } from "react";
+import Help from "../component/Alert/Help";
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -18,20 +20,39 @@ import ReactFlow, {
   MiniMap,
   useReactFlow,
   NodeChange,
-  NodeOrigin
+  NodeOrigin,
 } from "reactflow";
 import "reactflow/dist/base.css";
-import { Factory } from "../function/ConvertObjectToMetadata/Factory";
+import {
+  Factory,
+  MetaFunction,
+} from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
+import Customnode from "../component/node/Customnode";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
+
+import { useParams } from "react-router-dom";
+import parser_then from "../function/ConvertMetadataToObject/action_then";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
 
-
+import {
+  Tree,
+  adjustParents,
+  adjustTreePosition,
+  drawTree,
+  generateTreeFromReactFlow,
+} from "../function/auto-layout";
 import NormalButton from "../component/NormalButton";
-import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
+import {
+  getAccessTokenFromLocalStorage,
+  getActionName,
+  getSCHEMA_CODE,
+  saveSCHEMA_CODE,
+} from "../helpers/AuthService";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { set } from "lodash";
 
 const initialNodes: Node[] = [
   {
@@ -54,12 +75,12 @@ const getId = () => `${id++}`;
 
 const nodeOrigin: NodeOrigin = [0.5, 0.5];
 
-
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
 
 const BasicFlow = () => {
+  const param = useParams();
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
 
@@ -79,12 +100,25 @@ const BasicFlow = () => {
   const [redraw, setRedraw] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
+  const [actionName, setactionName] = useState("");
+  const [actionData, setActionData] = useState();
+  const [actionThenArr, setActionThenArr] = useState([]);
+  const [actionThenIndex, setActionThenIndex] = useState(null);
+  const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
     width_input: 151.2,
     height_input: 35.2,
     grid_padding: 60,
+  };
+
+  const isBase64 = (str) => {
+    try {
+      return btoa(atob(str)) === str;
+    } catch (error) {
+      return false;
+    }
   };
 
   const onConnect = (params: Connection | Edge) =>
@@ -94,6 +128,161 @@ const BasicFlow = () => {
   const onDragOver = (event: DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
+  };
+
+  const convertObjectToNode = (obj) => {
+    let nodeIdCounter = 1;
+    const outputArray = [];
+    const edgesArr = [];
+
+    const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
+      const nodeId = `${nodeIdCounter++}`;
+      const outputNode = {
+        width: 150,
+        height: 57,
+        id: nodeId,
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY },
+        draggable: false,
+        data: {
+          showType: "",
+          id: nodeId,
+          parentNode: parentNodeId,
+          label: { x: 0, y: parentPositionY },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
+
+      const outputNode2 = {
+        width: 150,
+        height: 57,
+        id: `${parseInt(nodeId) + 1}`,
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY + 150 },
+        draggable: false,
+        data: {
+          showType: "",
+          id: `${parseInt(nodeId) + 1}`,
+          parentNode: `${parseInt(parentNodeId) + 1}`,
+          label: { x: 0, y: parentPositionY + 150 },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
+
+      console.log("node==>", node);
+
+      console.log("value", node.value);
+
+      if (
+        node.type === "meta_function" &&
+        (node.functionName === "SetNumber" ||
+          node.functionName === "SetString" ||
+          node.functionName === "SetBoolean" ||
+          node.functionName === "SetFloat")
+      ) {
+        outputNode.data.showType = "selectAttributeNode";
+        outputNode.data.value = node.attributeName.value;
+        outputNode.data.dataType = node.attributeName.dataType;
+        setSelectedAttribute(node.attributeName.dataType);
+      } else if (node.type === "constant" && node.value && !node.left) {
+        outputNode.data.showType = "setNode";
+        outputNode2.data.showType = "valueNode";
+        outputNode2.data.value = node.value;
+      } else if (node.type === "constant" && node.dataType) {
+        outputNode.data.showType = "valueNode";
+        outputNode.data.value = node.value;
+      } else if (node.right.type === "constant" && node.dataType) {
+        outputNode.data.showType = "valueNode";
+        outputNode.data.value = node.value;
+      } else if (
+        node.type === "math_operation" &&
+        node.value === "+" &&
+        node.left
+      ) {
+        outputNode.data.showType = "increaseNode";
+        outputNode2.data.showType = "valueNode";
+        outputNode2.data.value = node.right.value;
+      } else if (node.type === "math_operation" && node.value === "+") {
+        outputNode.data.showType = "increaseNode";
+        outputNode.data.value = node.value;
+      } else if (node.type === "math_operation" && node.value === "-") {
+        outputNode.data.showType = "decreaseNode";
+        outputNode.data.value = node.value;
+      }
+
+      if (node.type === "constant" && node.value) {
+        if (outputNode2.data.showType === "valueNode") {
+          outputArray.push(outputNode, outputNode2);
+        } else {
+          outputArray.push(outputNode);
+        }
+      } else {
+        console.log("A===", outputArray);
+        if (outputNode2.data.showType === "valueNode") {
+          outputArray.push(outputNode, outputNode2);
+        } else {
+          outputArray.push(outputNode);
+        }
+      }
+
+      if (
+        node.value1 &&
+        node.value1.value &&
+        node.value1.type !== "math_operation"
+      ) {
+        console.log("<---", node.value1);
+        edgesArr.push(
+          {
+            id: `e${nodeId}-${parseInt(nodeId) + 1}`,
+            source: nodeId,
+            target: processNode(node.value1, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          },
+          {
+            id: `e${parseInt(nodeId) + 1}-${parseInt(nodeId) + 2}`,
+            source: `${parseInt(nodeId) + 1}`,
+            target: `${parseInt(nodeId) + 2}`,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          }
+        );
+      }
+
+      if (node.value1 && node.value1.right) {
+        const edgeId = `e${nodeId}-${parseInt(nodeId) + 1}`;
+        edgesArr.push(
+          {
+            id: edgeId,
+            source: nodeId,
+            target: processNode(node.value1, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          },
+          {
+            id: `e${parseInt(nodeId) + 1}-${parseInt(nodeId) + 2}`,
+            source: `${parseInt(nodeId) + 1}`,
+            target: `${parseInt(nodeId) + 2}`,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          }
+        );
+      }
+
+      return outputNode;
+    };
+
+    processNode(obj);
+    setEdges(edgesArr);
+    setNodes(outputArray);
   };
 
   const onDrop = async (event: DragEvent) => {
@@ -122,6 +311,7 @@ const BasicFlow = () => {
           position.y <= startY + halfHeight
         );
       };
+
       const updateNode = (node: object, type: string) => {
         let updatedNode;
         if (type === "increaseNode") {
@@ -225,7 +415,11 @@ const BasicFlow = () => {
           console.log("f**k");
           updatedNodes.push(node);
         } else {
-          if (type !== "valueNode" && type !== "paramNode" && type !== "attributeNode") {
+          if (
+            type !== "valueNode" &&
+            type !== "paramNode" &&
+            type !== "attributeNode"
+          ) {
             const onAddNodeId = getId();
 
             const onAddNodePosition = {
@@ -357,7 +551,10 @@ const BasicFlow = () => {
   }, [nodes, setNodes]);
 
   useEffect(() => {
-    setSelectedAttribute(nodes[0].data.dataType);
+    if (nodes.length > 1) {
+      setSelectedAttribute(nodes[0].data.dataType);
+    }
+    // here
     if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
       setCreateFirstNode(false);
       const onAddId = getId();
@@ -391,14 +588,30 @@ const BasicFlow = () => {
   }, [nodes[0].data.value]);
 
   useEffect(() => {
-    if (createFirstNode) {
-      console.log("yo");
+    // console.log("setRedraw=>");
+    // setRedraw(true);
+
+    saveSCHEMA_CODE(param.schema_revision);
+
+    const firstMetaData = param.meta_function;
+    if (
+      firstMetaData.startsWith("meta.SetString") ||
+      firstMetaData.startsWith("meta.SetBoolean") ||
+      firstMetaData.startsWith("meta.SetNumber") ||
+      firstMetaData.startsWith("meta.SetFloat")
+    ) {
+      console.log("it's work");
+      convertObjectToNode(parser_then.parse(firstMetaData));
+      setMetaData(param.meta_function);
+      console.log("metaData", metaData);
     }
-  }, [createFirstNode]);
+  }, []);
+
+
 
   const getDataFromNode = () => {
     const transformData = (nodes) => {
-      const result = {};
+      let result = {};
 
       for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
@@ -419,9 +632,10 @@ const BasicFlow = () => {
         }
 
         if (nodes[i].data.showType === "valueNode") {
-          nodes[i].data.dataType = nodes[0].data.dataType
+          nodes[i].data.dataType = nodes[0].data.dataType;
           console.log("1", nodes[i].data.dataType);
         }
+
 
         if (nodes[i].data.showType === "selectAttributeNode") {
           console.log("x");
@@ -430,10 +644,10 @@ const BasicFlow = () => {
             nodes[i].data.dataType === "float"
               ? "SetFloat"
               : nodes[i].data.dataType === "number"
-                ? "SetNumber"
-                : nodes[i].data.dataType === "boolean"
-                  ? "SetBoolean"
-                  : "SetString";
+              ? "SetNumber"
+              : nodes[i].data.dataType === "boolean"
+              ? "SetBoolean"
+              : "SetString";
           result.attributeName = {
             type: "constant",
             dataType: "string",
@@ -453,18 +667,18 @@ const BasicFlow = () => {
               nodes[i].data.showType === "increaseNode"
                 ? "+"
                 : nodes[i].data.showType === "decreaseNode"
-                  ? "-"
-                  : "=",
+                ? "-"
+                : "=",
             left: {
               type: "meta_function",
               functionName:
                 result.functionName === "SetFloat"
                   ? "GetFloat"
                   : result.functionName === "SetNumber"
-                    ? "GetNumber"
-                    : result.functionName === "SetBoolean"
-                      ? "GetBoolean"
-                      : "GetString",
+                  ? "GetNumber"
+                  : result.functionName === "SetBoolean"
+                  ? "GetBoolean"
+                  : "GetString",
               attributeName: {
                 type: "constant",
                 dataType: "string",
@@ -494,24 +708,37 @@ const BasicFlow = () => {
         } else if (nodes[i].data.showType === "paramNode") {
           result.value1 = {
             type: "param_function",
-            functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
+            functionName:
+              nodes[i].data.dataType === "float"
+                ? "GetFloat"
+                : nodes[i].data.dataType === "number"
+                ? "GetNumber"
+                : nodes[i].data.dataType === "boolean"
+                ? "GetBoolean"
+                : "GetString",
             attributeName: {
               type: "constant",
               dataType: nodes[i].data.dataType,
               value: nodes[i].data.value,
-            }
-
+            },
           };
         } else if (nodes[i].data.showType === "attributeNode") {
           result.value1 = {
             type: "meta_function",
-            functionName: nodes[i].data.dataType === "float" ? "GetFloat" : nodes[i].data.dataType === "number" ? "GetNumber" : nodes[i].data.dataType === "boolean" ? "GetBoolean" : "GetString",
+            functionName:
+              nodes[i].data.dataType === "float"
+                ? "GetFloat"
+                : nodes[i].data.dataType === "number"
+                ? "GetNumber"
+                : nodes[i].data.dataType === "boolean"
+                ? "GetBoolean"
+                : "GetString",
             attributeName: {
               type: "constant",
               dataType: nodes[i].data.dataType,
               value: nodes[i].data.value,
-            }
-          }
+            },
+          };
         }
       }
 
@@ -520,7 +747,6 @@ const BasicFlow = () => {
     };
 
     const object = Factory.createObject(transformData(nodes)).toString();
-    console.log("--->obj", transformData(nodes))
     setMetaData(object);
     return object;
   };
@@ -538,67 +764,114 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
-
-  const [actionName, setactionName] = useState("")
   const FindSchemaCode = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
-    const params = {
-    };
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${param.schema_revision}`;
+    const params = {};
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-    }
-    // Make a GET request with parameters
-    await axios.get(apiUrl, {
-      params: params, // Pass parameters as an object
-      headers: headers, // Pass headers as an object
-    })
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
+    await axios
+      .get(apiUrl, {
+        params: params,
+        headers: headers,
+      })
       .then((response) => {
-        // Handle successful response here
-        console.log('Response:', response.data);
-        setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name)
-
+        setActionData(
+          response.data.data.schema_info.schema_info.onchain_data.actions
+        );
       })
       .catch((error) => {
-        // Handle errors here
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
-  }
-
+  };
 
   const saveAction = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
-    const requestData = {
-      "payload": {
-        "schema_code": getSCHEMA_CODE(),
-        "update_then": true,
-        "name": getActionName(),
-        "then": [metaData],
-      }
-    };
+    console.log("-->", (actionThenArr[actionThenIndex] = metaData));
+    console.log("arr= ", actionThenArr);
+    const apiUrl =
+      "https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_actions"; // Replace with your API endpoint
+      let requestData
+      if (isCreateNewAction) {
+      requestData = {
+        payload: {
+          schema_code: param.schema_revision,
+          update_then: false,
+          name: param.action_name,
 
-    await axios.post(apiUrl, requestData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-        // Add any other headers your API requires
-      },
-    })
-      .then(response => {
-        console.log('API Response saveOnchainCollectionAttributes :', response.data);
-        console.log("Request :", requestData)
+          then: [...actionThenArr, metaData]
+        },
+      };
+    } else {
+       requestData = {
+        payload: {
+          schema_code: param.schema_revision,
+          update_then: false,
+          name: param.action_name,
+
+          then: actionThenArr,
+        },
+      };
+    }
+
+    await axios
+      .post(apiUrl, requestData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+        },
+      })
+      .then((response) => {
+        console.log(
+          "API Response saveOnchainCollectionAttributes :",
+          response.data
+        );
+        console.log("Request :", requestData);
         // You can handle the API response here
       })
-      .catch(error => {
-        console.error('API Error:', error);
+      .catch((error) => {
+        console.error("API Error:", error);
         // Handle errors here
       });
-
-  }
+  };
 
   useEffect(() => {
-    FindSchemaCode()
-  }, [])
+    const convertFromBase64 = (str) => {
+      console.log("str: ", str);
+      return atob(str);
+    };
+    if (actionData !== undefined) {
+      const getDataByName = (data, name) => {
+        return data.find((item) => item.name === name);
+      };
+      if (isBase64(param.meta_function)) {
+        const result = getDataByName(actionData, param.action_name);
+        console.log("result: ", actionData);
+        console.log("actionName: ", param.action_name);
+        setActionThenArr(result.then);
+        const index = actionThenArr.indexOf(
+          convertFromBase64(param.meta_function)
+        );
+        console.log("--: ", index);
+        setActionThenIndex(index);
+      } else {
+        const result = getDataByName(actionData, param.action_name);
+        console.log("result: ", result);
+        setActionThenArr(result.then);
+        const index = actionThenArr.indexOf(param.meta_function);
+        console.log("--: ", index);
+        setActionThenIndex(index);
+      }
+
+      if(param.meta_function === "create-new-action"){
+      setIsCreateNewAction(true)
+      }
+    }
+  }, [actionData]);
+
+  useEffect(() => {
+    FindSchemaCode();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -641,59 +914,51 @@ const BasicFlow = () => {
         </div>
 
         <div>
-          <div className="flex justify-center" onClick={async () => { await saveAction()  ; console.log(metaData) ;navigate("/newintregation/beginer") }}>
-            <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
+          <div
+            className="flex justify-center"
+            onClick={async () => {
+              await saveAction();
+              console.log(metaData);
+              navigate(`/draft/actions/${param.schema_revision}`);
+            }}
+          >
+            <NormalButton
+              BorderRadius={0}
+              FontSize={32}
+              TextTitle={"SAVE"}
+            ></NormalButton>
           </div>
         </div>
+        <button onClick={() => console.log(nodes)}>log</button>
+        <button onClick={() => console.log(edges)}>log edges</button>
+        <button onClick={() => console.log("D-->", selectedAttribute)}>
+          log metaData
+        </button>
+        <button onClick={() => console.log("A-->", param.meta_function)}>
+          AAA
+        </button>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute} actionName={getActionName()}></Flowbar>
+      <Flowbar selectedAttribute={selectedAttribute}></Flowbar>
     </div>
   );
 };
 
-export default function NewIntregationThenAttribute() {
-  const [isShow, setIsShow] = React.useState(false);
-
+const DraftEditActionsAttribute = () => {
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div className="flex justify-between">
-              <div>
-                <Stepper2 ActiveStep={6}></Stepper2>
-                <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
-              </div>
-              <Conectwalet></Conectwalet>
-            </div>
-            <div className="mt-[20px] flex flex-col items-center justify-center">
+            <div className="h-full flex flex-col items-center justify-center">
               <ReactFlowProvider>
                 <BasicFlow />
               </ReactFlowProvider>
             </div>
           </div>
-          <Tooltip title={"help"}>
-            <div
-              onClick={() => {
-                setIsShow(true);
-              }}
-              className=" z-[51] w-[50px] h-[50px] rounded-full bg-transparent  hover:bg-slate-200 flex justify-center items-center absolute text-[50px] mt-[750px] ml-[1180px] cursor-pointer hover:scale-150 hover:text-[#262f50] duration-500"
-            >
-              ?
-            </div>
-          </Tooltip>
         </div>
-        {isShow && (
-          <div
-            className="absolute duration-500"
-            onClick={() => {
-              setIsShow(!isShow);
-            }}
-          >
-            <Darkbg></Darkbg>
-          </div>
-        )}
       </div>
     </div>
   );
-}
+};
+
+export default DraftEditActionsAttribute;
