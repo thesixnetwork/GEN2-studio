@@ -159,22 +159,22 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(true)
         }
         else if (containsSame(str)) {
-            setErrorMessage("Not Same")
+            setErrorMessage("Name can't be same")
             setIser(true)
         }
         else if (containsSpecialChars(str)) {
             //("2")
-            setErrorMessage("Sp Chars")
+            setErrorMessage("Special characters are not allowed")
             setIser(true)
         }
         else if (containsSpace(str)) {
             //("3")
-            setErrorMessage("Space")
+            setErrorMessage("Space are not allowed")
             setIser(true)
         }
         else if (containsUppercase(str)) {
             //("4")
-            setErrorMessage("Uppercase")
+            setErrorMessage("Uppercase are not allowed")
             setIser(true)
         }
         else {
@@ -205,20 +205,20 @@ export default function AttributeBox(props: MyComponentProps) {
             setIser(true)
         } 
         else if (containsSame(e.target.value)) {
-            setErrorMessage("Not Same")
+            setErrorMessage("Name can't be same")
             setIser(true)
 
         }
         else if (containsSpecialChars(e.target.value)) {
-            setErrorMessage("Sp Chars")
+            setErrorMessage("Special characters are not allowed")
             setIser(true)
         }
         else if (containsSpace(e.target.value)) {
-            setErrorMessage("Space")
+            setErrorMessage("Space are not allowed")
             setIser(true)
         }
         else if (containsUppercase(e.target.value)) {
-            setErrorMessage("Uppercase")
+            setErrorMessage("Uppercase are not allowed")
             setIser(true)
         }
         else {
