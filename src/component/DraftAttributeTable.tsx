@@ -16,7 +16,6 @@ const DraftAttributeTable = ({
   data,
   expand,
   setIsSave,
-  whichExpand,
   setWhichExpand,
 }) => {
   const param = useParams();
@@ -25,6 +24,8 @@ const DraftAttributeTable = ({
   const [selectedItem, setSelectedItem] = useState("");
   const [editableRow, setEditableRow] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [errorRows, setErrorRows] = useState([]);
+
 
   const Expand = styled(AspectRatioIcon)({
     cursor: "pointer",
@@ -54,6 +55,8 @@ const DraftAttributeTable = ({
         ...prevState,
         originattributes: false,
       }));
+      console.log("index", index)
+      console.log("index", data[index])
     } else if (type === "collectionAttributes") {
       setIsSave((prevState) => ({
         ...prevState,
@@ -101,13 +104,23 @@ const DraftAttributeTable = ({
     }
     currentObj[fieldParts[fieldParts.length - 1]] = value;
     // console.log("currentObj[fieldParts[fieldParts.length - 1]]",currentObj[fieldParts[fieldParts.length - 1]])
-
+    console.log("Value currentObj", currentObj["default_mint_value"])
+    console.log("Value", value)
     if (value === "string") {
       if (type !== "originAttributes") {
         currentObj["default_mint_value"] = {
           string_attribute_value: { value: "" },
         };
+        console.log("Value currentObj", currentObj["default_mint_value"])
       }
+      // if (newData[index].data_type !== 'number' || newData[index].value !== '123') {
+      //   currentObj.hasConflict = true;
+      // } else {
+      //   currentObj.hasConflict = false;
+      // }
+    // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
+
+
       setSelectedItem("string");
     } else if (value === "number") {
       if (type !== "originAttributes") {
@@ -125,6 +138,24 @@ const DraftAttributeTable = ({
       setSelectedItem("boolean");
     }
   };
+
+  const handleCellChange2 = (index, field, value) => {
+    // ทำการตรวจสอบค่า value ที่คุณต้องการ
+    const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
+    
+    if (!isValid) {
+      // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
+    } else {
+      setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
+    }
+  
+    if (isValid) {
+      // บันทึกข้อมูลเมื่อค่าถูกต้อง
+    }
+  };
+  
+  
+
 
   useEffect(() => {
     console.log("---?");
@@ -187,6 +218,16 @@ const DraftAttributeTable = ({
     // setIsData([...isData, newRow]);
     // console.log(isData)
   };
+
+  const handelDel = (index: number) => {
+    data.splice(index, 1);
+    setIsData(data);
+  }
+
+  const handelErrValue = (e) => {
+    console.log("kkkk ==>",e)
+  }
+  
   console.log(data);
 
   return (
@@ -282,9 +323,14 @@ const DraftAttributeTable = ({
                 data.map((item, index) => (
                   <tr
                     key={index}
-                    className={`border border-white bg-[#B9BAC2] ${
-                      editableRow === index ? "bg-blue-200" : ""
-                    }`}
+                  //   className={`border border-white bg-[#B9BAC2] 
+                  //   ${
+                  //     editableRow === index ? "bg-blue-200" : ""
+                  //   }`
+                  // }
+                  className={`border border-white 
+                  ${item.hasConflict ? 'bg-red-500' : 'bg-[#B9BAC2]'}
+                  ${editableRow === index ? "bg-blue-200" : ""}`}
                   >
                     <td
                       className="border border-white"
@@ -376,7 +422,7 @@ const DraftAttributeTable = ({
                                           onDoubleClick={() => handleEditClick(index)}
                                           >
                       <Flex>
-                        <DeleteIcon />
+                        <DeleteIcon onClick={() => handelDel(index)}/>
                         {editableRow === index ? (
                           <img
                             src={saveIcon}
