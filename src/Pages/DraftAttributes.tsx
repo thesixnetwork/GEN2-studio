@@ -23,7 +23,7 @@ const DraftAttributes = () => {
   const [whichExpand, setWhichExpand] = useState("none");
   const { schema_revision } = useParams();
 
-  const FindSchemaCode = async () => {
+  const findSchemaCode = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/get_schema_info/${schema_revision}`;
@@ -63,14 +63,12 @@ const DraftAttributes = () => {
       await axios.post(apiUrl, requestData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-          // Add any other headers your API requires
+          'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`, 
         },
       })
         .then(response => {
           console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
           console.log("Request :",requestData)
-          // You can handle the API response here
           Swal.fire({
             position: "center",
             icon: "success",
@@ -81,7 +79,6 @@ const DraftAttributes = () => {
         })
         .catch((error) => {
           console.error("API Error:", error);
-          // Handle errors here
           Swal.fire({
             position: "center",
             icon: "error",
@@ -103,7 +100,7 @@ const DraftAttributes = () => {
 
   
   useEffect(() => {
-    FindSchemaCode();
+    findSchemaCode();
   }, []);
   return (
     <div className="w-full flex justify-center ">
@@ -204,7 +201,7 @@ const DraftAttributes = () => {
                   FontSize={24}
                 ></NormalButton>
               </div>
-              <div className="w-32" onClick={FindSchemaCode} >
+              <div className="w-32" onClick={findSchemaCode} >
                 <NormalButton
                   TextTitle="RESET"
                   BorderRadius={0}

@@ -39,7 +39,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
     }
   };
 
-  const FindSchemaCode = async () => {
+  const findSchemaCode = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/get_schema_info/${param.schema_revision}`;
@@ -64,7 +64,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
   };
 
   useEffect(() => {
-    FindSchemaCode();
+    findSchemaCode();
   }, []);
 
   const handleEditDesc = () => {
@@ -247,18 +247,18 @@ const DraftActionPreviewCard = ({ data, param }) => {
                         : `/draft/actions/edit/then/${data.name}/${data.then[index]}/${param}`
                     }
                   >
-                    <div className="min-w-4 min-h-4">
+                    <div className="w-4 h-4 mr-1">
                       <img
                         src={editIcon}
                         alt="edit"
-                        className="w-4 h-4 mr-1 duration-300 hover:scale-125"
+                        className="w-4 h-4 duration-300 hover:scale-125"
                       />
                     </div>
                   </Link>
                   <Tooltip title={item}>
-                      <span>
-                        {convertStringIfTooLong(item, 60)}
-                      </span>
+                    <span className="whitespace-nowrap">
+                      {convertStringIfTooLong(item, 60)}
+                    </span>
                   </Tooltip>
                 </div>
               </li>

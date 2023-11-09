@@ -79,16 +79,17 @@ const NewIntregationThen = () => {
                 ></CircularProgress>
               ) : (
                 <>
+                <div className="max-w-1/2 h-92 flex flex-col items-center justify-center gap-y-10">
                   {actions !== undefined && (
-                    <DraftActionThenPreview actions={actions} />
+                    <DraftActionThenPreview actions={actions}/>
                   )}
-              <div className="flex gap-x-10">
-                <ActionTypeCard type="update" draft={false} />
-                <ActionTypeCard type="transfer" draft={false} />
-              </div>
-              <div>
-                <ActionTypeCard type="transform" draft={false} />
-              </div>
+                  <div className="flex gap-x-10">
+                    <ActionTypeCard type="update" draft={true} />
+                    <ActionTypeCard type="transfer" draft={true} />
+                    <ActionTypeCard type="transform" draft={true} />
+                  </div>
+
+                </div>
                 </>
               )}
             </div>

@@ -30,6 +30,16 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
   const param = useParams();
   const navigate = useNavigate();
 
+  const checkDuplicateActionName = (actionNameValue)=>{
+    let isDuplicate = false
+    actions.forEach((action)=>{
+      if(action.name === actionNameValue){
+        isDuplicate = true
+      }
+    })
+    return isDuplicate
+  }
+
   const saveAction = async () => {
     const apiUrl =
       `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`;
@@ -41,40 +51,46 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
       },
     };
     console.log("1",requestData)
+    if (!isActionNameError || !isDescriptionError){
+      await axios
+        .post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+          },
+        })
+        .then((response) => {
+          console.log(
+            "API Response saveOnchainCollectionAttributes :",
+            response.data
+          );
+          console.log("Request :", requestData);
+          setActions([...actions,response.data.data.schema_info.schema_info.onchain_data.actions[response.data.data.schema_info.schema_info.onchain_data.actions.length-1]])
+          Swal.fire({
+            icon: "success",
+            title: "Create Action Success!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        })
+        .catch((error) => {
+          console.error("API Error:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Something Went Wrong!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        });
 
-    await axios
-      .post(apiUrl, requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
-        },
+    }else{
+      Swal.fire({
+        icon: "error",
+        title: "Something Went Wrong!",
+        showConfirmButton: false,
+        timer: 1500,
       })
-      .then((response) => {
-        console.log(
-          "API Response saveOnchainCollectionAttributes :",
-          response.data
-        );
-        console.log("Request :", requestData);
-        console.log(">",actions)
-        console.log(">>",response.data)
-        console.log(">>>",response.data.data.schema_info.schema_info.onchain_data.actions)
-        setActions([...actions,response.data.data.schema_info.schema_info.onchain_data.actions[response.data.data.schema_info.schema_info.onchain_data.actions.length-1]])
-        Swal.fire({
-          icon: "success",
-          title: "Create Action Success!",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Something Went Wrong!",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      });
+    }
   };
 
   const containsSpecialChars = (str) => {
@@ -97,15 +113,18 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
       setActionNameErrorMessage("Not Availible");
       setIsActionNameError(true);
     } else if (containsSpecialChars(str)) {
-      setActionNameErrorMessage("Special Characters");
+      setActionNameErrorMessage("Can't Contain Special Characters");
       setIsActionNameError(true);
     } else if (containsSpace(str)) {
-      setActionNameErrorMessage("Space");
+      setActionNameErrorMessage(" Can't Contain Space");
       setIsActionNameError(true);
     } else if (containsUppercase(str)) {
-      setActionNameErrorMessage("Uppercase");
+      setActionNameErrorMessage("Can't Contain Uppercase");
       setIsActionNameError(true);
-    } else {
+    } else if (checkDuplicateActionName(str)){
+      setActionNameErrorMessage("Can't Be Duplicate!");
+      setIsActionNameError(true);
+    }  else {
       setIsActionNameError(false);
     }
   };
@@ -162,7 +181,7 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
                 <div className=" flex  justify-center">
                   <RedAleart
                     Height={20}
-                    Width={180}
+                    Width={300}
                     Rotate={0}
                     ML={0}
                     MT={0}
@@ -207,7 +226,7 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
                       <div className="flex justify-center">
                         <RedAleart
                           Height={20}
-                          Width={180}
+                          Width={300}
                           Rotate={0}
                           ML={0}
                           MT={0}

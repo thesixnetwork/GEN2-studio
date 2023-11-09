@@ -145,7 +145,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
 
 
 
-    const FindSchemaCode = async () => {
+    const findSchemaCode = async () => {
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${schema_revision}`;
         const params = {};
         const headers = {
@@ -169,7 +169,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
     };
 
     useEffect(() => {
-        FindSchemaCode();
+        findSchemaCode();
     }, [])
 
     const handleNetworkChange = (event) => {

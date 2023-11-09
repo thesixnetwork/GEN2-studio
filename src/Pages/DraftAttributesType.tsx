@@ -13,16 +13,13 @@ import DraftAttributeTable from "../component/DraftAttributeTable";
 import { CircularProgress } from "@mui/material";
 
 const DraftAttributesType = () => {
-  const [originAttributes, setOriginAttributes] = useState([]);
-  const [collectionAttributes, setCollectionAttributes] = useState([]);
-  const [tokenAttributes, setTokenAttributes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState();
   const [isSave, setIsSave] = useState(false);
 
   const param = useParams();
 
-  const FindSchemaCode = async () => {
+  const findSchemaCode = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/get_schema_info/${param.schema_revision}`;
@@ -37,24 +34,6 @@ const DraftAttributesType = () => {
         headers: headers,
       })
       .then((response) => {
-        // console.log('Response:', response.data.data.schema_info.schema_info.origin_data.origin_attributes);
-        setOriginAttributes(
-          response.data.data.schema_info.schema_info.origin_data
-            .origin_attributes
-        );
-        // console.log('Response:', response.data.data.schema_info.schema_info.onchain_data.nft_attributes);
-        setCollectionAttributes(
-          response.data.data.schema_info.schema_info.onchain_data.nft_attributes
-        );
-        // console.log(
-        //   response.data.data.schema_info.schema_info.onchain_data
-        //     .token_attributes
-        // );
-        setTokenAttributes(
-          response.data.data.schema_info.schema_info.onchain_data
-            .token_attributes
-        );
-
         setData(response.data.data.schema_info.schema_info);
         setLoading(false);
       })
@@ -81,8 +60,7 @@ const DraftAttributesType = () => {
         .post(apiUrl, requestData, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, // Set the content type to JSON
-            // Add any other headers your API requires
+            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
           },
         })
         .then((response) => {
@@ -91,7 +69,6 @@ const DraftAttributesType = () => {
             response.data
           );
           console.log("Request :", requestData);
-          // You can handle the API response here
           Swal.fire({
             position: "center",
             icon: "success",
@@ -102,7 +79,6 @@ const DraftAttributesType = () => {
         })
         .catch((error) => {
           console.error("API Error:", error);
-          // Handle errors here
           Swal.fire({
             position: "center",
             icon: "error",
@@ -122,7 +98,7 @@ const DraftAttributesType = () => {
   };
   console.log(param.attribute_type);
   useEffect(() => {
-    FindSchemaCode();
+    findSchemaCode();
   }, []);
   return (
     <div className="w-full flex justify-center ">
@@ -174,7 +150,7 @@ const DraftAttributesType = () => {
                   FontSize={24}
                 ></NormalButton>
               </div>
-              <div className="w-32" onClick={FindSchemaCode}>
+              <div className="w-32" onClick={findSchemaCode}>
                 <NormalButton
                   TextTitle="DISCARD"
                   BorderRadius={0}

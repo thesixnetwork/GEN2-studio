@@ -531,10 +531,12 @@ const BasicFlow = () => {
   }, [nodes, setNodes]);
 
   useEffect(() => {
-    if (nodes.length > 1) {
-      setSelectedAttribute(nodes[0].data.dataType);
-    }
-    // here
+    setSelectedAttribute(nodes[0].data.dataType);
+
+  }
+  ,[nodes[0].data.dataType])
+
+  useEffect(() => {
     if (nodes[0].data.value && nodes.length < 2 && createFirstNode) {
       setCreateFirstNode(false);
       const onAddId = getId();
@@ -744,7 +746,7 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
-  const FindSchemaCode = async () => {
+  const findSchemaCode = async () => {
     const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${param.schema_revision}`;
     const params = {};
     const headers = {
@@ -850,7 +852,7 @@ const BasicFlow = () => {
   }, [actionData]);
 
   useEffect(() => {
-    FindSchemaCode();
+    findSchemaCode();
   }, []);
 
   const navigate = useNavigate();
@@ -892,7 +894,6 @@ const BasicFlow = () => {
             </ReactFlow>
           </div>
         </div>
-
         <div className="flex gap-x-5 justify-center">
         <div
             className="flex justify-center"

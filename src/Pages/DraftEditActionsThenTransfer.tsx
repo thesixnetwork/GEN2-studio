@@ -439,7 +439,7 @@ const BasicFlow = () => {
     setNodes(updatedNodes);
   };
 
-  const FindSchemaCode = async () => {
+  const findSchemaCode = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/get_schema_info/${param.schema_revision}`;
@@ -938,7 +938,7 @@ const BasicFlow = () => {
   }, [actionData]);
 
   useEffect(() => {
-    FindSchemaCode();
+    findSchemaCode();
   }, []);
 
   return (
@@ -1007,6 +1007,7 @@ const BasicFlow = () => {
               TextTitle={"SAVE"}
             ></NormalButton>
           </div>
+
         </div>
       </div>
       <Flowbar selectedAttribute={selectedAttribute} actionName={param.action_name}></Flowbar>

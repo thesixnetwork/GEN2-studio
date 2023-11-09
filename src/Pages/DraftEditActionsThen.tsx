@@ -11,6 +11,8 @@ const DraftEditActionsThen = () => {
   const param = useParams();
   const [actions, setActions] = useState();
   const [loading, setLoading] = useState(true);
+  
+  
   const findSchemaCode = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
@@ -72,17 +74,16 @@ const DraftEditActionsThen = () => {
                   }}
                 ></CircularProgress>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center gap-y-10">
+                <div className="max-w-1/2 h-92 flex flex-col items-center justify-center gap-y-10">
                   {actions !== undefined && (
                     <DraftActionThenPreview actions={actions}/>
                   )}
                   <div className="flex gap-x-10">
                     <ActionTypeCard type="update" draft={true} />
                     <ActionTypeCard type="transfer" draft={true} />
-                  </div>
-                  <div>
                     <ActionTypeCard type="transform" draft={true} />
                   </div>
+
                 </div>
               )}
             </div>
