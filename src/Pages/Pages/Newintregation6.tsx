@@ -59,7 +59,7 @@ const NewIntregation6 = () => {
     ]);
 
 
-    const [ChainType, setChainType] = useState("FIVENET")
+    const [ChainType, setChainType] = useState("")
     const navigate = useNavigate();
     const [ml, setml] = useState(0)
     const [isSelection, setisSelection] = useState(false)
@@ -98,7 +98,7 @@ const NewIntregation6 = () => {
     }
 
     const saveOriginContractAddressAndOriginBaseURI = async () => {
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`; // Replace with your API endpoint
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
         const requestData = {
             "payload": {
                 "schema_info": {
@@ -139,7 +139,7 @@ const NewIntregation6 = () => {
         const updatedText = [...text];
         updatedText[3].value = "";
         setisLoading(true)
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/base_uri_from_contract`; // Replace with your API endpoint
+        const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/base_uri_from_contract'; // Replace with your API endpoint
 
         const params = {
             contract_address: `${text[2].value}`,
@@ -177,7 +177,7 @@ const NewIntregation6 = () => {
         // const updatedText = [...text];
         // updatedText[0].duplicate = true;
         setIsLoadingHistory(true)
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+        const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
         const params = {
 
         };
@@ -337,7 +337,10 @@ const NewIntregation6 = () => {
                             DeTail={'An existing endpoint URL you use as NFT metadata. This is not required in case you plan to create all attributes in Gen 2'}
                             Height={414} Width={266} TitleSize={24} DetailSize={14}>
                         </WhiteBox>
-                        <div className=' w-[266px] h-full flex  justify-center items-center  mt-8'>
+                        <div className=' w-[266px] h-full flex  justify-between items-center  mt-8'>
+                            <div onClick={() => { navigate('/newintregation/7') }}>
+                                <BoxButton BorderRadius={0} FontSize={30} TextTitle={'SKIP'}></BoxButton>
+                            </div>
                             <div onClick={handleSubmit} >
                                 <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
                             </div>

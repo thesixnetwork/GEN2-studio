@@ -94,8 +94,7 @@ const NewIntregation7 = () => {
   }
 
   const checkALLError = () => {
-    const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~ ]/;
-    if (text.every((item) => item.name !== "" && item.display_option.opensea.trait_type!=="" && !specialChars.test(item.name)  )) {
+    if (text.every((item) => item.Error === 'T')) {
       navigate('/newintregation/8')
     }
   }
@@ -120,6 +119,7 @@ const NewIntregation7 = () => {
     }).then((result) => {
       /* Read more about handling dismissals below */
       if (result.dismiss === Swal.DismissReason.timer) {
+
       }
     })
 
@@ -132,9 +132,9 @@ const NewIntregation7 = () => {
     setTimeout(() => {
       checkALLError()
     }, 500);
-    LoadingCheckErro()
     await saveOriginTokenAttributes()
-    
+    LoadingCheckErro()
+    navigate('/newintregation/8')
   };
 
   const handleCreateAttribute = () => {
@@ -176,7 +176,7 @@ const NewIntregation7 = () => {
   };
 
   const saveOriginTokenAttributes = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`; // Replace with your API endpoint
+    const apiUrl = 'https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/set_schema_info'; // Replace with your API endpoint
     const requestData = {
       "payload": {
         "schema_info": {
@@ -212,7 +212,7 @@ const NewIntregation7 = () => {
 
   const getOriginAttributFromContract = async () => {
 
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/origin_attribute_from_baseuri/${getOriginContractAddressFromLocalStorage()}`; // Replace with your API endpoint
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/origin_attribute_from_baseuri/${getOriginContractAddressFromLocalStorage()}`; // Replace with your API endpoint
     const params = {
 
     };
@@ -261,7 +261,7 @@ const NewIntregation7 = () => {
     // const updatedText = [...text];
     // updatedText[0].duplicate = true;
     setIsLoadingHistory(true)
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const apiUrl = `https://six-gen2-studio-nest-backend-api-traffic-gateway-1w6bfx2j.ts.gateway.dev/schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
     const params = {
     };
     const headers = {

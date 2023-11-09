@@ -858,6 +858,11 @@ export default function AttributeBox(props: MyComponentProps) {
           ] && (
             <input
               type="text"
+              value={
+                props.text[props.index]["default_mint_value"][
+                  "string_attribute_value"
+                ]?.value 
+              }
               // value={
               //   props.text[props.index]["default_mint_value"][
               //     "string_attribute_value"

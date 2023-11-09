@@ -131,7 +131,7 @@ export default function AttributeBox(props: MyComponentProps) {
         }
 
         const lastField = fieldPathArray[fieldPathArray.length - 1];
-        
+
         target[lastField] = text;
 
         // console.log("TEXT:",updatedText[props.index]);
@@ -151,11 +151,11 @@ export default function AttributeBox(props: MyComponentProps) {
     const saveCheckErrorI = async (str) => {
         setIser(false)
         setPartI(false)
-        if (!str) {
-            setErrorMessage("Not Availible")
-            setIser(true)
-        }
-        else if (!props.text[props.index].data_type) {
+        // if (!str) {
+        //     setErrorMessage("Not Availible")
+        //     setIser(true)
+        // }
+        if (!props.text[props.index].data_type) {
             setErrorMessage("Need Data Type");
             setIser(true)
         }
@@ -201,14 +201,13 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const CheckErrorI = async (e) => {
         setPartI(false)
-        if (!e.target.value) {
-            setErrorMessage("Not Availible")
-            setIser(true)
-        }
-        else if (containsSame(e.target.value)) {
+        // if (!e.target.value) {
+        //     setErrorMessage("Not Availible")
+        //     setIser(true)
+        // }
+        if (containsSame(e.target.value)) {
             setErrorMessage("Name can't be same")
             setIser(true)
-
         }
         else if (containsSpecialChars(e.target.value)) {
             setErrorMessage("Special characters are not allowed")
@@ -229,16 +228,17 @@ export default function AttributeBox(props: MyComponentProps) {
     }
 
     const checkErrorII = (e) => {
-        if (!e.target.value) {
-            setErrorMessage("Not Availible")
-            setIser(true)
-        } else if (!props.text[props.index].data_type) {
+        // if (!e.target.value) {
+        //     setErrorMessage("Not Availible")
+        //     setIser(true)
+        // } 
+        if (!props.text[props.index].data_type) {
             setErrorMessage("Need Data Type");
             setIser(true)
 
         }
         else {
-            // setIser(false)
+            setIser(false)
         }
     }
 
@@ -269,14 +269,14 @@ export default function AttributeBox(props: MyComponentProps) {
 
     const SavecheckErrorII = (str) => {
         setIser(false)
-        if (!str && str === "") {
-            setErrorMessage("Not Availible")
-            setIser(true)
-        }
-        else {
-            setIser(false)
-            // return (true)
-        }
+        // if (!str && str === "") {
+        //     setErrorMessage("Not Availible")
+        //     setIser(true)
+        // }
+        // else {
+        // setIser(false)
+        // return (true)
+        // }
     }
 
     const handleDeleteAttribute = () => {
@@ -357,8 +357,18 @@ export default function AttributeBox(props: MyComponentProps) {
         }
     }
 
+    const validatEmptyInput = () => {
+        setPartI(false)
+        console.log(props.index,":",props.text[props.index])
+        if (props.text[props.index].name==="" || props.text[props.index].display_option.opensea.trait_type==="") {
+            setErrorMessage("Not Availible")
+            setIser(true)
+        }
+    }
+
     useEffect(() => {
         if (props.save) {
+            validatEmptyInput()
             // fetchError()
             // searchError()
         }
