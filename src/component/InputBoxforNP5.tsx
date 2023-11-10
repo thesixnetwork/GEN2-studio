@@ -194,13 +194,13 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     //         setIsDisabled(true)
     //     }
     // },[])
+   
 
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>
             <div className=' w-4/5 flex justify-start items-center '>
                 <p className='font-bold text-[24px] w-2/5 mr-[5%]'>{props.text[props.index].Name}</p>
                 <input
-                    disabled={isDisabled}
                     value={inputValue}
                     type="text"
                     // onChange={handleInputschemaCode}

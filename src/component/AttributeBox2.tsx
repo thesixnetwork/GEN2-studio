@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Select, MenuItem, styled, InputBase } from "@mui/material";
+import { 
+  // Select, 
+  // MenuItem, 
+  styled, 
+  // InputBase 
+} from "@mui/material";
 import Swal from "sweetalert2";
 import ClearIcon from "@mui/icons-material/Clear";
 import RedAleart from "./Alert/RedAleart";
-import ReactDOM from "react-dom";
-import { set, useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
+// import ReactDOM from "react-dom";
+// import { set, useForm } from "react-hook-form";
+// import { ErrorMessage } from "@hookform/error-message";
 import AlertCard from "./Alert/AlertCard";
-import { border } from "@chakra-ui/react";
+// import { border } from "@chakra-ui/react";
 
 interface MyComponentProps {
   State: number;
@@ -85,14 +90,15 @@ interface MyComponentProps {
 // }
 
 export default function AttributeBox(props: MyComponentProps) {
-  const [error, setError] = useState(false);
+  // const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [iser, setIser] = useState(false);
-  const [textInputI, settextInputI] = useState("");
+  // const [textInputI, settextInputI] = useState("");
   const [partI, setPartI] = useState(false);
   const [partII, setPartII] = useState(false);
-  const [SAME, setSAME] = useState(false);
-  const [partIII, setPartIII] = useState(false);
+  // const [SAME, setSAME] = useState(false);
+  // const [partIII, setPartIII] = useState(false);
+  const [isSuggest, setIsSuggest] = useState("");
 
   const Delete = styled(ClearIcon)({
     borderRadius: "16px",
@@ -110,8 +116,9 @@ export default function AttributeBox(props: MyComponentProps) {
   //     },
   // });
 
-  function containsSpecialChars(str) {
-    const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+  function containsSpecialChars(str: string) {
+    // const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+    const specialChars = /[`!@#$%^&*()+\-=[\]{};':"\\|,.<>?~]/;
     return specialChars.test(str);
   }
 
@@ -138,58 +145,65 @@ export default function AttributeBox(props: MyComponentProps) {
     const lastField = fieldPathArray[fieldPathArray.length - 1];
     target[lastField] = e.target.value;
 
-    console.log(updatedText[props.index]);
+    // console.log(updatedText[props.index]);
     props.setText(updatedText);
     props.setIsShow(false);
   };
 
-  const handleChangetrait_type = (e, path) => {
-    const updatedText = [...props.text];
-    updatedText[props.index].path = e.target.value;
-    props.setText(updatedText);
-    props.setIsShow(false);
+  const handleSuggestTraitType = async (str: string) => {
+    const result = str
+      .replace(/(\b\w)/g, (char) => char.toUpperCase())
+      .replace(/_/g, " ");
+    setIsSuggest(result);
   };
 
-  const CheckErrorComponent = async (e: any) => {
-    setPartI(false);
-    const updatedText = [...props.text];
-    console.log("props.index >", props.index);
-    console.log("updatedText[index] >", updatedText[props.index].name);
-    console.log(
-      "containsSame(updatedText[props.index].name) >",
-      containsSame(updatedText[props.index].name)
-    );
-    /// check name ///
-    if (
-      !updatedText[props.index].name ||
-      !updatedText[props.index].dataType ||
-      !updatedText[props.index].traitType ||
-      !updatedText[props.index].value
-    ) {
-      if (!updatedText[props.index].dataType) {
-        console.log(22222);
-        setErrorMessage("Need datatype");
-      }
-      if (
-        !updatedText[props.index].name ||
-        !updatedText[props.index].traitType ||
-        !updatedText[props.index].value
-      ) {
-        setErrorMessage("Not Availible");
-      }
-      setIser(true);
-    } else if (
-      updatedText[props.index].name &&
-      updatedText[props.index].dataType &&
-      updatedText[props.index].traitType &&
-      updatedText[props.index].value
-    ) {
-      console.log("all");
-    } else {
-      setIser(false);
-      setPartI(true);
-    }
-  };
+  // const handleChangetrait_type = (e, path) => {
+  //   const updatedText = [...props.text];
+  //   updatedText[props.index].path = e.target.value;
+  //   props.setText(updatedText);
+  //   props.setIsShow(false);
+  // };
+
+  // const CheckErrorComponent = async (e: any) => {
+  //   setPartI(false);
+  //   const updatedText = [...props.text];
+  //   // console.log("props.index >", props.index);
+  //   // console.log("updatedText[index] >", updatedText[props.index].name);
+  //   // console.log(
+  //   //   "containsSame(updatedText[props.index].name) >",
+  //   //   containsSame(updatedText[props.index].name)
+  //   // );
+  //   /// check name ///
+  //   if (
+  //     !updatedText[props.index].name ||
+  //     !updatedText[props.index].dataType ||
+  //     !updatedText[props.index].traitType ||
+  //     !updatedText[props.index].value
+  //   ) {
+  //     if (!updatedText[props.index].dataType) {
+  //       // console.log(22222);
+  //       setErrorMessage("Need datatype");
+  //     }
+  //     if (
+  //       !updatedText[props.index].name ||
+  //       !updatedText[props.index].traitType ||
+  //       !updatedText[props.index].value
+  //     ) {
+  //       setErrorMessage("Not Availible");
+  //     }
+  //     setIser(true);
+  //   } else if (
+  //     updatedText[props.index].name &&
+  //     updatedText[props.index].dataType &&
+  //     updatedText[props.index].traitType &&
+  //     updatedText[props.index].value
+  //   ) {
+  //     // console.log("all");
+  //   } else {
+  //     setIser(false);
+  //     setPartI(true);
+  //   }
+  // };
 
   const saveCheckErrorI = async (str) => {
     setIser(false);
@@ -227,11 +241,6 @@ export default function AttributeBox(props: MyComponentProps) {
       }
     }
   }
-
-  // useEffect(() => {
-  //     setErrorMessage("Not Same")
-  //     setIser(true)
-  // }, [SAME]);
 
   const CheckErrorI = async (e) => {
     setPartI(false);
@@ -285,24 +294,20 @@ export default function AttributeBox(props: MyComponentProps) {
       return false;
     }
   };
-  const checkErrorII = (e) => {
-    if (!e.target.value) {
-      setErrorMessage("Not Availible");
-      setIser(true);
-    } else if (containsSpace(e.target.value)) {
-      setErrorMessage("Space are not allowed");
-      setIser(true);
-    } else {
-      setIser(false);
-    }
-  };
+  // const checkErrorII = (e) => {
+  //   if (!e.target.value) {
+  //     setErrorMessage("Not Availible");
+  //     setIser(true);
+  //   } else if (containsSpace(e.target.value)) {
+  //     setErrorMessage("Space are not allowed");
+  //     setIser(true);
+  //   } else {
+  //     setIser(false);
+  //   }
+  // };
 
   const checkErrorIII = async () => {
     await setPartII(false);
-    // console.log("props.text >>>",props.text[props.index].data_type)
-    // console.log("props.text >>>",props.index)
-    // const updatedText = [...props.text];
-    // console.log("updatedText >>>", updatedText[props.index].value);
     if (!props.text[props.index].name) {
       setErrorMessage("Not Availible");
       setIser(true);
@@ -325,21 +330,12 @@ export default function AttributeBox(props: MyComponentProps) {
       return;
     }
 
-    if (props.text[props.index].data_type === "") {
-      //   console.log(1111);
+    if (props.text[props.index]["data_type"] === "") {
       setErrorMessage("Need datatype");
       setIser(true);
-    } else if (props.text[props.index].data_type === "string") {
-      // const isValue =
-      //   props.text[props.index]["default_mint_value"]["string_attribute_value"]
-      //     .value;
-      // setErrorMessage("Value is not of type string");
-      // if (!isValue || isValue !== "") {
-      //   setIser(true);
-      // } else {
+    } else if (props.text[props.index]["data_type"] === "string") {
       setIser(false);
-      // }
-    } else if (props.text[props.index].data_type === "number") {
+    } else if (props.text[props.index]["data_type"] === "number") {
       const isValue =
         props.text[props.index]["default_mint_value"]["number_attribute_value"]
           .value;
@@ -352,14 +348,11 @@ export default function AttributeBox(props: MyComponentProps) {
       if (typeof isValue === "number") {
         setIser(false);
       }
-    } else if (props.text[props.index].data_type === "boolean") {
+    } else if (props.text[props.index]["data_type"] === "boolean") {
       const isValue =
         props.text[props.index]["default_mint_value"]["boolean_attribute_value"]
           ?.value;
-      const isValue2 = props.text[props.index]["default_mint_value"];
       setErrorMessage("Value is not of type boolean");
-      console.log("Dddd1 =>", isValue);
-      console.log("Dddd2 =>", isValue2);
       setIser(true);
 
       if (typeof isValue === "boolean") {
@@ -371,85 +364,64 @@ export default function AttributeBox(props: MyComponentProps) {
     }
   };
 
-  const checkValueAndDataType = async (str: string) => {
-    if (props.DataType === "string") {
-      if (str === "true" || str === "false") {
-        return "Value is not of type string";
-      }
+  // const checkValueAndDataType = async (str: string) => {
+  //   if (props.DataType === "string") {
+  //     if (str === "true" || str === "false") {
+  //       return "Value is not of type string";
+  //     }
 
-      if (!/^[a-z]*$/.test(str) && typeof str === "string") {
-        if (str.includes(".")) {
-          return "Value is not of type string";
-        }
-        return "Value is not of type string";
-      }
-    }
+  //     if (!/^[a-z]*$/.test(str) && typeof str === "string") {
+  //       if (str.includes(".")) {
+  //         return "Value is not of type string";
+  //       }
+  //       return "Value is not of type string";
+  //     }
+  //   }
 
-    if (props.DataType === "number") {
-      if (!str && str != "0") {
-        return "Value is not of type number";
-      }
+  //   if (props.DataType === "number") {
+  //     if (!str && str != "0") {
+  //       return "Value is not of type number";
+  //     }
 
-      if (str === "true" || str === "false") {
-        return "Value is not of type number";
-      }
+  //     if (str === "true" || str === "false") {
+  //       return "Value is not of type number";
+  //     }
 
-      if (!/^[0-9]*$/.test(str) && typeof str === "string") {
-        if (str.includes(".")) {
-          return "Value is not of type number";
-        }
-        return "Value is not of type number";
-      }
-    }
+  //     if (!/^[0-9]*$/.test(str) && typeof str === "string") {
+  //       if (str.includes(".")) {
+  //         return "Value is not of type number";
+  //       }
+  //       return "Value is not of type number";
+  //     }
+  //   }
 
-    if (props.DataType === "boolean") {
-      if (str.toString() !== "true" && str.toString() !== "false") {
-        return "Value is not of type boolean";
-      }
-    }
+  //   if (props.DataType === "boolean") {
+  //     if (str.toString() !== "true" && str.toString() !== "false") {
+  //       return "Value is not of type boolean";
+  //     }
+  //   }
 
-    return;
-  };
+  //   return;
+  // };
 
   const SavecheckErrorIII = async () => {
     await setPartII(false);
 
-    if (props.text[props.index].data_type === "") {
+    if (props.text[props.index]["data_type"] === "") {
       setErrorMessage("Need datatype");
       setIser(true);
     } else {
       setIser(false);
       setPartII(true);
-      // console.log("partII",partII)
     }
   };
 
-  const SavecheckErrorII = async (str: string) => {
+  const SavecheckErrorII = async () => {
     setIser(false);
 
     if (await CheckErrorIIII(props.text[props.index].name)) {
       return;
-    } else if (containsSpace(str)) {
-      setErrorMessage("Space are not allowed");
-      setIser(true);
-    } else if (
-      props.text[props.index]["default_mint_value"]["_attribute_value"]
-    ) {
-      setErrorMessage("Need datatype");
-      setIser(true);
-    } 
-    // else if (
-    //   props.text[props.index]["default_mint_value"]["string_attribute_value"] ||
-    //   props.text[props.index]["default_mint_value"]["number_attribute_value"] ||
-    //   props.text[props.index]["default_mint_value"]["boolean_attribute_value"]
-    // ) {
-    //   const isError = await checkValueAndDataType(str);
-    //   if (isError) {
-    //     setErrorMessage(isError);
-    //     setIser(true);
-    //   }
-    // } 
-    else {
+    } else {
       setIser(false);
       return true;
     }
@@ -483,51 +455,6 @@ export default function AttributeBox(props: MyComponentProps) {
     });
   };
 
-  // const checkError = (text) => {
-  //     const nameSet = new Set();
-
-  //     const newErrors = text.map((item) => {
-
-  //         //("item =", item)
-  //         const errorObj = {};
-
-  //         if (nameSet.has(item.name)) {
-  //             Object.assign(errorObj, { error: true, errorMessage: "Duplicate Name" });
-  //         }
-
-  //         if (item.name.includes(" ")) {
-
-  //             Object.assign(errorObj, { error: true, errorMessage: "Have Space" });
-  //         }
-
-  //         if (item.name === null || item.dataType === null || item.traitType === null) {
-  //             Object.assign(errorObj, { error: true, errorMessage: "Can't be empty" });
-  //         }
-
-  //         nameSet.add(item.name);
-
-  //         return errorObj;
-  //     });
-  //     props.setErrorObj(newErrors);
-  // };
-
-  // const test = () => {
-  //     const newArray = props.text.map(() => ({
-  //         error: false,
-  //         errorMessage: "",
-  //     }));
-  //     props.setErrorObj(newArray);
-  //     //(props.errorObj);
-  // };
-
-  const searchError = () => {
-    // console.log(`name :${props.text[props.index].name}`)
-    for (let i = 0; i <= props.text.length; i++) {
-      // //.log(`dataType :${props.text[i].dataType}`)
-      // //.log(`traitType :${props.text[i].traitType}`)
-    }
-  };
-
   useEffect(() => {
     if (props.save) {
       console.log("props.save =>", props.save);
@@ -545,73 +472,42 @@ export default function AttributeBox(props: MyComponentProps) {
     props.setText(updatedText);
 
     await saveCheckErrorI(props.text[props.index].name);
-    //.log("partI",partI)
     if (partI) {
       await SavecheckErrorIII();
-      //.log("partII",partII)
       if (partII) {
-        SavecheckErrorII(
-          props.text[props.index].display_option.opensea.trait_type
-        );
+        SavecheckErrorII();
         if (
-          SavecheckErrorII(
-            props.text[props.index].display_option.opensea.trait_type
-          )
+          await SavecheckErrorII()
         ) {
-          SavecheckErrorII(props.text[props.index].value);
+          SavecheckErrorII();
           //   console.log("COCO:", SavecheckErrorII(props.text[props.index].value));
-          if (SavecheckErrorII(props.text[props.index].value)) {
-            document.getElementById(props.index).style.zIndex = "0";
+          if (await SavecheckErrorII()) {
+            document.getElementById(props.index.toString())!.style.zIndex = "0";
             const updatedText = [...props.text];
             updatedText[props.index]["Error"] = "T";
             props.setText(updatedText);
           } else {
-            document.getElementById(props.index).style.zIndex = "50";
+            document.getElementById(props.index.toString())!.style.zIndex = "50";
             props.setIsShow(true);
           }
         } else {
-          document.getElementById(props.index).style.zIndex = "50";
+          document.getElementById(props.index.toString())!.style.zIndex = "50";
           props.setIsShow(true);
         }
       } else {
-        document.getElementById(props.index).style.zIndex = "50";
+        document.getElementById(props.index.toString())!.style.zIndex = "50";
         props.setIsShow(true);
       }
     } else {
-      document.getElementById(props.index).style.zIndex = "50";
+      document.getElementById(props.index.toString())!.style.zIndex = "50";
       props.setIsShow(true);
     }
 
     // props.setEnum(0)
   };
+  
 
-  // useEffect(() => {
-
-  // }, [props.text]);
-
-  // const renderError = () => {
-  //     return error ? (
-  //         <RedAleart
-  //             Height={20}
-  //             Width={150}
-  //             Rotate={90}
-  //             ML={151}
-  //             MT={-76}
-  //             detailsText={errorMessage}
-  //         />
-  //     ) : null;
-  // };
-
-  // const addError = () => {
-  //     const newArray = props.text.map(() => ({
-  //         error: "",
-  //         errorMessage: "",
-  //     }));
-  //     props.setErrorObj(newArray);
-  //     //(props.errorObj);
-  // };
-
-  const [selectedItem, setSelectedItem] = useState("Icon0");
+  // const [selectedItem, setSelectedItem] = useState("Icon0");
   const [selectedItemValue, setSelectedItemValue] = useState("Icon4");
 
   const changeBgColorButton = async (e) => {
@@ -645,13 +541,7 @@ export default function AttributeBox(props: MyComponentProps) {
   };
 
   const handleChangeIcon = (e) => {
-    console.log("updatedText[]", props.text[props.index]);
     const updatedText = [...props.text];
-    // let isValue
-    // if
-    console.log("updatedText[]", props.text[props.index]["default_mint_value"]);
-    console.log("e.target.id]", e.target.id);
-    // //(typeof e.target.id)
     if (e.target.id == "string") {
       updatedText[props.index]["data_type"] = "string";
       updatedText[props.index]["default_mint_value"] = {
@@ -666,69 +556,13 @@ export default function AttributeBox(props: MyComponentProps) {
       };
     } else if (e.target.id == "number") {
       updatedText[props.index]["data_type"] = "number";
-      // updatedText[props.index]["default_mint_value"] = {
-      //   number_attribute_value: {
-      //     value:
-      //       props.text[props.index]["default_mint_value"][
-      //         "number_attribute_value"
-      //       ]?.value ||
-      //       props.text[props.index]["default_mint_value"]["_attribute_value"]
-      //         ?.value,
-      //   },
-      // };
       updatedText[props.index]["default_mint_value"] = {
         number_attribute_value: {
           value: 0,
         },
       };
     } else if (e.target.id == "boolean") {
-      updatedText[props.index]["data_type"] = "boolean";
-      // if (
-      //   props.text[props.index]["default_mint_value"]["boolean_attribute_value"]
-      // ) {
-      //   console.log(222);
-
-      //   // updatedText[props.index]["default_mint_value"] = {
-      //   //   boolean_attribute_value: {
-      //   //     value:
-      //   //       typeof props.text[props.index]["default_mint_value"][
-      //   //         "boolean_attribute_value"
-      //   //       ]?.value === "boolean" &&
-      //   //       props.text[props.index]["default_mint_value"][
-      //   //         "boolean_attribute_value"
-      //   //       ]?.value,
-      //   //   },
-      //   // };
-      // }
-
-      // if (props.text[props.index]["default_mint_value"]["_attribute_value"]) {
-      //   console.log(1111);
-      //   updatedText[props.index]["default_mint_value"] = {
-      //     boolean_attribute_value: {
-      //       value: JSON.parse(
-      //         props.text[props.index]["default_mint_value"]["_attribute_value"]
-      //           ?.value
-      //       ),
-      //     },
-      //   };
-      // }
-      // updatedText[props.index]["default_mint_value"] = {
-      //   boolean_attribute_value: {
-      //     value:
-      //       typeof props.text[props.index]["default_mint_value"][
-      //         "boolean_attribute_value"
-      //       ]?.value === "boolean"
-      //         ? props.text[props.index]["default_mint_value"][
-      //             "boolean_attribute_value"
-      //           ]?.value
-      //         : props.text[props.index]["default_mint_value"][
-      //             "_attribute_value"
-      //           ]?.value &&
-      //           props.text[props.index]["default_mint_value"][
-      //             "_attribute_value"
-      //           ]?.value,
-      //   },
-      // };
+      updatedText[props.index]["data_type"] = "boolean";  
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
           value: true,
@@ -738,18 +572,18 @@ export default function AttributeBox(props: MyComponentProps) {
     props.setText(updatedText);
   };
 
-  const handleChangValue = (e) => {
+  const handleChangValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedText = [...props.text];
-    const dataType = props.text[props.index].data_type.toLowerCase();
-    console.log("type", dataType);
-    // console.log("type ee", JSON.parse(e.target.value));
-    if (props.text[props.index].data_type.toLowerCase() === "number") {
+    const dataType = props.text[props.index]["data_type"].toLowerCase();
+    if (props.text[props.index]["data_type"].toLowerCase() === "number") {
       updatedText[props.index]["default_mint_value"] = {
         [`${dataType}_attribute_value`]: {
           value: parseInt(e.target.value),
         },
       };
-    } else if (props.text[props.index].data_type.toLowerCase() === "boolean") {
+    } else if (
+      props.text[props.index]["data_type"].toLowerCase() === "boolean"
+    ) {
       updatedText[props.index]["default_mint_value"] = {
         [`${dataType}_attribute_value`]: {
           value:
@@ -765,8 +599,6 @@ export default function AttributeBox(props: MyComponentProps) {
         },
       };
     }
-
-    // console.log(updatedText[props.index]); // Changed from props.text to updatedText
     props.setText(updatedText);
   };
 
@@ -807,8 +639,8 @@ export default function AttributeBox(props: MyComponentProps) {
             onChange={async (e) => {
               await handleChange(e, "name");
               await CheckErrorI(e);
+              await handleSuggestTraitType(e.target.value);
             }}
-            // onBlur={() => { fetchError() }}
             className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[160px]"
             placeholder="Add attribute name"
           />
@@ -820,14 +652,7 @@ export default function AttributeBox(props: MyComponentProps) {
               onClick={(e) => {
                 changeBgColorButton(e);
                 checkErrorIII();
-                console.log(
-                  "props.text",
-                  props.text[props.index]["default_mint_value"][
-                    "string_attribute_value"
-                  ]["value"]
-                );
               }}
-              // onMouseLeave={() => fetchError()}
               id="string"
               className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
                 props.DataType === "string"
@@ -873,13 +698,11 @@ export default function AttributeBox(props: MyComponentProps) {
           Trait type :&ensp;{" "}
           <input
             type="text"
-            value={props.TraitType}
+            value={isSuggest}
             onChange={(e) => {
               handleChange(e, "display_option.opensea.trait_type");
-              // handleChangetrait_type(e);
-              SavecheckErrorII(
-                props.text[props.index].display_option.opensea.trait_type
-              );
+              setIsSuggest(e.target.value);
+              SavecheckErrorII();
             }}
             // onBlur={fetchError}
             className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
@@ -898,30 +721,9 @@ export default function AttributeBox(props: MyComponentProps) {
                   "string_attribute_value"
                 ]?.value
               }
-              // value={
-              //   props.text[props.index]["default_mint_value"][
-              //     "string_attribute_value"
-              //   ]?.value ||
-              //   props.text[props.index]["default_mint_value"][
-              //     `${props.text[props.index].data_type}_attribute_value`
-              //   ]?.value
-              // }
-              onChange={(e) => {
-                console.log(props.State);
-                //   console.log("eeee =>", e.target.value);
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 handleChangValue(e);
-
-                //   SavecheckErrorII(
-                //     props.text[props.index]["default_mint_value"][
-                //       "string_attribute_value"
-                //     ]?.value ||
-                //       props.text[props.index]["default_mint_value"][
-                //         `${props.text[props.index].data_type}_attribute_value`
-                //       ]?.value
-                //   );
-                // SavecheckErrorII(e.target.value);
               }}
-              // onBlur={fetchError}
               className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
               placeholder="Add value here"
             />
@@ -936,10 +738,9 @@ export default function AttributeBox(props: MyComponentProps) {
                   "number_attribute_value"
                 ]?.value
               }
-              onChange={(e) => {
-                console.log(props.State);
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 handleChangValue(e);
-                SavecheckErrorII(e.target.value);
+                SavecheckErrorII();
               }}
               className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
               placeholder="Add trait type here"
@@ -950,7 +751,7 @@ export default function AttributeBox(props: MyComponentProps) {
           ] && (
             <div className="flex w-[160px]  space-evenly">
               <div
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                   changeBgColorButtonValue(e);
                   checkErrorIII();
                 }}

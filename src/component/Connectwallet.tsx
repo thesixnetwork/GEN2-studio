@@ -176,7 +176,7 @@ const Conectwalet = () => {
       "signature": `${signedMessage.signature}`
     };
     console.log(signedMessage)
-    await axios.post(apiUrl, requestData, {
+    await  axios.post(apiUrl, requestData, {
       headers: {
         'Content-Type': 'application/json', // Set the content type to JSON
         // Add any other headers your API requires
@@ -206,11 +206,11 @@ const Conectwalet = () => {
   return (
     <div className="w-[266px] h-[95px] border-[1px] border-white rounded-xl px-[12px] py-[9px] flex justify-center items-center">
       {walletcounterReducer.loading ? (
-        <CircularProgress className=" text-white" sx={{
+        <CircularProgress className=" text-white"   sx={{
           width: 300,
           color: 'white',
         }}
-        ></CircularProgress>
+      ></CircularProgress>
       ) : (
         <div>
           {(getAccessTokenFromLocalStorage() == null) ? (
@@ -218,7 +218,7 @@ const Conectwalet = () => {
               <div className="flex justify-center items-center h-[80px]">
                 <p
                   className="text-3xl text-white cursor-pointer hover:scale-105 duration-500"
-                  onClick={() => { buttonHandlerKeplrConnect(); ABCDE(); }}
+                  onClick={()=>{buttonHandlerKeplrConnect(); ABCDE();}}
                 >
                   Connect Wallet
                 </p>
@@ -250,7 +250,7 @@ const Conectwalet = () => {
                   </Tooltip>
                   <Tooltip title={"Home"}>
 
-                    <img src={logo3} onClick={()=>{navigate('/'); clearSCHEMA_CODE();}} className="w-[18px] h-[18px] mt-2 hover:scale-125 duration-500 cursor-pointer"></img>
+                    <img src={logo3} onClick={()=>{navigate('/')}} className="w-[18px] h-[18px] mt-2 hover:scale-125 duration-500 cursor-pointer"></img>
                   </Tooltip>
                 </div>
               </div>

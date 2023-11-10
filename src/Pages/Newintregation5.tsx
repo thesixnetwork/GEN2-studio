@@ -1,14 +1,12 @@
-import { useState, useRef, SetStateAction, useEffect } from 'react'
-import { Button, CircularProgress } from '@mui/material'
+import { useState,useEffect } from 'react'
+import {  CircularProgress } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2'
-import { Link, Navigate } from 'react-router-dom'
+
 import Darkbg from '../component/Alert/Darkbg'
-import AlertCard from '../component/Alert/AlertCard'
-import RedAleart from '../component/Alert/RedAleart'
+
 import { useNavigate } from 'react-router-dom';
 import GobackButton from '../component/GobackButton'
-import NextPageButton from '../component/NextPageButton'
 import WhiteBox from '../component/WhiteBox'
 import InputBoxforNP5 from '../component/InputBoxforNP5'
 import BoxButton from '../component/BoxButton'
@@ -17,13 +15,11 @@ import axios from 'axios'
 //Redux
 import { useSelector } from "react-redux";
 import {
-    walletcounterSelector,
-    setAccess_token,
-    setRefresh_token,
+    walletcounterSelector
 } from "../store/slices/walletcounterSlice";
 import { useAppDispatch } from "../store/store";
-import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, getSCHEMA_CODE, saveSCHEMA_CODE, saveTokensToLocalStorage } from '../helpers/AuthService'
-import { ABCDE } from '../App'
+import { getAccessTokenFromLocalStorage,getSCHEMA_CODE, saveSCHEMA_CODE } from '../helpers/AuthService'
+
 
 import Swal from 'sweetalert2'
 //Redux
