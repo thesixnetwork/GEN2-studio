@@ -5,14 +5,15 @@ import { useParams } from "react-router-dom";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
-import DraftActionThenPreview from '../component/DraftActionThenPreview'
+import DraftActionThenPreview from "../component/DraftActionThenPreview";
+import OpenAI from "openai";
 
 const DraftEditActionsThen = () => {
   const param = useParams();
   const [actions, setActions] = useState();
   const [loading, setLoading] = useState(true);
-  
-  
+
+
   const findSchemaCode = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
@@ -76,14 +77,13 @@ const DraftEditActionsThen = () => {
               ) : (
                 <div className="max-w-1/2 h-92 flex flex-col items-center justify-center gap-y-10">
                   {actions !== undefined && (
-                    <DraftActionThenPreview actions={actions}/>
+                    <DraftActionThenPreview actions={actions} />
                   )}
                   <div className="flex gap-x-10">
                     <ActionTypeCard type="update" draft={true} />
                     <ActionTypeCard type="transfer" draft={true} />
                     <ActionTypeCard type="transform" draft={true} />
                   </div>
-
                 </div>
               )}
             </div>
