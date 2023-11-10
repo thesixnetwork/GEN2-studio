@@ -70,6 +70,11 @@ export const getSCHEMA_CODE=()=>{
   return localStorage.getItem(SCHEMA_CODE)
 }
 
+export const clearSCHEMA_CODE = () => {
+  localStorage.removeItem(SCHEMA_CODE);
+};
+
+
 export const getOriginContractAddressFromLocalStorage=()=>{
   return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
 }
