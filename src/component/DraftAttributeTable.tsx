@@ -118,7 +118,7 @@ const DraftAttributeTable = ({
       // } else {
       //   currentObj.hasConflict = false;
       // }
-      // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
+    // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
 
 
       setSelectedItem("string");
@@ -142,19 +142,19 @@ const DraftAttributeTable = ({
   const handleCellChange2 = (index, field, value) => {
     // ทำการตรวจสอบค่า value ที่คุณต้องการ
     const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
-
+    
     if (!isValid) {
       // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
     } else {
       setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
     }
-
+  
     if (isValid) {
       // บันทึกข้อมูลเมื่อค่าถูกต้อง
     }
   };
-
-
+  
+  
 
 
   useEffect(() => {
@@ -225,15 +225,16 @@ const DraftAttributeTable = ({
   }
 
   const handelErrValue = (e) => {
-    console.log("kkkk ==>", e)
+    console.log("kkkk ==>",e)
   }
-
+  
   console.log(data);
 
   return (
     <div
-      className={`${expand === true ? "w-[1260px] h-[600px]" : "w-[560px] h-96"
-        } border-2 border-white rounded-xl`}
+      className={`${
+        expand === true ? "w-[1260px] h-[600px]" : "w-[560px] h-96"
+      } border-2 border-white rounded-xl`}
     >
       <div className="flex w-full justify-between p-3">
         <div className="flex items-center justify-center">
@@ -241,30 +242,25 @@ const DraftAttributeTable = ({
             {type === "originAttributes"
               ? "Origin Attributes"
               : type === "collectionAttributes"
-                ? "Collection Attributes"
-                : type === "tokenAttributes"
-                  ? "Token Attributes"
-                  : null}
+              ? "Collection Attributes"
+              : type === "tokenAttributes"
+              ? "Token Attributes"
+              : null}
           </p>
+          <PlusSquareIcon
+            sx={{ cursor: "pointer" }}
+            onClick={() => addDataTable()}
+          />
         </div>
-        <div className=" flex justify-between items-center w-14 h-8">
-          <div className=" flex justify-center items-center scale-125 hover:scale-150 duration-500">
-            <PlusSquareIcon
-              sx={{ cursor: "pointer" }}
-              onClick={() => addDataTable()}
-            />
+        {expand === true ? (
+          <div onClick={() => setWhichExpand("none")}>
+            <Collapse />
           </div>
-          {expand === true ? (
-            <div onClick={() => setWhichExpand("none")}>
-              <Collapse />
-            </div>
-          ) : (
-            <div onClick={() => handleExpand()}>
-              <Expand />
-            </div>
-          )}
-        </div>
-
+        ) : (
+          <div onClick={() => handleExpand()}>
+            <Expand />
+          </div>
+        )}
       </div>
       <div className="w-full max-h-[320px] flex justify-center items-center overflow-scroll">
         {data.length === 0 ? (
@@ -327,12 +323,12 @@ const DraftAttributeTable = ({
                 data.map((item, index) => (
                   <tr
                     key={index}
-                    //   className={`border border-white bg-[#B9BAC2] 
-                    //   ${
-                    //     editableRow === index ? "bg-blue-200" : ""
-                    //   }`
-                    // }
-                    className={`border border-white 
+                  //   className={`border border-white bg-[#B9BAC2] 
+                  //   ${
+                  //     editableRow === index ? "bg-blue-200" : ""
+                  //   }`
+                  // }
+                  className={`border border-white 
                   ${item.hasConflict ? 'bg-red-500' : 'bg-[#B9BAC2]'}
                   ${editableRow === index ? "bg-blue-200" : ""}`}
                   >
@@ -364,16 +360,17 @@ const DraftAttributeTable = ({
                               }
                             }}
                             id={type}
-                            className={` cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${item.data_type === type
-                              ? "bg-[#D9D9D975]"
-                              : "bg-transparent"
-                              }`}
+                            className={` cursor-pointer hover:scale-110 duration-500 w-7 h-7 rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                              item.data_type === type
+                                ? "bg-[#D9D9D975]"
+                                : "bg-transparent"
+                            }`}
                           >
                             {type === "string"
                               ? "abc"
                               : type === "number"
-                                ? "123"
-                                : "Y/N"}
+                              ? "123"
+                              : "Y/N"}
                           </button>
                         ))}
                       </div>
@@ -403,10 +400,10 @@ const DraftAttributeTable = ({
                             item.data_type === "number"
                               ? "default_mint_value.number_attribute_value.value"
                               : item.data_type === "float"
-                                ? "default_mint_value.float_attribute_value.value"
-                                : item.data_type === "boolean"
-                                  ? "default_mint_value.boolean_attribute_value.value"
-                                  : "default_mint_value.string_attribute_value.value",
+                              ? "default_mint_value.float_attribute_value.value"
+                              : item.data_type === "boolean"
+                              ? "default_mint_value.boolean_attribute_value.value"
+                              : "default_mint_value.string_attribute_value.value",
                             e.target.innerText
                           )
                         }
@@ -414,18 +411,18 @@ const DraftAttributeTable = ({
                         {item.data_type === "number"
                           ? item.default_mint_value.number_attribute_value.value
                           : item.data_type === "float"
-                            ? item.default_mint_value.float_attribute_value.value
-                            : item.data_type === "boolean"
-                              ? item.default_mint_value.boolean_attribute_value.value.toString()
-                              : item.default_mint_value.string_attribute_value
-                                .value}
+                          ? item.default_mint_value.float_attribute_value.value
+                          : item.data_type === "boolean"
+                          ? item.default_mint_value.boolean_attribute_value.value.toString()
+                          : item.default_mint_value.string_attribute_value
+                              .value}
                       </td>
                     )}
                     <td className="border border-white  "
-                      onDoubleClick={() => handleEditClick(index)}
-                    >
+                                          onDoubleClick={() => handleEditClick(index)}
+                                          >
                       <Flex>
-                        <DeleteIcon onClick={() => handelDel(index)} />
+                        <DeleteIcon onClick={() => handelDel(index)}/>
                         {editableRow === index ? (
                           <img
                             src={saveIcon}

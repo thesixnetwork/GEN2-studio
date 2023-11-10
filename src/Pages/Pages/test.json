@@ -1,0 +1,68 @@
+{
+    "schema_info": {
+        "onchain_data": {
+            "nft_attributes": [
+                {
+                    "name": "sdgfsdg",
+                    "data_type": "Number",
+                    "required": false,
+                    "display_value_field": "",
+                    "display_option": {
+                        "bool_true_value": "",
+                        "bool_false_value": "",
+                        "opensea": {
+                            "display_type": "",
+                            "trait_type": "sdfdsf",
+                            "max_value": "0"
+                        }
+                    },
+                    "default_mint_value": {
+                        "float_attribute_value": {
+                            "value": "sdfsdfdsf"
+                        }
+                    },
+                    "hidden_overide": false,
+                    "hidden_to_marketplace": false,
+                    "Error": "F"
+                }
+            ]
+        }
+    },
+    "schema_code": "gust.test3_v1",
+    "status": "Draft",
+    "current_state": "4"
+}
+
+{
+    "schema_info": {
+        "onchain_data": {
+            "nft_attributes": [
+                {
+                    "name": "sdgfsdg",
+                    "data_type": "Number",
+                    "required": false,
+                    "display_value_field": "",
+                    "display_option": {
+                        "bool_true_value": "",
+                        "bool_false_value": "",
+                        "opensea": {
+                            "display_type": "",
+                            "trait_type": "sdfdsf",
+                            "max_value": "0"
+                        }
+                    },
+                    "default_mint_value": {
+                        "float_attribute_value": {
+                            "value": "sdfsdfdsf"
+                        }
+                    },
+                    "hidden_overide": false,
+                    "hidden_to_marketplace": false,
+                }
+            ]
+        }
+    },
+    "schema_code": "gust.test3_v1",
+    "status": "Draft",
+    "current_state": "4"
+}
