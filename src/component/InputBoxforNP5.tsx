@@ -131,11 +131,11 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         }
     }, [, props.Next])
 
-    useEffect(()=>{
-        if(getSCHEMA_CODE() && (props.index===0)){
-            setIsDisabled(true)
-        }
-    },[])
+    // useEffect(()=>{
+    //     if(getSCHEMA_CODE() && (props.index===0)){
+    //         setIsDisabled(true)
+    //     }
+    // },[])
 
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>

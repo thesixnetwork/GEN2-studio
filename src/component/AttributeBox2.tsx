@@ -37,7 +37,7 @@ interface MyComponentProps {
   setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
   save: boolean;
   setSave: React.Dispatch<React.SetStateAction<boolean>>;
- 
+
   helpStep: number;
 }
 
@@ -256,6 +256,35 @@ export default function AttributeBox(props: MyComponentProps) {
       setPartI(true);
     }
   };
+
+  const CheckErrorIIII = async (str: string) => {
+    setPartI(false);
+    if (!str) {
+      setErrorMessage("Not Availible");
+      setIser(true);
+      return true;
+    } else if (containsSame(str)) {
+      setErrorMessage("Name can't be same");
+      setIser(true);
+      return true;
+    } else if (containsSpecialChars(str)) {
+      setErrorMessage("Special characters are not allowed");
+      setIser(true);
+      return true;
+    } else if (containsSpace(str)) {
+      setErrorMessage("Space are not allowed");
+      setIser(true);
+      return true;
+    } else if (containsUppercase(str)) {
+      setErrorMessage("Uppercase are not allowed");
+      setIser(true);
+      return true;
+    } else {
+      setIser(false);
+      setPartI(true);
+      return false;
+    }
+  };
   const checkErrorII = (e) => {
     if (!e.target.value) {
       setErrorMessage("Not Availible");
@@ -277,26 +306,23 @@ export default function AttributeBox(props: MyComponentProps) {
     if (!props.text[props.index].name) {
       setErrorMessage("Not Availible");
       setIser(true);
-      return
-
+      return;
     } else if (containsSame(props.text[props.index].name)) {
       setErrorMessage("Name can't be same");
       setIser(true);
-      return
-
+      return;
     } else if (containsSpecialChars(props.text[props.index].name)) {
       setErrorMessage("Special characters are not allowed");
       setIser(true);
-      return
-
+      return;
     } else if (containsSpace(props.text[props.index].name)) {
       setErrorMessage("Space are not allowed");
       setIser(true);
-      return
+      return;
     } else if (containsUppercase(props.text[props.index].name)) {
       setErrorMessage("Uppercase are not allowed");
       setIser(true);
-      return
+      return;
     }
 
     if (props.text[props.index].data_type === "") {
@@ -311,7 +337,7 @@ export default function AttributeBox(props: MyComponentProps) {
       // if (!isValue || isValue !== "") {
       //   setIser(true);
       // } else {
-        setIser(false);
+      setIser(false);
       // }
     } else if (props.text[props.index].data_type === "number") {
       const isValue =
@@ -400,7 +426,10 @@ export default function AttributeBox(props: MyComponentProps) {
 
   const SavecheckErrorII = async (str: string) => {
     setIser(false);
-    if (containsSpace(str)) {
+
+    if (await CheckErrorIIII(props.text[props.index].name)) {
+      return;
+    } else if (containsSpace(str)) {
       setErrorMessage("Space are not allowed");
       setIser(true);
     } else if (
@@ -408,17 +437,19 @@ export default function AttributeBox(props: MyComponentProps) {
     ) {
       setErrorMessage("Need datatype");
       setIser(true);
-    } else if (
-      props.text[props.index]["default_mint_value"]["string_attribute_value"] ||
-      props.text[props.index]["default_mint_value"]["number_attribute_value"] ||
-      props.text[props.index]["default_mint_value"]["boolean_attribute_value"]
-    ) {
-      const isError = await checkValueAndDataType(str);
-      if (isError) {
-        setErrorMessage(isError);
-        setIser(true);
-      }
-    } else {
+    } 
+    // else if (
+    //   props.text[props.index]["default_mint_value"]["string_attribute_value"] ||
+    //   props.text[props.index]["default_mint_value"]["number_attribute_value"] ||
+    //   props.text[props.index]["default_mint_value"]["boolean_attribute_value"]
+    // ) {
+    //   const isError = await checkValueAndDataType(str);
+    //   if (isError) {
+    //     setErrorMessage(isError);
+    //     setIser(true);
+    //   }
+    // } 
+    else {
       setIser(false);
       return true;
     }
@@ -584,7 +615,6 @@ export default function AttributeBox(props: MyComponentProps) {
   const [selectedItemValue, setSelectedItemValue] = useState("Icon4");
 
   const changeBgColorButton = async (e) => {
-  
     await handleChangeIcon(e);
     props.setIsShow(false);
   };
@@ -602,18 +632,17 @@ export default function AttributeBox(props: MyComponentProps) {
     if (e.target.id == "Icon4") {
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
-          value: true
+          value: true,
         },
       };
     } else if (e.target.id == "Icon5") {
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
-          value: false
+          value: false,
         },
       };
     }
-  }
-
+  };
 
   const handleChangeIcon = (e) => {
     console.log("updatedText[]", props.text[props.index]);
@@ -649,7 +678,7 @@ export default function AttributeBox(props: MyComponentProps) {
       // };
       updatedText[props.index]["default_mint_value"] = {
         number_attribute_value: {
-          value: 0
+          value: 0,
         },
       };
     } else if (e.target.id == "boolean") {
@@ -702,7 +731,7 @@ export default function AttributeBox(props: MyComponentProps) {
       // };
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
-          value: true
+          value: true,
         },
       };
     }
@@ -801,7 +830,9 @@ export default function AttributeBox(props: MyComponentProps) {
               // onMouseLeave={() => fetchError()}
               id="string"
               className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                props.DataType === "string" ? "bg-[#D9D9D975]" : "bg-transparent"
+                props.DataType === "string"
+                  ? "bg-[#D9D9D975]"
+                  : "bg-transparent"
               }`}
             >
               {props.Title[0]}
@@ -814,7 +845,9 @@ export default function AttributeBox(props: MyComponentProps) {
               // onMouseLeave={() => fetchError()}
               id="number"
               className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                props.DataType === "number" ? "bg-[#D9D9D975]" : "bg-transparent"
+                props.DataType === "number"
+                  ? "bg-[#D9D9D975]"
+                  : "bg-transparent"
               }`}
             >
               {props.Title[1]}
@@ -827,7 +860,9 @@ export default function AttributeBox(props: MyComponentProps) {
               // onMouseLeave={() => fetchError()}
               id="boolean"
               className={`cursor-pointer hover:scale-110 duration-500 w-[50px] h-[50px] rounded-full flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                props.DataType === "boolean" ? "bg-[#D9D9D975]" : "bg-transparent"
+                props.DataType === "boolean"
+                  ? "bg-[#D9D9D975]"
+                  : "bg-transparent"
               }`}
             >
               {props.Title[2]}
@@ -861,7 +896,7 @@ export default function AttributeBox(props: MyComponentProps) {
               value={
                 props.text[props.index]["default_mint_value"][
                   "string_attribute_value"
-                ]?.value 
+                ]?.value
               }
               // value={
               //   props.text[props.index]["default_mint_value"][
@@ -899,7 +934,7 @@ export default function AttributeBox(props: MyComponentProps) {
               value={
                 props.text[props.index]["default_mint_value"][
                   "number_attribute_value"
-                ]?.value 
+                ]?.value
               }
               onChange={(e) => {
                 console.log(props.State);
@@ -921,23 +956,27 @@ export default function AttributeBox(props: MyComponentProps) {
                 }}
                 id="Icon4"
                 className={`cursor-pointer hover:scale-110 duration-500 w-16 h-8  flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                  selectedItemValue === "Icon4" ? "bg-[#D9D9D975]" : "bg-transparent"
+                  selectedItemValue === "Icon4"
+                    ? "bg-[#D9D9D975]"
+                    : "bg-transparent"
                 }`}
               >
                 Yes
               </div>
               <div
-              onClick={(e) => {
-                changeBgColorButtonValue(e);
-                checkErrorIII();
-              }}
-              id="Icon5"
-              className={`cursor-pointer hover:scale-110 duration-500 w-16 h-8  flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                selectedItemValue === "Icon5" ? "bg-[#D9D9D975]" : "bg-transparent"
-              }`}
-            >
-              No
-            </div>
+                onClick={(e) => {
+                  changeBgColorButtonValue(e);
+                  checkErrorIII();
+                }}
+                id="Icon5"
+                className={`cursor-pointer hover:scale-110 duration-500 w-16 h-8  flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
+                  selectedItemValue === "Icon5"
+                    ? "bg-[#D9D9D975]"
+                    : "bg-transparent"
+                }`}
+              >
+                No
+              </div>
             </div>
           )}
         </div>
