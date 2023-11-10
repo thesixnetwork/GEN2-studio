@@ -115,6 +115,7 @@ export interface ISchemaInfo {
     },
     "hidden_overide": boolean,
     "hidden_to_marketplace": boolean,
+    "hasConflict"?: boolean
   }
   
   export interface IOnChainData {

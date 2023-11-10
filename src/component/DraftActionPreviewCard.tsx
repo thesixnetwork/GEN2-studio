@@ -1,37 +1,49 @@
-import { Button, Tooltip } from "@mui/material";
+import {
+  // Button,
+  Tooltip,
+} from "@mui/material";
 import editIcon from "../pic/draft-edit-rounded.png";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+// import IconButton from "@mui/material/IconButton";
+// import Menu from "@mui/material/Menu";
+// import MenuItem from "@mui/material/MenuItem";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 import { useState } from "react";
 import saveIcon from "../pic/draft-save.png";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import axios from "axios";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
-import { Navigate, useNavigate } from "react-router-dom";
+import {
+  // Navigate,
+  useNavigate,
+} from "react-router-dom";
 import addIcon from "../pic/draft-add.png";
 
-const DraftActionPreviewCard = ({ data, param }) => {
+import { IActions } from "../types/Nftmngr";
+
+interface MyComponentProps {
+  data: IActions;
+  param: string;
+}
+const DraftActionPreviewCard = (props: MyComponentProps) => {
   const [isEditDesc, setIsEditDesc] = useState(false);
-  const [actionData, setActionData] = useState();
-  const [actionThenArr, setActionThenArr] = useState([]);
-  const [actionThenIndex, setActionThenIndex] = useState(null);
-  const [descInput, setDescInput] = useState(data.desc);
+  const [, setActionData] = useState();
+  // const [actionThenArr, setActionThenArr] = useState([]);
+  // const [actionThenIndex, setActionThenIndex] = useState(null);
+  const [descInput, setDescInput] = useState(props.data.desc);
   const navigate = useNavigate();
 
   const handleDescInput = (e) => {
     setDescInput(e.target.value);
-    data.desc = e.target.value;
+    props.data.desc = e.target.value;
   };
   const convertToBase64 = (str) => {
     return btoa(str);
   };
 
-  const convertStringIfTooLong = (str, length) => {
+  const convertStringIfTooLong = (str: string, length: number) => {
     if (str.length > length) {
       return str.substring(0, length) + "...";
     } else {
@@ -40,9 +52,12 @@ const DraftActionPreviewCard = ({ data, param }) => {
   };
 
   const findSchemaCode = async () => {
+    // const apiUrl = `${
+    //   import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    // }schema/get_schema_info/${param.schema_revision}`;
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
-    }schema/get_schema_info/${param.schema_revision}`;
+    }schema/get_schema_info/${props.param}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -85,9 +100,9 @@ const DraftActionPreviewCard = ({ data, param }) => {
       if (result.isConfirmed) {
         await saveEditedDesc();
         Swal.fire("Saved!", "Your descripttion has been saved.", "success");
-        navigate(`/draft/actions/${param}`);
+        navigate(`/draft/actions/${props.param}`);
       } else if (result.isDismissed) {
-        setDescInput(data.desc);
+        setDescInput(props.data.desc);
       }
     });
   };
@@ -98,8 +113,8 @@ const DraftActionPreviewCard = ({ data, param }) => {
     }schema/set_actions`;
     const requestData = {
       payload: {
-        schema_code: param,
-        name: data.name,
+        schema_code: props.param,
+        name: props.data.name,
         desc: descInput,
       },
     };
@@ -150,10 +165,13 @@ const DraftActionPreviewCard = ({ data, param }) => {
           <MenuItem onClick={handleClose}>low code</MenuItem>
         </Menu>
       </div> */}
+
+      {console.log("props.data ==>", props.data)}
+
       <div className="p-3">
         <div className="flex">
           <p className="text-md">Name:&nbsp;</p>
-          <span className="text-md underline">{data.name}</span>
+          <span className="text-md underline">{props.data.name}</span>
         </div>
         <div>
           <p>Description:&nbsp;</p>
@@ -175,7 +193,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
                 />
               </button>
             )}
-            <Tooltip title={data.desc}>
+            <Tooltip title={props.data.desc}>
               {isEditDesc ? (
                 <input
                   type="text"
@@ -185,8 +203,8 @@ const DraftActionPreviewCard = ({ data, param }) => {
                 ></input>
               ) : (
                 <span>
-                  {data.desc !== undefined &&
-                    convertStringIfTooLong(data.desc, 70)}
+                  {props.data.desc !== undefined &&
+                    convertStringIfTooLong(props.data.desc, 70)}
                 </span>
               )}
             </Tooltip>
@@ -194,16 +212,27 @@ const DraftActionPreviewCard = ({ data, param }) => {
         </div>
         <div className="flex">
           <p className="text-md">Parameters:&nbsp;</p>
-          <span className="text-md underline">{data.params}</span>
+          {/* <span className="text-md underline">{data.params}</span> */}
+          {props.data.params ? (
+            <div>
+              {props.data.params.map((param, index: number) => (
+                <div key={index}>
+                  <span className="text-md underline">{param.name}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <span>No parameters available</span>
+          )}
         </div>
         <div>
           <p>When:&nbsp;</p>
           <div className="flex items-center ml-8">
             <Link
               to={
-                data.when === ""
-                  ? `/draft/actions/edit/when/${data.name}/create-new-when/${param}`
-                  : `/draft/actions/edit/when/${data.name}/${data.when}/${param}`
+                props.data.when === ""
+                  ? `/draft/actions/edit/when/${props.data.name}/create-new-when/${props.param}`
+                  : `/draft/actions/edit/when/${props.data.name}/${props.data.when}/${props.param}`
               }
             >
               <button>
@@ -213,8 +242,8 @@ const DraftActionPreviewCard = ({ data, param }) => {
                   className="w-4 h-4 mr-1 duration-300 hover:scale-125"
                 />
               </button>
-              <Tooltip title={data.when}>
-                <span>{convertStringIfTooLong(data.when, 70)}</span>
+              <Tooltip title={props.data.when}>
+                <span>{convertStringIfTooLong(props.data.when, 70)}</span>
               </Tooltip>
             </Link>
           </div>
@@ -222,29 +251,37 @@ const DraftActionPreviewCard = ({ data, param }) => {
         <div>
           <p>Then:&nbsp;</p>
           <ul className="ml-8">
-            {data.then.map((item, index) => (
+            {props.data.then.map((item, index: number) => (
               <li key={index} className="list-disc w-96 flex items-center">
                 <div className="flex items-center">
                   <Link
                     to={
-                      data.then[index].startsWith(
+                      props.data.then[index].startsWith(
                         "meta.SetImage(meta.ReplaceAllString"
                       )
                         ? `/draft/actions/edit/then/transform/dynamic/${
-                            data.name
-                          }/${convertToBase64(data.then[index])}/${param}`
-                        : data.then[index].startsWith("meta.SetImage")
+                            props.data.name
+                          }/${convertToBase64(props.data.then[index])}/${
+                            props.param
+                          }`
+                        : props.data.then[index].startsWith("meta.SetImage")
                         ? `/draft/actions/edit/then/transform/static/${
-                            data.name
-                          }/${convertToBase64(data.then[index])}/${param}`
-                        : data.then[index].startsWith("meta.TransferNumber")
-                        ? `/draft/actions/edit/then/transfer/${data.name}/${data.then[index]}/${param}`
-                        : data.then[index].startsWith("meta.SetString") ||
-                          data.then[index].startsWith("meta.SetBoolean") ||
-                          data.then[index].startsWith("meta.SetNumber") ||
-                          data.then[index].startsWith("meta.SetFloat")
-                        ? `/draft/actions/edit/then/attribute/${data.name}/${data.then[index]}/${param}`
-                        : `/draft/actions/edit/then/${data.name}/${data.then[index]}/${param}`
+                            props.data.name
+                          }/${convertToBase64(props.data.then[index])}/${
+                            props.param
+                          }`
+                        : props.data.then[index].startsWith(
+                            "meta.TransferNumber"
+                          )
+                        ? `/draft/actions/edit/then/transfer/${props.data.name}/${props.data.then[index]}/${props.param}`
+                        : props.data.then[index].startsWith("meta.SetString") ||
+                          props.data.then[index].startsWith(
+                            "meta.SetBoolean"
+                          ) ||
+                          props.data.then[index].startsWith("meta.SetNumber") ||
+                          props.data.then[index].startsWith("meta.SetFloat")
+                        ? `/draft/actions/edit/then/attribute/${props.data.name}/${props.data.then[index]}/${props.param}`
+                        : `/draft/actions/edit/then/${props.data.name}/${props.data.then[index]}/${props.param}`
                     }
                   >
                     <div className="w-4 h-4 mr-1">
@@ -269,7 +306,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
             onClick={() => {
               // saveActionName(props.actionName);
               navigate(
-                `/draft/actions/edit/then/${data.name}/create-new-action/${param}`
+                `/draft/actions/edit/then/${props.data.name}/create-new-action/${props.param}`
               );
             }}
           >

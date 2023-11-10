@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo1 from "../pic/Keplr_Icon 1.png";
 import logo2 from "../pic/Copy.png";
 import logo3 from "../pic/Share.png";
 import logo4 from "../pic/SIX_Token_Icon 1.png";
 import logo5 from "../pic/X.png";
 import { StargateClient } from "@cosmjs/stargate";
-import { Navigate, useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
+import {
+  // Navigate,
+  useNavigate,
+} from "react-router-dom";
+import Swal from "sweetalert2";
+// import withReactContent from 'sweetalert2-react-content'
 //Redux
 import { useSelector } from "react-redux";
 import {
@@ -20,15 +23,19 @@ import {
 import { useAppDispatch } from "../store/store";
 import {
   CircularProgress,
-  LinearProgress,
-  Skeleton,
+  // LinearProgress,
+  // Skeleton,
   Tooltip,
 } from "@mui/material";
-import axios from 'axios'
+import axios from "axios";
 
-import { clearTokensFromLocalStorage, getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage, } from '../helpers/AuthService';
+import {
+  clearTokensFromLocalStorage,
+  getAccessTokenFromLocalStorage,
+  getRefreshTokenFromLocalStorage,
+  saveTokensToLocalStorage,
+} from "../helpers/AuthService";
 import { ABCDE } from "../App";
-
 
 const Conectwalet = () => {
   //Redux
@@ -36,49 +43,44 @@ const Conectwalet = () => {
   const walletcounterReducer = useSelector(walletcounterSelector);
   // Usetstate for storing wallets details state.
   // Loading
-  const [isLoading, setisLoading] = useState(false);
+  // const [isLoading, setisLoading] = useState(false);
   // chain detail
-  const [chainId, setChainId] = useState("fivenet");
-  const [token, setToken] = useState("usix");
-  const [rpcEndpoint, setRpcEndpoint] = useState(
+  const [chainId] = useState("fivenet");
+  const [token] = useState("usix");
+  const [rpcEndpoint] = useState(
     import.meta.env.VITE_APP_RPC1_ENDPOINT_SIX_FIVENET
   );
-  const [exponent, setExponent] = useState(1e6);
+  const [exponent] = useState(1e6);
 
   const [cosmosAddress, setCosmosAddress] = useState("");
 
   const [copied, setCopied] = useState(false);
 
-  const message = import.meta.env.VITE_APP_SIGN_MESSAGE
-
+  const message = import.meta.env.VITE_APP_SIGN_MESSAGE;
 
   const navigate = useNavigate();
 
   const buttonLogout = async () => {
-
     Swal.fire({
-      title: 'Are you sure to logout?',
+      title: "Are you sure to logout?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#7A8ED7',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, Logout '
+      confirmButtonColor: "#7A8ED7",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Logout ",
     }).then((result) => {
       if (result.isConfirmed) {
-        clearTokensFromLocalStorage()
-        Swal.fire(
-          'Logout Complete!',
-          'Your file has been deleted.',
-          'success'
-        )
+        clearTokensFromLocalStorage();
+        Swal.fire("Logout Complete!", "Your file has been deleted.", "success");
         dispatch(setisloggin(false));
         dispatch(setAddress(""));
         dispatch(setBalance(0));
-        navigate("/connect")
+        navigate("/connect");
         localStorage.clear();
       }
-    })
+      return;
+    });
   };
 
   // Connect Keplr
@@ -89,7 +91,7 @@ const Conectwalet = () => {
       await window.keplr.enable(chainId);
       // Use offlineSigner to get first wallet and public key.
       // Currently only first address is supported.
-      const offlineSigner = await window.getOfflineSigner(chainId);
+      const offlineSigner = await window.keplr.getOfflineSigner(chainId);
       const keplrAccounts = await offlineSigner.getAccounts();
       // Set state value as first address.
       // console.log("KEPL ADREESS :" + keplrAccounts[0].address);
@@ -98,6 +100,7 @@ const Conectwalet = () => {
     } else {
       alert("Keplr extension is not installed.");
     }
+    return;
   };
 
   //Get balance
@@ -118,28 +121,31 @@ const Conectwalet = () => {
   const getSignature = async () => {
     if (cosmosAddress) {
       try {
-        const offlineSigner = window.getOfflineSigner(chainId);
-        const signedMessage = await offlineSigner.keplr.signArbitrary(
-          chainId,
-          cosmosAddress,
-          message
-        );
-        // console.log(signedMessage.signature);
-        // console.log(signedMessage.pub_key);
-        const verified = await offlineSigner.keplr.verifyArbitrary(
-          chainId,
-          cosmosAddress,
-          message,
-          signedMessage
-        );
-        console.log("verified= ", verified);
+        if (window.keplr) {
+          // const offlineSigner = window.keplr.getOfflineSigner(chainId);
+          const signedMessage = await window.keplr.signArbitrary(
+            chainId,
+            cosmosAddress,
+            message
+          );
+          // console.log(signedMessage.signature);
+          // console.log("signedMessage",signedMessage);
+          const verified = await window.keplr.verifyArbitrary(
+            chainId,
+            cosmosAddress,
+            message,
+            signedMessage
+          );
+          console.log("verified= ", verified);
+        }
+        return;
       } catch (error) {
         console.error("Error:", error);
       }
     }
   };
 
-  const copyToClipboard = (value) => {
+  const copyToClipboard = (value: string) => {
     navigator.clipboard.writeText(value);
     setCopied(true);
   };
@@ -157,68 +163,84 @@ const Conectwalet = () => {
   // }, [walletcounterReducer.cosmosaddress]);
 
   const LoginApi = async () => {
-    const offlineSigner = window.getOfflineSigner(chainId);
-    const keplrAccounts = await offlineSigner.getAccounts();
-    // console.log("KEPL ADREESS :" + keplrAccounts[0].address);
-    // console.log("gust")
-    const signedMessage = await offlineSigner.keplr.signArbitrary(
-      chainId,
-      cosmosAddress,
-      message
-    );
-    console.log(signedMessage)
-    // DB request
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}auth/login`; // Replace with your API endpoint
-    const requestData = {
-      "channel": "Keply",
-      "ssoID": `${keplrAccounts[0].address}`,
-      "messagge": message,
-      "signature": `${signedMessage.signature}`
-    };
-    console.log(signedMessage)
-    await  axios.post(apiUrl, requestData, {
-      headers: {
-        'Content-Type': 'application/json', // Set the content type to JSON
-        // Add any other headers your API requires
-      },
-    })
-      .then(response => {
-        // console.log('API Response:', response.data);
-        // console.log('Access_token:', response.data.data.access_token);
-        // console.log('Refresh_token:', response.data.data.refresh_token);
-        // console.log('Refresh_token:', response.data.data.id);
-        saveTokensToLocalStorage(response.data.data.access_token, response.data.data.refresh_token);
-        const accessToken = getAccessTokenFromLocalStorage();
-        const refreshToken = getRefreshTokenFromLocalStorage();
-        console.log("Access-: ", accessToken)
-        console.log("Refresh: ", refreshToken)
-        // You can handle the API response here
-      })
-      .catch(error => {
-        console.error('API Error:', error);
-        // Handle errors here
-      });
+    if (window.keplr) {
+      const offlineSigner = window.keplr.getOfflineSigner(chainId);
+      const keplrAccounts = await offlineSigner.getAccounts();
+      // console.log("KEPL ADREESS :" + keplrAccounts[0].address);
+      // console.log("gust")
+      const signedMessage = await window.keplr.signArbitrary(
+        chainId,
+        cosmosAddress,
+        message
+      );
+      console.log(signedMessage);
+      // DB request
+      const apiUrl = `${
+        import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+      }auth/login`; // Replace with your API endpoint
+      const requestData = {
+        channel: "Keply",
+        ssoID: `${keplrAccounts[0].address}`,
+        messagge: message,
+        signature: `${signedMessage.signature}`,
+      };
+      console.log(signedMessage);
+      await axios
+        .post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json", // Set the content type to JSON
+            // Add any other headers your API requires
+          },
+        })
+        .then((response) => {
+          // console.log('API Response:', response.data);
+          // console.log('Access_token:', response.data.data.access_token);
+          // console.log('Refresh_token:', response.data.data.refresh_token);
+          // console.log('Refresh_token:', response.data.data.id);
+          saveTokensToLocalStorage(
+            response.data.data.access_token,
+            response.data.data.refresh_token
+          );
+          const accessToken = getAccessTokenFromLocalStorage();
+          const refreshToken = getRefreshTokenFromLocalStorage();
+          console.log("Access-: ", accessToken);
+          console.log("Refresh: ", refreshToken);
+          // You can handle the API response here
+        })
+        .catch((error) => {
+          console.error("API Error:", error);
+          // Handle errors here
+        });
 
-    dispatch(setLoading(false));
-    dispatch(setisloggin(true))
-  }
-  console.log(">>", message)
+      dispatch(setLoading(false));
+      dispatch(setisloggin(true));
+    } else {
+      alert("Keplr extension is not installed.");
+    }
+    return;
+  };
+  console.log(">>", message);
   return (
     <div className="w-[266px] h-[95px] border-[1px] border-white rounded-xl px-[12px] py-[9px] flex justify-center items-center">
       {walletcounterReducer.loading ? (
-        <CircularProgress className=" text-white"   sx={{
-          width: 300,
-          color: 'white',
-        }}
-      ></CircularProgress>
+        <CircularProgress
+          className=" text-white"
+          sx={{
+            width: 300,
+            color: "white",
+          }}
+        ></CircularProgress>
       ) : (
         <div>
-          {(getAccessTokenFromLocalStorage() == null) ? (
+          {getAccessTokenFromLocalStorage() == null ? (
             <Tooltip title="Connect to keplr wallet">
               <div className="flex justify-center items-center h-[80px]">
                 <p
                   className="text-3xl text-white cursor-pointer hover:scale-105 duration-500"
-                  onClick={()=>{buttonHandlerKeplrConnect(); ABCDE();}}
+                  onClick={() => {
+                    buttonHandlerKeplrConnect();
+                    ABCDE();
+                  }}
                 >
                   Connect Wallet
                 </p>
@@ -269,12 +291,10 @@ const Conectwalet = () => {
                       className="border-[0.5px] rounded-xl p-2 hover:scale-105 duration-500 cursor-pointer"
                     ></img>
                   </Tooltip>
-
                 </div>
               </div>
             </div>
-          )
-          }
+          )}
         </div>
       )}
     </div>

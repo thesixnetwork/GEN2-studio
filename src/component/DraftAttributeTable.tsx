@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import expandIcon from "../pic/draft-expand-menu.png";
+// import expandIcon from "../pic/draft-expand-menu.png";
 import editIcon from "../pic/draft-edit.png";
 import saveIcon from "../pic/draft-save.png";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import narrowIcon from "../pic/draft-narrow-menu.png";
+// import narrowIcon from "../pic/draft-narrow-menu.png";
 import { PlusSquareIcon, DeleteIcon } from "@chakra-ui/icons";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
-import { Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { styled } from "@mui/material";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
+import { ItokenAttributes } from "../types/Nftmngr";
 
 const DraftAttributeTable = ({
   type,
@@ -18,13 +19,13 @@ const DraftAttributeTable = ({
   setIsSave,
   setWhichExpand,
 }) => {
-  const param = useParams();
+  // const param = useParams();
   const [isData, setIsData] = useState(data);
 
-  const [selectedItem, setSelectedItem] = useState("");
-  const [editableRow, setEditableRow] = useState(null);
+  const [, setSelectedItem] = useState("");
+  const [editableRow, setEditableRow] = useState<null | number>(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [errorRows, setErrorRows] = useState([]);
+  const [, setErrorRows] = useState([]);
 
 
   const Expand = styled(AspectRatioIcon)({
@@ -48,7 +49,7 @@ const DraftAttributeTable = ({
   const handleExpand = () => {
     setWhichExpand(type);
   };
-  const handleEditClick = (index) => {
+  const handleEditClick = (index: number) => {
     setIsEdit(true);
     if (type === "originAttributes") {
       setIsSave((prevState) => ({
@@ -93,7 +94,7 @@ const DraftAttributeTable = ({
     setEditableRow(null);
   };
 
-  const handleCellChange = (index, field, value) => {
+  const handleCellChange = (index: number, field: string, value: string) => {
     console.log(`item.data_type ${index}: ${value}`);
     const newData = [...data];
     const fieldParts = field.split(".");
@@ -139,20 +140,20 @@ const DraftAttributeTable = ({
     }
   };
 
-  const handleCellChange2 = (index, field, value) => {
-    // ทำการตรวจสอบค่า value ที่คุณต้องการ
-    const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
+  // const handleCellChange2 = (index, field, value) => {
+  //   // ทำการตรวจสอบค่า value ที่คุณต้องการ
+  //   const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
     
-    if (!isValid) {
-      // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
-    } else {
-      setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
-    }
+  //   if (!isValid) {
+  //     // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
+  //   } else {
+  //     setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
+  //   }
   
-    if (isValid) {
-      // บันทึกข้อมูลเมื่อค่าถูกต้อง
-    }
-  };
+  //   if (isValid) {
+  //     // บันทึกข้อมูลเมื่อค่าถูกต้อง
+  //   }
+  // };
   
   
 
@@ -224,9 +225,9 @@ const DraftAttributeTable = ({
     setIsData(data);
   }
 
-  const handelErrValue = (e) => {
-    console.log("kkkk ==>",e)
-  }
+  // const handelErrValue = (e) => {
+  //   console.log("kkkk ==>",e)
+  // }
   
   console.log(data);
 
@@ -320,7 +321,7 @@ const DraftAttributeTable = ({
             </thead>
             <tbody>
               {data !== undefined &&
-                data.map((item, index) => (
+                data.map((item: ItokenAttributes, index: number) => (
                   <tr
                     key={index}
                   //   className={`border border-white bg-[#B9BAC2] 
@@ -329,7 +330,7 @@ const DraftAttributeTable = ({
                   //   }`
                   // }
                   className={`border border-white 
-                  ${item.hasConflict ? 'bg-red-500' : 'bg-[#B9BAC2]'}
+                  ${item.hasConflict ?'bg-red-500' : 'bg-[#B9BAC2]'}
                   ${editableRow === index ? "bg-blue-200" : ""}`}
                   >
                     <td
@@ -355,7 +356,7 @@ const DraftAttributeTable = ({
                                 handleCellChange(
                                   index,
                                   "data_type",
-                                  e.target.id
+                                  (e.target as HTMLButtonElement).id
                                 );
                               }
                             }}
@@ -378,7 +379,7 @@ const DraftAttributeTable = ({
                     <td
                       className="border border-white"
                       contentEditable={editableRow === index}
-                      onBlur={(e) =>
+                      onBlur={(e: React.FocusEvent<HTMLTableDataCellElement, Element>) =>
                         handleCellChange(
                           index,
                           "display_option.opensea.trait_type",

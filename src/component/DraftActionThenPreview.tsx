@@ -1,7 +1,8 @@
-import { Tooltip } from "@mui/material";
+// import { Tooltip } from "@mui/material";
+import React from "react"
 
 const DraftActionThenPreview = (actions) => {
-  const convertStringIfTooLong = (str, length) => {
+  const convertStringIfTooLong = (str: string, length: number) => {
     if (str.length > length) {
       return str.substring(0, length) + "...";
     } else {

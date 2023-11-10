@@ -3,14 +3,26 @@ import { styled, Tooltip } from "@mui/material";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
-import { useEffect, useState } from "react";
+import React, { 
+  // useEffect, 
+  // useState 
+} from "react";
 import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import dotenv from "dotenv";
-import path from "path";
+// import { useNavigate } from "react-router-dom";
+// import dotenv from "dotenv";
+// import path from "path";
 // dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+import { IActions } from "../types/Nftmngr"
 
-const DraftActionCard = ({ index, data, allAction, isSelected }) => {
+interface MyComponentProps {
+  index: number, 
+  data: IActions, 
+  allAction: IActions[], 
+}
+
+const DraftActionCard = (props: MyComponentProps) => {
+  // console.log(11111)
+  // console.log(11111,props.data)
   const { schema_revision } = useParams();
   const Delete = styled(ClearIcon)({
     borderRadius: "16px",
@@ -23,11 +35,12 @@ const DraftActionCard = ({ index, data, allAction, isSelected }) => {
     },
   });
 
-  const convertStringIfTooLong = (str, length) => {
+  const convertStringIfTooLong = (str: string, length: number): React.ReactElement<string> => {
     if (str.length > length) {
-      return str.substring(0, length) + "...";
+      const text = str.substring(0, length) + "...";
+      return <>{text}</>;
     } else {
-      return str;
+      return <>{str}</>;
     }
   };
 
@@ -42,7 +55,7 @@ const DraftActionCard = ({ index, data, allAction, isSelected }) => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        allAction.splice(index, 1);
+        props.allAction.splice(props.index, 1);
         await saveAction();
       }
     });
@@ -56,7 +69,7 @@ const DraftActionCard = ({ index, data, allAction, isSelected }) => {
       payload: {
         schema_info: {
           onchain_data: {
-            actions: allAction,
+            actions: props.allAction,
           },
         },
         schema_code: schema_revision,
@@ -83,7 +96,7 @@ const DraftActionCard = ({ index, data, allAction, isSelected }) => {
           ">",
           response.data.data.update_schema.schema_info.onchain_data.actions
         );
-        allAction =
+        props.allAction =
           response.data.data.update_schema.schema_info.onchain_data.actions;
       })
       .catch((error) => {
@@ -99,8 +112,8 @@ const DraftActionCard = ({ index, data, allAction, isSelected }) => {
         <div className="flex">
           <p className="text-md">Name:&nbsp;</p>
           <span className="text-md underline text-gray-300 decoration-gray-300">
-            <Tooltip title={data.name}>
-              {convertStringIfTooLong(data.name, 8)}
+            <Tooltip title={props.data.name}>
+              {convertStringIfTooLong(props.data.name, 8)}
             </Tooltip>
           </span>
         </div>
@@ -111,8 +124,8 @@ const DraftActionCard = ({ index, data, allAction, isSelected }) => {
       <div className="flex flex-col items-start">
         <p className="text-md">Description:&nbsp;</p>
         <p className="text-md underline text-gray-300 decoration-gray-300">
-          <Tooltip title={data.desc}>
-            {convertStringIfTooLong(data.desc, 18)}
+          <Tooltip title={props.data.desc}>
+            {convertStringIfTooLong(props.data.desc, 18)}
           </Tooltip>
         </p>
       </div>

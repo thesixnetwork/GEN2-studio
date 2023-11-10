@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css'
 import {
   createBrowserRouter,
-  Route,
+  // Route,
   RouterProvider,
 } from "react-router-dom";
 import Connect from './Pages/Connect.tsx'
@@ -20,13 +20,17 @@ import Newintregation9 from './Pages/Newintregation9.tsx'
 import Newintregationb from './Pages/Newintregationb.tsx'
 import Newintregationb1 from './Pages/Newintregationb1.tsx'
 import Newintregationb2 from './Pages/Newintregationb2.tsx'
-import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, isAccessTokenExpired, saveTokensToLocalStorage } from './helpers/AuthService.tsx';
+import { 
+  getAccessTokenFromLocalStorage, 
+  getRefreshTokenFromLocalStorage, 
+  // isAccessTokenExpired, 
+  saveTokensToLocalStorage } from './helpers/AuthService.tsx';
 import axios from 'axios';
 import { useAppDispatch } from './store/store.ts';
 import { useSelector } from 'react-redux';
 import {
   walletcounterSelector,
-  setisloggin,
+  // setisloggin,
   setAddress,
   setBalance,
   setLoading,
@@ -192,18 +196,21 @@ const router = createBrowserRouter([
   },
 ]);
 
+
+
 function App() {
 
   //Redux
   const dispatch = useAppDispatch();
   const walletcounterReducer = useSelector(walletcounterSelector);
 
-  const [chainId, setChainId] = useState("fivenet");
-  const [token, setToken] = useState("usix");
-  const [rpcEndpoint, setRpcEndpoint] = useState(
+  const [chainId] = useState("fivenet");
+  const [token] = useState("usix");
+  
+  const [rpcEndpoint] = useState(
     import.meta.env.VITE_APP_RPC1_ENDPOINT_SIX_FIVENET
   );
-  const [exponent, setExponent] = useState(1e6);
+  const [exponent] = useState(1e6);
 
   const [cosmosAddress, setCosmosAddress] = useState("");
 
@@ -215,7 +222,7 @@ function App() {
       await window.keplr.enable(chainId);
       // Use offlineSigner to get first wallet and public key.
       // Currently only first address is supported.
-      const offlineSigner = await window.getOfflineSigner(chainId);
+      const offlineSigner = await window.keplr.getOfflineSigner(chainId);
       const keplrAccounts = await offlineSigner.getAccounts();
       // Set state value as first address.
       // console.log("KEPL ADREESS :" + keplrAccounts[0].address);

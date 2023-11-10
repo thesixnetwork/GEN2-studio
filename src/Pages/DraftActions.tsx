@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import  React, { useEffect, useState } from "react";
 
 
 import DraftMenu from "../component/DraftMenu";
@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import GobackButton from "../component/GobackButton";
 import DraftActionCard from "../component/DraftActionCard";
 import DraftCreateNewAction from "../component/DraftCreateNewAction";
+import { IActions } from "../types/Nftmngr"
 
 const DraftActions = () => {
   const [actions, setActions] = useState([]);
