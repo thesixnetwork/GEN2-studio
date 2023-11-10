@@ -211,6 +211,7 @@ const NewIntregation5 = () => {
 
     const UpdateSchemaInfo = () => {
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`; 
+        console.log("text[1].value ==>", text[1].value)
         const requestData = {
             "payload": {
                 "schema_info": {
