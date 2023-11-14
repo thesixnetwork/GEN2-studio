@@ -135,6 +135,7 @@ const Conectwalet = () => {
         console.log("verified= ", verified);
       } catch (error) {
         console.error("Error:", error);
+        dispatch(setLoading(false));
       }
     }
   };
@@ -197,6 +198,7 @@ const Conectwalet = () => {
       .catch(error => {
         console.error('API Error:', error);
         // Handle errors here
+        
       });
 
     dispatch(setLoading(false));

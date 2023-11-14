@@ -38,6 +38,7 @@ import {
 } from "../helpers/AuthService";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import parser_when from "../function/ConvertMetadataToObject/action_when";
 
 // const nodeTypes = {
 //   custom: Customnode,
@@ -120,7 +121,8 @@ const BasicFlow = () => {
   const { setCenter } = useReactFlow();
   const [redraw, setRedraw] = useState(false);
   const [actionName, setactionName] = useState("");
-
+  const [isGenerateGPT,setIsGenerateGPT] = useState(false);
+  const navigate = useNavigate();
 
   const onConnect = (params: Connection | Edge) =>
     setEdges((eds) => addEdge(params, eds));
@@ -589,13 +591,156 @@ const BasicFlow = () => {
     }
   };
 
+  const convertObject = (obj) => {
+    console.log("starting convert..");
+    const outputArray = [];
+    const edgesArr = [];
+    let nodeIdCounter = 1;
+
+    const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
+      const nodeId = `${nodeIdCounter++}`;
+      console.log("---node>", node);
+      const outputNode = {
+        id: nodeId,
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY },
+        draggable: false,
+        data: {
+          showType: "",
+          id: nodeId,
+          parentNode: parentNodeId,
+          label: { x: 0, y: parentPositionY },
+          width: 150,
+          height: 57,
+          value: "",
+          dataType: "",
+        },
+      };
+
+      if (node.type === "condition_oper" && node.value === "AND") {
+        outputNode.data.showType = "andNode";
+        outputNode.data.value = "and";
+      } else if (node.type === "condition_oper" && node.value === "OR") {
+        outputNode.data.showType = "orNode";
+        outputNode.data.value = "or";
+      } else if (
+        (node.type === "string_compare_oper" ||
+          node.type === "boolean_compare_oper" ||
+          node.type === "number_compare_oper" ||
+          node.type === "float_compare_oper") &&
+        node.value === "=="
+      ) {
+        outputNode.data.showType = "equalNode";
+        outputNode.data.value = "equal";
+      } else if (
+        (node.type === "string_compare_oper" ||
+          node.type === "boolean_compare_oper" ||
+          node.type === "number_compare_oper" ||
+          node.type === "float_compare_oper") &&
+        node.value === "!="
+      ) {
+        outputNode.data.showType = "notEqualNode";
+        outputNode.data.value = "notequal";
+      } else if (
+        (node.type === "string_compare_oper" ||
+          node.type === "boolean_compare_oper" ||
+          node.type === "number_compare_oper" ||
+          node.type === "float_compare_oper") &&
+        node.value === ">"
+      ) {
+        outputNode.data.showType = "moreThanNode";
+        outputNode.data.value = "morethan";
+      } else if (
+        (node.type === "string_compare_oper" ||
+          node.type === "boolean_compare_oper" ||
+          node.type === "number_compare_oper" ||
+          node.type === "float_compare_oper") &&
+        node.value === ">="
+      ) {
+        outputNode.data.showType = "moreThanAndEqualNode";
+        outputNode.data.value = "morethanandequal";
+      } else if (
+        (node.type === "string_compare_oper" ||
+          node.type === "boolean_compare_oper" ||
+          node.type === "number_compare_oper" ||
+          node.type === "float_compare_oper") &&
+        node.value === "<"
+      ) {
+        outputNode.data.showType = "lessThanNode";
+        outputNode.data.value = "lessthan";
+      } else if (
+        (node.type === "string_compare_oper" ||
+          node.type === "boolean_compare_oper" ||
+          node.type === "number_compare_oper" ||
+          node.type === "float_compare_oper") &&
+        node.value === "<="
+      ) {
+        outputNode.data.showType = "lessThanAndEqualNode";
+        outputNode.data.value = "lessthanandequal";
+      } else if (
+        node.type === "meta_function" &&
+        node.attributeName.type === "param_function"
+      ) {
+        outputNode.data.showType = "paramNode";
+        outputNode.data.value = node.value;
+      } else if (node.type === "meta_function") {
+        outputNode.data.showType = "attributeNode";
+        outputNode.data.value = node.attributeName.value;
+        if(node.functionName === "GetString"){
+          outputNode.data.dataType = "string";
+        }else if (node.functionName === "GetNumber"){
+          outputNode.data.dataType = "number";
+        }else if (node.functionName === "GetBoolean"){
+          outputNode.data.dataType = "boolean";
+        }else if (node.functionName === "GetFloat"){
+          outputNode.data.dataType = "float";
+        }
+      } else if (node.type === "constant") {
+        outputNode.data.showType = "valueNode";
+        outputNode.data.value = node.value;
+      }
+
+      outputArray.push(outputNode);
+
+      if (node.left) {
+        const edgeId = `e${nodeId}-${node.left.type}`;
+        edgesArr.push({
+          id: edgeId,
+          source: nodeId,
+          target: processNode(node.left, nodeId, parentPositionY + 150).id,
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        });
+      }
+
+      if (node.right) {
+        const edgeId = `e${nodeId}-${node.right.type}`;
+        edgesArr.push({
+          id: edgeId,
+          source: nodeId,
+          target: processNode(node.right, nodeId, parentPositionY + 150).id,
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        });
+      }
+
+      return outputNode;
+    };
+
+    processNode(obj);
+    setNodes(outputArray);
+    setEdges(edgesArr);
+  };
+
   useEffect(() => {
     if (redraw && nodes.length > 0) {
       setRedraw(false);
       const treeNodes = generateTreeFromReactFlow(nodes, edges);
 
       const tree = new Tree(treeNodes);
-      console.log("=>", tree)
+      console.log("=>", tree);
       tree.root.setBox(nodes.filter((node) => node.id === tree.root.id)[0]);
       // log tree
 
@@ -697,7 +842,9 @@ const BasicFlow = () => {
   };
 
   const FindSchemaCode = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -736,8 +883,9 @@ const BasicFlow = () => {
   }, []);
 
   const saveAction = async () => {
-    const apiUrl =
-      `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_actions`; // Replace with your API endpoint
     const requestData = {
       payload: {
         schema_code: getSCHEMA_CODE(),
@@ -768,11 +916,28 @@ const BasicFlow = () => {
       });
   };
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (isGenerateGPT) {
+      // console.log(">",metaData)
+      // console.log(">>", parser_when.parse(metaData));
+      setRedraw(true);
+      console.log(`"${metaData.toString()}"`)
+      console.log(
+        convertObject(parser_when.parse(metaData.toString()))
+      );
+      // convertObject(parser_when.parse("meta.GetNumber('points') > 0"));
+      setIsGenerateGPT(false);
+    }
+  }, [isGenerateGPT]);
 
   return (
     <div>
-      <Flowbar metaData={metaData} actionName={actionName}></Flowbar>
+      <Flowbar
+        metaData={metaData}
+        setMetaData={setMetaData}
+        actionName={actionName}
+        setIsGenerateGPT={setIsGenerateGPT}
+      ></Flowbar>{" "}
       <div style={{ height: 480, width: 1200 }}>
         <div ref={reactFlowWrapper} className="h-full">
           <ReactFlow

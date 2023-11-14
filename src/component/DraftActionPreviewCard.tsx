@@ -175,7 +175,6 @@ const DraftActionPreviewCard = ({ data, param }) => {
                 />
               </button>
             )}
-            <Tooltip title={data.desc}>
               {isEditDesc ? (
                 <input
                   type="text"
@@ -184,12 +183,13 @@ const DraftActionPreviewCard = ({ data, param }) => {
                   onChange={handleDescInput}
                 ></input>
               ) : (
+                <Tooltip title={data.desc}>
                 <span>
                   {data.desc !== undefined &&
                     convertStringIfTooLong(data.desc, 70)}
                 </span>
-              )}
             </Tooltip>
+              )}
           </div>
         </div>
         <div className="flex">

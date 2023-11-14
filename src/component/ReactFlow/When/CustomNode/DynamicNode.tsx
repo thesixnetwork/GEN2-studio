@@ -6,6 +6,7 @@ import {
   getAccessTokenFromLocalStorage,
   getSCHEMA_CODE,
 } from "../../../../helpers/AuthService";
+import { set } from "lodash";
 
 interface CircleNodeProps {
   data: {
@@ -128,8 +129,22 @@ const DynamicNode = (props: CircleNodeProps) => {
       await fetchData();
     };
     asyncFetchData();
-    console.log("fetching");
   }, [props.data.showType]);
+
+  useEffect(()=>{
+    console.log("--->", props.data.value)
+  },[props.data.value])
+
+  useEffect(() => {
+    if(props.data.showType === "valueNode"){
+      setInputValue(props.data.value)
+    }else if(props.data.showType === "attributeNode"){
+      setSelectValue({
+        name: props.data.value,
+        dataType: props.data.dataType,
+      });
+    }
+  }, [props.data.value]);
 
   useEffect(() => {
     if (attributesObj !== undefined) {
@@ -138,6 +153,8 @@ const DynamicNode = (props: CircleNodeProps) => {
       combineArrays(tokenAttributes, nftAttributes);
     }
   }, [attributesObj]);
+
+
 
   return props.data.showType === "valueNode" ? (
     <div

@@ -5,6 +5,8 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import OpenAI from "openai";
 import { Button, Modal, Box, Typography } from "@mui/material";
 import { useState } from "react";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
+import { styled } from "@mui/material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -21,14 +23,23 @@ const style = {
 interface MetaDataProps {
   metaData: string;
   actionName: string;
+  setMetaData: React.Dispatch<React.SetStateAction<string>>;
+  setIsGenerateGPT: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Flowbar(metaData: MetaDataProps) {
+export default function Flowbar(props: MetaDataProps) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [outputFromGPT, setOutputFromGPT] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const Robot = styled(SmartToyIcon)({
+    borderRadius: "16px",
+    transition: "color 0.3s, border 0.3s",
+    border: "1px solid white",
+    cursor: "pointer",
+  });
 
   const processGPT = async () => {
     const openai = new OpenAI({
@@ -36,11 +47,24 @@ export default function Flowbar(metaData: MetaDataProps) {
       dangerouslyAllowBrowser: true,
     });
 
+    const removeLeadingTrailingSpace = (text) => {
+      let startIndex = 0;
+      while (startIndex < text.length && text[startIndex].trim() === "") {
+        startIndex++;
+      }
+
+      let endIndex = text.length - 1;
+      while (endIndex >= 0 && text[endIndex].trim() === "") {
+        endIndex--;
+      }
+
+      return text.substring(startIndex, endIndex + 1);
+    };
+
     try {
       const response = await openai.completions.create({
         model: "gpt-3.5-turbo-instruct-0914",
-        prompt:
-          `I want to transform from statement text into programming condition comparison. For example the statement is \"when points are more than 100\" the result will be \"meta.GetNumber('points') > 100\".\nWhere meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules.\n- If the attribute data type is boolean , there's no need to put \"meta.GetBoolean('attributeName') == true\" , result can be just \"meta.GetBoolean('attributeName')\n- more than one comparison join together. For example statement \"when points are more than 100 and already check in , the result will be meta.GetNumber('points') > 100 && meta.GetBoolean('checked_in')\n\nWhat if the statement is "${inputValue}" What would be the answer ===>`,
+        prompt: `I want to transform from statement text into programming condition comparison. For example the statement is when points are more than 100 the result will be "meta.GetNumber('points') > 100.\nWhere meta.GetNumber means data type of 'point' is number. meta.GetString would be character (string) and meta.GetBoolean would be boolean. Here are some rules.\n- If the attribute data type is boolean , result will be meta.GetBoolean('attributeName') == true \n- more than one comparison join together. For example statement when points are more than 100 and already check in , the result will be meta.GetNumber('points') > 100 && meta.GetBoolean('checked_in') == true\n- These are the symbol which cannot be used '!' for example if not check in the output can't be !meta.GetBoolean('checked_in') the output must be meta.GetBoolean('checked_in') == false and the answer should be only meta function do not provide any guildline \n\nWhat if the statement is\n${inputValue}\n\n\n\nWhat would be the answer ===>`,
         temperature: 1,
         max_tokens: 256,
         top_p: 1,
@@ -50,59 +74,94 @@ export default function Flowbar(metaData: MetaDataProps) {
 
       console.log(response);
 
-      setOutputFromGPT(response.choices[0].text)
+      setOutputFromGPT(removeLeadingTrailingSpace(response.choices[0].text));
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleCreate = () => {
-    setOpen(false)
-    metaData.metaData = outputFromGPT
-  }
+    setOpen(false);
+    props.setMetaData(outputFromGPT);
+    props.setIsGenerateGPT(true);
+    console.log(">>", props.metaData);
+  };
 
   const handleInput = (e) => {
     setInputValue(e.target.value);
   };
+
   return (
     <div className="w-full h-36	  bg-[#D9D9D980] rounded-2xl flex justify-between p-4 items-center text-3xl">
       <div className="flex flex-col gap-y-2">
-        <span className="text-lg">ACTION NAME: {metaData.actionName}</span>
-        <div className="w-6 h-6 flex items-center justify-center rounded-full border">
-          <button className="text-xs" onClick={handleOpen}>AI</button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <Typography
-                id="modal-modal-title"
-                variant="h6"
-                component="h2"
-                color={"black"}
-              >
-                Text in a modal
-              </Typography>
-              <input
-                id="1"
-                type="text"
-                autoFocus
-                className={`text-black bg-transparent text-md border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
-                placeholder={""}
-                onChange={(e) => {
-                  handleInput(e);
-                }}
-              />
-              <button onClick={processGPT} className="text-black">processGPT</button>
-              <button className="text-black" onClick={()=>console.log(outputFromGPT)}>output</button>
-              <p className="text-black">output: {outputFromGPT}</p>
-              <button className="text-black" onClick={handleCreate}>Create</button>
-            </Box>
-          </Modal>
+        <div className="flex items-center gap-x-1">
+          <span className="text-lg">Action Name: {props.actionName}</span>
+          <div>
+            <button
+              className=" flex items-center justify-center rounded-full border text-xs hover:scale-125 duration-300"
+              onClick={handleOpen}
+            >
+              <Robot />
+            </button>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h2"
+                  color={"black"}
+                >
+                  Generate trees by input
+                </Typography>
+                <input
+                  id="1"
+                  type="text"
+                  autoFocus
+                  className={`text-black bg-transparent text-md border-[1px] focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed border-[#D9D9D9DD] p-1 focus:outline-none focus:scale-105 duration-1000 w-[100%] h-[${20}px]`}
+                  placeholder={""}
+                  onChange={(e) => {
+                    handleInput(e);
+                  }}
+                />
+                <div className="w-full flex justify-center gap-x-4">
+                  <Button variant="outlined" onClick={processGPT}>
+                    processGPT
+                  </Button>
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    onClick={() => console.log(outputFromGPT)}
+                  >
+                    output
+                  </Button>
+                </div>
+                <div className="py-4">
+                  <Typography sx={{ color: "black" }}>
+                    output: {outputFromGPT}
+                  </Typography>
+                </div>
+                <div className="w-full flex justify-center gap-x-4">
+                  <Button variant="outlined" onClick={handleCreate}>
+                    Create
+                  </Button>
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    onClick={handleClose}
+                  >
+                    Discard
+                  </Button>
+                </div>
+              </Box>
+            </Modal>
+          </div>
         </div>
-        <div className="max-w-xl h-16 overflow-scroll	">
+        <div className="max-w-xl h-16 overflow-scroll">
           <SyntaxHighlighter
             language="go"
             wrapLongLines={true}
@@ -113,10 +172,9 @@ export default function Flowbar(metaData: MetaDataProps) {
               },
             }}
           >
-            {metaData.metaData}
+            {props.metaData}
           </SyntaxHighlighter>
         </div>
-          <button onClick={()=>console.log(metaData)}>log herer</button>
       </div>
       <div className="flex w-90 ">
         <div className="flex flex-col gap-y-2 border-r-2 pr-4 border-gray-100">

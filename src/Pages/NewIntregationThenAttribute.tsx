@@ -24,7 +24,7 @@ import "reactflow/dist/base.css";
 import { Factory } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
-
+import parser_then from "../function/ConvertMetadataToObject/action_then";
 import SyntaxHighlighter from "react-syntax-highlighter";
 
 
@@ -71,7 +71,7 @@ const BasicFlow = () => {
       textUpdate: InputNode,
     };
   }, []);
-
+  const navigate = useNavigate();
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
@@ -79,6 +79,8 @@ const BasicFlow = () => {
   const [redraw, setRedraw] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [createFirstNode, setCreateFirstNode] = useState(true);
+  const [isGenerateGPT ,setIsGenerateGPT] = useState(false)
+  const [actionName, setactionName] = useState("")
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -269,6 +271,167 @@ const BasicFlow = () => {
         }
       }
     }
+  };
+
+  const convertObjectToNode = (obj) => {
+    let nodeIdCounter = 1;
+    const outputArray = [];
+    const edgesArr = [];
+
+    const processNode = (node, parentNodeId = null, parentPositionY = 0) => {
+      const nodeId = `${nodeIdCounter++}`;
+      const outputNode = {
+        width: 150,
+        height: 57,
+        id: nodeId,
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY },
+        draggable: false,
+        data: {
+          showType: "",
+          id: nodeId,
+          parentNode: parentNodeId,
+          label: { x: 0, y: parentPositionY },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
+
+      const outputNode2 = {
+        width: 150,
+        height: 57,
+        id: `${parseInt(nodeId) + 1}`,
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY + 150 },
+        draggable: false,
+        data: {
+          showType: "",
+          id: `${parseInt(nodeId) + 1}`,
+          parentNode: `${parseInt(parentNodeId) + 1}`,
+          label: { x: 0, y: parentPositionY + 150 },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
+
+      console.log("node==>", node);
+
+      console.log("value", node.value);
+
+      if (
+        node.type === "meta_function" &&
+        (node.functionName === "SetNumber" ||
+          node.functionName === "SetString" ||
+          node.functionName === "SetBoolean" ||
+          node.functionName === "SetFloat")
+      ) {
+        outputNode.data.showType = "selectAttributeNode";
+        outputNode.data.value = node.attributeName.value;
+        if(node.functionName === "SetNumber"){
+          outputNode.data.dataType = "number";
+        }else if (node.functionName === "SetString"){
+          outputNode.data.dataType = "string";
+        }else if (node.functionName === "SetBoolean"){
+          outputNode.data.dataType = "boolean";
+        }
+        setSelectedAttribute(node.attributeName.dataType);
+      } else if (node.type === "constant" && node.value && !node.left) {
+        outputNode.data.showType = "setNode";
+        outputNode2.data.showType = "valueNode";
+        outputNode2.data.value = node.value;
+      } else if (node.type === "constant" && node.dataType) {
+        outputNode.data.showType = "valueNode";
+        outputNode.data.value = node.value;
+      } else if (node.right.type === "constant" && node.dataType) {
+        outputNode.data.showType = "valueNode";
+        outputNode.data.value = node.value;
+      } else if (
+        node.type === "math_operation" &&
+        node.value === "+" &&
+        node.left
+      ) {
+        outputNode.data.showType = "increaseNode";
+        outputNode2.data.showType = "valueNode";
+        outputNode2.data.value = node.right.value;
+      } else if (node.type === "math_operation" && node.value === "+") {
+        outputNode.data.showType = "increaseNode";
+        outputNode.data.value = node.value;
+      } else if (node.type === "math_operation" && node.value === "-") {
+        outputNode.data.showType = "decreaseNode";
+        outputNode.data.value = node.value;
+      }
+
+      if (node.type === "constant" && node.value) {
+        if (outputNode2.data.showType === "valueNode") {
+          outputArray.push(outputNode, outputNode2);
+        } else {
+          outputArray.push(outputNode);
+        }
+      } else {
+        console.log("A===", outputArray);
+        if (outputNode2.data.showType === "valueNode") {
+          outputArray.push(outputNode, outputNode2);
+        } else {
+          outputArray.push(outputNode);
+        }
+      }
+
+      if (
+        node.value1 &&
+        node.value1.value &&
+        node.value1.type !== "math_operation"
+      ) {
+        console.log("<---", node.value1);
+        edgesArr.push(
+          {
+            id: `e${nodeId}-${parseInt(nodeId) + 1}`,
+            source: nodeId,
+            target: processNode(node.value1, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          },
+          {
+            id: `e${parseInt(nodeId) + 1}-${parseInt(nodeId) + 2}`,
+            source: `${parseInt(nodeId) + 1}`,
+            target: `${parseInt(nodeId) + 2}`,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          }
+        );
+      }
+
+      if (node.value1 && node.value1.right) {
+        const edgeId = `e${nodeId}-${parseInt(nodeId) + 1}`;
+        edgesArr.push(
+          {
+            id: edgeId,
+            source: nodeId,
+            target: processNode(node.value1, nodeId, parentPositionY + 150).id,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          },
+          {
+            id: `e${parseInt(nodeId) + 1}-${parseInt(nodeId) + 2}`,
+            source: `${parseInt(nodeId) + 1}`,
+            target: `${parseInt(nodeId) + 2}`,
+            animated: true,
+            style: { stroke: "#FFAA9A" },
+            type: "smoothstep",
+          }
+        );
+      }
+
+      return outputNode;
+    };
+
+    processNode(obj);
+    setEdges(edgesArr);
+    setNodes(outputArray);
   };
 
   const focusNode = () => {
@@ -539,7 +702,6 @@ const BasicFlow = () => {
   };
 
 
-  const [actionName, setactionName] = useState("")
   const FindSchemaCode = async () => {
     const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
     const params = {
@@ -600,7 +762,16 @@ const BasicFlow = () => {
     FindSchemaCode()
   }, [])
 
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isGenerateGPT) {
+      console.log(`"${metaData.toString()}"`)
+      console.log(
+        convertObjectToNode(parser_then.parse(metaData.toString()))
+      );
+      setIsGenerateGPT(false);
+    }
+  }, [isGenerateGPT]);
 
   return (
     <div className="flex justify-between w-full">
@@ -646,7 +817,7 @@ const BasicFlow = () => {
           </div>
         </div>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute} actionName={getActionName()}></Flowbar>
+      <Flowbar selectedAttribute={selectedAttribute} actionName={getActionName()} setIsGenerateGPT={setIsGenerateGPT} setMetaData={setMetaData} metaData={metaData} type="attribute"></Flowbar>
     </div>
   );
 };

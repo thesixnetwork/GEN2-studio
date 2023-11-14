@@ -94,7 +94,6 @@ const BasicFlow = () => {
   const [metaData, setMetaData] = useState("please add item");
   const { setCenter, project } = useReactFlow();
   const [redraw, setRedraw] = useState(false);
-  const [createFirstNode, setCreateFirstNode] = useState(true);
   const navigate = useNavigate();
   const [isDraft, setIsDraft] = useState(false);
   const [actionData, setActionData] = useState();
@@ -102,6 +101,7 @@ const BasicFlow = () => {
   const [actionThenIndex, setActionThenIndex] = useState(null);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState("");
+  const [isGenerateGPT, setIsGenerateGPT] = useState(false);
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -521,18 +521,6 @@ const BasicFlow = () => {
     // onNodesChange(changes);
   };
 
-  useEffect(() => {
-    if (nodes.length > 1 && nodes.length < 10) {
-      focusNode();
-    }
-  }, [nodes]);
-
-  useEffect(() => {
-    if (nodes.length > 1) {
-      getDataFromNode();
-    }
-  }, [nodes, setNodes]);
-
   const getDataFromNode = () => {
     const transformData = (nodes) => {
       let result = {};
@@ -544,7 +532,6 @@ const BasicFlow = () => {
         }
 
         if (nodes[i].data.showType === "paramNode") {
-          nodes[i].data.dataType = nodes[0].data.dataType;
           console.log("1", nodes[i].data.dataType);
         }
 
@@ -570,6 +557,12 @@ const BasicFlow = () => {
                     dataType: "string",
                     value: nodes[i].data.value,
                   },
+                })
+              : nodes[i].data.showType === "valueNode"
+              ? (result.value2 = {
+                  type: "constant",
+                  dataType: "number",
+                  value: nodes[i].data.value,
                 })
               : (result.value2 = {
                   type: "meta_function",
@@ -611,6 +604,7 @@ const BasicFlow = () => {
     };
 
     const object = Factory.createObject(transformData(nodes)).toString();
+    console.log(">", object);
     setMetaData(object);
     return object;
   };
@@ -735,13 +729,13 @@ const BasicFlow = () => {
           const paramNode = {
             width: 150,
             height: 57,
-            id: (nodeId + 2).toString(),
+            id: (nodeId + 3).toString(),
             type: "customInputNode",
             position: { x: -150, y: parentPositionY + 300 },
             draggable: false,
             data: {
               showType: "paramNode",
-              id: (nodeId + 2).toString(),
+              id: (nodeId + 3).toString(),
               parentNode: (nodeId + 1).toString(),
               label: { x: -150, y: parentPositionY + 300 },
               value: node.value1.attributeName.value,
@@ -753,13 +747,13 @@ const BasicFlow = () => {
           const attributeNode = {
             width: 150,
             height: 57,
-            id: (nodeId + 2).toString(),
+            id: (nodeId + 3).toString(),
             type: "customInputNode",
             position: { x: -150, y: parentPositionY + 300 },
             draggable: false,
             data: {
               showType: "attributeNode",
-              id: (nodeId + 2).toString(),
+              id: (nodeId + 3).toString(),
               parentNode: (nodeId + 1).toString(),
               label: { x: -150, y: parentPositionY + 300 },
               value: node.value1.attributeName.value,
@@ -778,9 +772,9 @@ const BasicFlow = () => {
           type: "smoothstep",
         };
         const edge2 = {
-          id: `e${nodeId + 1}-${nodeId + 2}`,
+          id: `e${nodeId + 1}-${nodeId + 3}`,
           source: (nodeId + 1).toString(),
-          target: (nodeId + 2).toString(),
+          target: (nodeId + 3).toString(),
           animated: true,
           style: { stroke: "#FFAA9A" },
           type: "smoothstep",
@@ -793,13 +787,13 @@ const BasicFlow = () => {
         const amountNode = {
           width: 150,
           height: 57,
-          id: (nodeId + 3).toString(),
+          id: (nodeId + 2).toString(),
           type: "customInputNode",
           position: { x: 150, y: parentPositionY + 150 },
           draggable: false,
           data: {
             showType: "amountNode",
-            id: (nodeId + 3).toString(),
+            id: (nodeId + 2).toString(),
             parentNode: nodeId.toString(),
             label: { x: 0, y: parentPositionY + 150 },
             value: node.attributeName.value,
@@ -807,8 +801,8 @@ const BasicFlow = () => {
           },
         };
 
-        if (node.value2.type === "param_function") {
-          const paramNode = {
+        if (node.value2.type === "meta_function") {
+          const attributeNode = {
             width: 150,
             height: 57,
             id: (nodeId + 4).toString(),
@@ -816,7 +810,7 @@ const BasicFlow = () => {
             position: { x: 150, y: parentPositionY + 300 },
             draggable: false,
             data: {
-              showType: "paramNode",
+              showType: "attributeNode",
               id: (nodeId + 4).toString(),
               parentNode: (nodeId + 3).toString(),
               label: { x: 150, y: parentPositionY + 300 },
@@ -824,7 +818,7 @@ const BasicFlow = () => {
               dataType: node.value2.attributeName.dataType,
             },
           };
-          tempNodeArray.push(amountNode, paramNode);
+          tempNodeArray.push(amountNode, attributeNode);
         } else {
           const valueNode = {
             width: 150,
@@ -838,24 +832,24 @@ const BasicFlow = () => {
               id: (nodeId + 4).toString(),
               parentNode: (nodeId + 3).toString(),
               label: { x: 150, y: parentPositionY + 300 },
-              value: node.value2.attributeName.value,
-              dataType: node.value2.attributeName.dataType,
+              value: node.value2.value,
+              dataType: node.value2.dataType,
             },
           };
           tempNodeArray.push(amountNode, valueNode);
         }
 
         const edge = {
-          id: `e${nodeId}-${nodeId + 3}`,
+          id: `e${nodeId}-${nodeId + 2}`,
           source: nodeId.toString(),
-          target: (nodeId + 3).toString(),
+          target: (nodeId + 2).toString(),
           animated: true,
           style: { stroke: "#FFAA9A" },
           type: "smoothstep",
         };
         const edge2 = {
-          id: `e${nodeId + 3}-${nodeId + 4}`,
-          source: (nodeId + 3).toString(),
+          id: `e${nodeId + 2}-${nodeId + 4}`,
+          source: (nodeId + 2).toString(),
           target: (nodeId + 4).toString(),
           animated: true,
           style: { stroke: "#FFAA9A" },
@@ -864,6 +858,10 @@ const BasicFlow = () => {
 
         tempEdgeArray.push(edge, edge2);
       }
+      // Sort nodes.id in ascending order
+      tempNodeArray.sort((a, b) => {
+        return a.id - b.id;
+      });
 
       return nodeId;
     };
@@ -874,6 +872,18 @@ const BasicFlow = () => {
     setEdges(tempEdgeArray);
     return tempNodeArray;
   };
+
+  useEffect(() => {
+    if (nodes.length > 1 && nodes.length < 10) {
+      focusNode();
+    }
+  }, [nodes]);
+
+  useEffect(() => {
+    if (nodes.length > 1) {
+      getDataFromNode();
+    }
+  }, [nodes, setNodes]);
 
   useEffect(() => {
     saveSCHEMA_CODE(param.schema_revision);
@@ -889,14 +899,9 @@ const BasicFlow = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      nodes[0].data.value &&
-      nodes.length < 2 &&
-      createFirstNode &&
-      !isDraft
-    ) {
+    if (nodes[0].data.value && nodes.length < 2 && !isDraft) {
       createToAmountNodes();
-      setSelectedAttribute("none")
+      setSelectedAttribute("none");
     }
   }, [nodes[0].data.value]);
 
@@ -910,9 +915,8 @@ const BasicFlow = () => {
         return data.find((item) => item.name === name);
       };
       if (isBase64(param.meta_function)) {
+        setSelectedAttribute("none");
         const result = getDataByName(actionData, param.action_name);
-        console.log("result: ", actionData);
-        console.log("actionName: ", param.action_name);
         setActionThenArr(result.then);
         const index = actionThenArr.indexOf(
           convertFromBase64(param.meta_function)
@@ -920,22 +924,32 @@ const BasicFlow = () => {
         console.log("--: ", index);
         setActionThenIndex(index);
       } else {
+        setSelectedAttribute("none");
         const result = getDataByName(actionData, param.action_name);
         console.log("result: ", result);
         setActionThenArr(result.then);
         const index = actionThenArr.indexOf(param.meta_function);
         console.log("--: ", index);
         setActionThenIndex(index);
-        setSelectedAttribute("none")
       }
 
       if (param.meta_function === "create-new-action") {
         setIsCreateNewAction(true);
+        setSelectedAttribute("");
       }
 
       console.log("actionThenArr: ", actionThenArr);
     }
   }, [actionData]);
+
+  useEffect(() => {
+    if (isGenerateGPT) {
+      console.log(`"${metaData.toString()}"`);
+      convertObjectToNode(parser_then.parse(metaData.toString()));
+      setSelectedAttribute("none");
+      setIsGenerateGPT(false);
+    }
+  }, [isGenerateGPT]);
 
   useEffect(() => {
     findSchemaCode();
@@ -1007,10 +1021,16 @@ const BasicFlow = () => {
               TextTitle={"SAVE"}
             ></NormalButton>
           </div>
-
         </div>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute} actionName={param.action_name}></Flowbar>
+      <Flowbar
+        selectedAttribute={selectedAttribute}
+        actionName={param.action_name}
+        setIsGenerateGPT={setIsGenerateGPT}
+        setMetaData={setMetaData}
+        metaData={metaData}
+        type="transfer"
+      ></Flowbar>
     </div>
   );
 };
@@ -1024,7 +1044,6 @@ export default function DraftEditActionsTransfer() {
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
             <div className="h-full flex flex-col items-center justify-center">
-              
               <ReactFlowProvider>
                 <BasicFlow />
               </ReactFlowProvider>

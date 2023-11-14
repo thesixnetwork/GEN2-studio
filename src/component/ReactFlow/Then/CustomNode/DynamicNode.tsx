@@ -6,6 +6,7 @@ import {
   getSCHEMA_CODE,
 } from "../../../../helpers/AuthService";
 import axios from "axios";
+import { set } from "lodash";
 
 interface CircleNodeProps {
   data: {
@@ -150,7 +151,10 @@ const DynamicNode = (props: CircleNodeProps) => {
     const selectedOption = JSON.parse(e.target.value);
     // props.data.value = selectedOption.name
     props.data.dataType = selectedOption.dataType
-    console.log("---o>",selectedOption)
+    setSelectValue({
+      name: selectedOption.name,
+      dataType: selectedOption.dataType,
+    });
     const { nodeInternals } = store.getState();
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
@@ -189,6 +193,23 @@ const DynamicNode = (props: CircleNodeProps) => {
         getAttributeOption(tokenAttributes, nftAttributes);
     }
   }, [attributesObj]);
+
+  useEffect(() => {
+    if(props.data.showType === "valueNode"){
+      setInputValue(props.data.value)
+    }else if(props.data.showType === "attributeNode"){
+      setSelectValue({
+        name: props.data.value,
+        dataType: props.data.dataType,
+      });
+    }else if (props.data.showType === "paramNode"){
+      setInputValue(props.data.value)
+      setSelectValue({
+        name: props.data.value,
+        dataType: props.data.dataType,
+      });
+    }
+  }, [props.data.value]);
 
   return props.data.showType === "selectAttributeNode" ? (
     <div
@@ -388,9 +409,11 @@ const DynamicNode = (props: CircleNodeProps) => {
             className="text-black rounded-full w-32 my-2"
             onChange={handleSelectParamNode}
           >
-            <option value="" disabled selected hidden>
-              - select type -
-            </option>
+            <option value={selectValue.dataType} disabled selected hidden>
+            {selectValue.dataType === "" || selectValue.dataType === undefined
+              ? "-- select type --"
+              : selectValue.dataType}
+          </option>
             <option
               value={JSON.stringify({ name: "number", dataType: "number" })}
             >
@@ -402,7 +425,7 @@ const DynamicNode = (props: CircleNodeProps) => {
               string
             </option>
           </select>
-          {isSelected ? (
+          {/* {isSelected ? ( */}
             <div className="flex items-center justify-center">
               <input
                 type="text"
@@ -411,11 +434,12 @@ const DynamicNode = (props: CircleNodeProps) => {
                 className="w-32 rounded-full text-black"
                 onChange={onChange}
                 placeholder="  Input Param Name"
+                value={inputValue}
               />
             </div>
-          ) : (
+          {/* ) : (
             <div></div>
-          )}
+          )} */}
         </div>
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />

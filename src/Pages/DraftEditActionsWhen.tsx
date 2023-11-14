@@ -100,6 +100,7 @@ const Flow = () => {
   const [metaData, setMetaData] = useState("please add item");
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [isGenerateGPT, setIsGenerateGPT] = useState(false);
   const nodeTypes = useMemo(() => {
     return {
       customInputNode: InputNode,
@@ -184,7 +185,7 @@ const Flow = () => {
         node.value === "!="
       ) {
         outputNode.data.showType = "notEqualNode";
-        outputNode.data.value = "notEqual";
+        outputNode.data.value = "notequal";
       } else if (
         (node.type === "string_compare_oper" ||
           node.type === "boolean_compare_oper" ||
@@ -193,7 +194,7 @@ const Flow = () => {
         node.value === ">"
       ) {
         outputNode.data.showType = "moreThanNode";
-        outputNode.data.value = "moreThan";
+        outputNode.data.value = "morethan";
       } else if (
         (node.type === "string_compare_oper" ||
           node.type === "boolean_compare_oper" ||
@@ -202,7 +203,7 @@ const Flow = () => {
         node.value === ">="
       ) {
         outputNode.data.showType = "moreThanAndEqualNode";
-        outputNode.data.value = "moreThanAndEqual";
+        outputNode.data.value = "morethanandequal";
       } else if (
         (node.type === "string_compare_oper" ||
           node.type === "boolean_compare_oper" ||
@@ -211,7 +212,7 @@ const Flow = () => {
         node.value === "<"
       ) {
         outputNode.data.showType = "lessThanNode";
-        outputNode.data.value = "lessThan";
+        outputNode.data.value = "lessthan";
       } else if (
         (node.type === "string_compare_oper" ||
           node.type === "boolean_compare_oper" ||
@@ -220,7 +221,7 @@ const Flow = () => {
         node.value === "<="
       ) {
         outputNode.data.showType = "lessThanAndEqualNode";
-        outputNode.data.value = "lessThanAndEqual";
+        outputNode.data.value = "lessthanandequal";
       } else if (
         node.type === "meta_function" &&
         node.attributeName.type === "param_function"
@@ -228,9 +229,17 @@ const Flow = () => {
         outputNode.data.showType = "paramNode";
         outputNode.data.value = node.value;
       } else if (node.type === "meta_function") {
-        outputNode.data.dataType = node.attributeName.dataType;
         outputNode.data.showType = "attributeNode";
         outputNode.data.value = node.attributeName.value;
+        if(node.functionName === "GetString"){
+          outputNode.data.dataType = "string";
+        }else if (node.functionName === "GetNumber"){
+          outputNode.data.dataType = "number";
+        }else if (node.functionName === "GetBoolean"){
+          outputNode.data.dataType = "boolean";
+        }else if (node.functionName === "GetFloat"){
+          outputNode.data.dataType = "float";
+        }
       } else if (node.type === "constant") {
         outputNode.data.showType = "valueNode";
         outputNode.data.value = node.value;
@@ -798,8 +807,9 @@ const Flow = () => {
   };
 
   const saveAction = async () => {
-    const apiUrl =
-      `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_actions`; // Replace with your API endpoint
     const requestData = {
       payload: {
         schema_code: getSCHEMA_CODE(),
@@ -831,9 +841,9 @@ const Flow = () => {
   };
 
   useEffect(() => {
-    console.log(">>>",metaDataParams.meta_function)
+    console.log(">>>", metaDataParams.meta_function);
     if (
-      metaDataParams.meta_function !== "create-new-when" && 
+      metaDataParams.meta_function !== "create-new-when" &&
       metaDataParams.meta_function !== "please add item"
     ) {
       setRedraw(true);
@@ -843,6 +853,20 @@ const Flow = () => {
       setMetaData(metaDataParams.meta_function);
     }
   }, []);
+
+  useEffect(() => {
+    if (isGenerateGPT) {
+      // console.log(">",metaData)
+      // console.log(">>", parser_when.parse(metaData));
+      setRedraw(true);
+      console.log(`"${metaData.toString()}"`)
+      console.log(
+        convertObject(parser_when.parse(metaData.toString()))
+      );
+      // convertObject(parser_when.parse("meta.GetNumber('points') > 0"));
+      setIsGenerateGPT(false);
+    }
+  }, [isGenerateGPT]);
 
   useEffect(() => {
     if (redraw && nodes.length > 0) {
@@ -876,14 +900,18 @@ const Flow = () => {
 
   useEffect(() => {
     if (nodes.length > 1) {
-      ("setdata");
       getDataFromNode();
     }
   }, [nodes, setNodes]);
 
   return (
     <div>
-      <Flowbar metaData={metaData} actionName={metaDataParams.action_name}></Flowbar>
+      <Flowbar
+        metaData={metaData}
+        setMetaData={setMetaData}
+        actionName={metaDataParams.action_name}
+        setIsGenerateGPT={setIsGenerateGPT}
+      ></Flowbar>
       <div style={{ height: 600, width: 1200 }}>
         <div ref={reactFlowWrapper} className="h-full">
           <ReactFlow

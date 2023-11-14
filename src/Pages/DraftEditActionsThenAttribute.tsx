@@ -57,6 +57,7 @@ const getId = () => `${id++}`;
 
 const nodeOrigin: NodeOrigin = [0.5, 0.5];
 
+
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 57;
 const GRID_PADDING = 60;
@@ -75,7 +76,9 @@ const BasicFlow = () => {
     };
   }, []);
 
+  console.log('--nodeOrigin--',nodeOrigin)
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
   const { setCenter, project } = useReactFlow();
@@ -85,6 +88,8 @@ const BasicFlow = () => {
   const [actionThenArr, setActionThenArr] = useState([]);
   const [actionThenIndex, setActionThenIndex] = useState(null);
   const [isCreateNewAction, setIsCreateNewAction] = useState(false);
+  const [isGenerateGPT, setIsGenerateGPT] = useState(false);
+  const navigate = useNavigate();
   const nodeWidthAndHeight = {
     width: 150,
     height: 57,
@@ -132,7 +137,6 @@ const BasicFlow = () => {
           value: "",
           dataType: "",
         },
-        positionAbsolute: { x: 0, y: parentPositionY },
       };
 
       const outputNode2 = {
@@ -150,7 +154,6 @@ const BasicFlow = () => {
           value: "",
           dataType: "",
         },
-        positionAbsolute: { x: 0, y: parentPositionY },
       };
 
       console.log("node==>", node);
@@ -166,7 +169,13 @@ const BasicFlow = () => {
       ) {
         outputNode.data.showType = "selectAttributeNode";
         outputNode.data.value = node.attributeName.value;
-        outputNode.data.dataType = node.attributeName.dataType;
+        if(node.functionName === "SetNumber"){
+          outputNode.data.dataType = "number";
+        }else if (node.functionName === "SetString"){
+          outputNode.data.dataType = "string";
+        }else if (node.functionName === "SetBoolean"){
+          outputNode.data.dataType = "boolean";
+        }
         setSelectedAttribute(node.attributeName.dataType);
       } else if (node.type === "constant" && node.value && !node.left) {
         outputNode.data.showType = "setNode";
@@ -855,7 +864,16 @@ const BasicFlow = () => {
     findSchemaCode();
   }, []);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (isGenerateGPT) {
+      console.log(`"${metaData.toString()}"`)
+      console.log(
+        convertObjectToNode(parser_then.parse(metaData.toString()))
+      );
+      setIsGenerateGPT(false);
+    }
+  }, [isGenerateGPT]);
+
 
   return (
     <div className="flex justify-between w-full">
@@ -880,14 +898,15 @@ const BasicFlow = () => {
               nodes={nodes}
               edges={edges}
               nodeTypes={nodeTypes}
-              onEdgesChange={handleEdgesChange}
-              onNodesChange={handleNodesChange}
+              onEdgesChange={onEdgesChange}
+              onNodesChange={onNodesChange}
               onConnect={onConnect}
               onInit={onInit}
               onDrop={onDrop}
               onDragOver={onDragOver}
-              fitView
               nodeOrigin={nodeOrigin}
+              nodeDragThreshold={1}
+              fitView
             >
               <Controls position="top-left" />
               <MiniMap position="top-right"></MiniMap>
@@ -922,7 +941,7 @@ const BasicFlow = () => {
           </div>
         </div>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute} actionName={param.action_name}></Flowbar>
+      <Flowbar selectedAttribute={selectedAttribute} actionName={param.action_name} setIsGenerateGPT={setIsGenerateGPT} setMetaData={setMetaData} metaData={metaData} type="attribute"></Flowbar>
     </div>
   );
 };

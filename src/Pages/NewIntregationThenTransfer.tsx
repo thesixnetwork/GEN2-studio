@@ -3,7 +3,7 @@ import { Tooltip } from "@mui/material";
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import { useState, DragEvent, useRef, } from "react";
+import { useState, DragEvent, useRef } from "react";
 
 import ReactFlow, {
   ReactFlowProvider,
@@ -25,11 +25,16 @@ import { Factory } from "../function/ConvertObjectToMetadata/Factory";
 import Flowbar from "../component/ReactFlow/Then/Flowbar";
 import InputNode from "../component/ReactFlow/Then/CustomNode/InputNode";
 
+import parser_then from "../function/ConvertMetadataToObject/action_then";
 import SyntaxHighlighter from "react-syntax-highlighter";
 
 import NormalButton from "../component/NormalButton";
 import { useNavigate } from "react-router-dom";
-import { getAccessTokenFromLocalStorage, getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
+import {
+  getAccessTokenFromLocalStorage,
+  getActionName,
+  getSCHEMA_CODE,
+} from "../helpers/AuthService";
 import axios from "axios";
 
 const initialNodes: Node[] = [
@@ -69,12 +74,15 @@ const BasicFlow = () => {
       textUpdate: InputNode,
     };
   }, []);
-  const[selectedAttribute, setSelectedAttribute] = useState("");
+  const [selectedAttribute, setSelectedAttribute] = useState("");
 
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [updatedNodes, setUpdatedNodes] = useState(initialNodes);
   const [metaData, setMetaData] = useState("please add item");
+  const [isGenerateGPT, setIsGenerateGPT] = useState(false);
   const { setCenter } = useReactFlow();
+  const navigate = useNavigate();
+  const [isDraft, setIsDraft] = useState(false);
 
   const nodeWidthAndHeight = {
     width: 150,
@@ -330,154 +338,6 @@ const BasicFlow = () => {
     // onNodesChange(changes);
   };
 
-  useEffect(() => {
-    if (nodes.length > 1 && nodes.length < 10) {
-      focusNode();
-    }
-  }, [nodes]);
-
-  useEffect(() => {
-    if (nodes.length > 1) {
-      getDataFromNode();
-    }
-  }, [nodes, setNodes]);
-
-  useEffect(() => {
-    if (nodes[0].data.value && nodes.length < 2) {
-      const positionLeftNode = {
-        x: nodes[0].position.x - nodeWidthAndHeight.width,
-        y:
-          nodes[0].position.y +
-          nodeWidthAndHeight.height +
-          nodeWidthAndHeight.grid_padding,
-      };
-      const positionRightNode = {
-        x: nodes[0].position.x + nodeWidthAndHeight.width,
-        y:
-          nodes[0].position.y +
-          nodeWidthAndHeight.height +
-          nodeWidthAndHeight.grid_padding,
-      };
-      const positionLeftBottomNode = {
-        x: nodes[0].position.x - nodeWidthAndHeight.width,
-        y:
-          (nodes[0].position.y +
-            nodeWidthAndHeight.height +
-            nodeWidthAndHeight.grid_padding) *
-          2,
-      };
-      const positionRightBottomNode = {
-        x: nodes[0].position.x + nodeWidthAndHeight.width,
-        y:
-          (nodes[0].position.y +
-            nodeWidthAndHeight.height +
-            nodeWidthAndHeight.grid_padding) *
-          2,
-      };
-      const leftId = getId();
-      const rightId = getId();
-      const leftBottomId = getId();
-      const rightBottomId = getId();
-
-      const leftNode = {
-        id: leftId,
-        position: positionLeftNode,
-        type: "customInputNode",
-        data: {
-          showType: "toNode",
-          label: positionLeftNode,
-          id: leftId,
-          parentNode: nodes[0].id,
-          width: nodeWidthAndHeight.width,
-          height: nodeWidthAndHeight.height,
-        },
-        draggable: false,
-      };
-      const rightNode = {
-        id: rightId,
-        position: positionRightNode,
-        type: "customInputNode",
-        data: {
-          showType: "amountNode",
-          label: positionRightNode,
-          id: rightId,
-          parentNode: nodes[0].id,
-          width: nodeWidthAndHeight.width,
-          height: nodeWidthAndHeight.height,
-        },
-        draggable: false,
-      };
-      const leftBottomNode = {
-        id: leftBottomId,
-        position: positionLeftBottomNode,
-        type: "customInputNode",
-        data: {
-          showType: "addNode",
-          label: positionLeftBottomNode,
-          id: leftBottomId,
-          parentNode: leftId,
-          width: nodeWidthAndHeight.width,
-          height: nodeWidthAndHeight.height,
-        },
-        draggable: false,
-      };
-      const rightBottomNode = {
-        id: rightBottomId,
-        position: positionRightBottomNode,
-        type: "customInputNode",
-        data: {
-          showType: "addNode",
-          label: positionRightBottomNode,
-          id: rightBottomId,
-          parentNode: rightId,
-          width: nodeWidthAndHeight.width,
-          height: nodeWidthAndHeight.height,
-        },
-        draggable: false,
-      };
-
-      const newEdges = [
-        {
-          id: `e1-${leftId}`,
-          source: nodes[0].id,
-          target: leftId,
-          animated: true,
-          style: { stroke: "#FFAA9A" },
-          type: "smoothstep",
-        },
-        {
-          id: `e1-${rightId}`,
-          source: nodes[0].id,
-          target: rightId,
-          animated: true,
-          style: { stroke: "#FFAA9A" },
-          type: "smoothstep",
-        },
-        {
-          id: `e${leftId}-${leftBottomId}`,
-          source: leftId,
-          target: leftBottomId,
-          animated: true,
-          style: { stroke: "#FFAA9A" },
-          type: "smoothstep",
-        },
-        {
-          id: `e${rightId}-${rightBottomId}`,
-          source: rightId,
-          target: rightBottomId,
-          animated: true,
-          style: { stroke: "#FFAA9A" },
-          type: "smoothstep",
-        },
-      ];
-
-      setEdges([...edges, ...newEdges]);
-      updatedNodes.push(leftNode, rightNode, leftBottomNode, rightBottomNode);
-      setSelectedAttribute("none")
-    }
-    setNodes(updatedNodes);
-  }, [nodes[0].data.value]);
-
   const getDataFromNode = () => {
     const transformData = (nodes) => {
       const result = {};
@@ -573,39 +433,405 @@ const BasicFlow = () => {
     return nodeSort;
   };
 
-  const saveAction = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_actions`; // Replace with your API endpoint
-    const requestData = {
-      "payload": {
-        "schema_code": getSCHEMA_CODE(),
-        "update_then": true,
-        "name": getActionName(),
-        "then": [metaData],
-      }
+  const createToAmountNodes = () => {
+    const positionLeftNode = {
+      x: nodes[0].position.x - nodeWidthAndHeight.width,
+      y:
+        nodes[0].position.y +
+        nodeWidthAndHeight.height +
+        nodeWidthAndHeight.grid_padding,
+    };
+    const positionRightNode = {
+      x: nodes[0].position.x + nodeWidthAndHeight.width,
+      y:
+        nodes[0].position.y +
+        nodeWidthAndHeight.height +
+        nodeWidthAndHeight.grid_padding,
+    };
+    const positionLeftBottomNode = {
+      x: nodes[0].position.x - nodeWidthAndHeight.width,
+      y:
+        (nodes[0].position.y +
+          nodeWidthAndHeight.height +
+          nodeWidthAndHeight.grid_padding) *
+        2,
+    };
+    const positionRightBottomNode = {
+      x: nodes[0].position.x + nodeWidthAndHeight.width,
+      y:
+        (nodes[0].position.y +
+          nodeWidthAndHeight.height +
+          nodeWidthAndHeight.grid_padding) *
+        2,
+    };
+    const leftId = getId();
+    const rightId = getId();
+    const leftBottomId = getId();
+    const rightBottomId = getId();
+
+    const leftNode = {
+      id: leftId,
+      position: positionLeftNode,
+      type: "customInputNode",
+      data: {
+        showType: "toNode",
+        label: positionLeftNode,
+        id: leftId,
+        parentNode: nodes[0].id,
+        width: nodeWidthAndHeight.width,
+        height: nodeWidthAndHeight.height,
+      },
+      draggable: false,
+    };
+    const rightNode = {
+      id: rightId,
+      position: positionRightNode,
+      type: "customInputNode",
+      data: {
+        showType: "amountNode",
+        label: positionRightNode,
+        id: rightId,
+        parentNode: nodes[0].id,
+        width: nodeWidthAndHeight.width,
+        height: nodeWidthAndHeight.height,
+      },
+      draggable: false,
+    };
+    const leftBottomNode = {
+      id: leftBottomId,
+      position: positionLeftBottomNode,
+      type: "customInputNode",
+      data: {
+        showType: "addNode",
+        label: positionLeftBottomNode,
+        id: leftBottomId,
+        parentNode: leftId,
+        width: nodeWidthAndHeight.width,
+        height: nodeWidthAndHeight.height,
+      },
+      draggable: false,
+    };
+    const rightBottomNode = {
+      id: rightBottomId,
+      position: positionRightBottomNode,
+      type: "customInputNode",
+      data: {
+        showType: "addNode",
+        label: positionRightBottomNode,
+        id: rightBottomId,
+        parentNode: rightId,
+        width: nodeWidthAndHeight.width,
+        height: nodeWidthAndHeight.height,
+      },
+      draggable: false,
     };
 
-    await axios.post(apiUrl, requestData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
-        // Add any other headers your API requires
+    const newEdges = [
+      {
+        id: `e1-${leftId}`,
+        source: nodes[0].id,
+        target: leftId,
+        animated: true,
+        style: { stroke: "#FFAA9A" },
+        type: "smoothstep",
       },
-    })
-      .then(response => {
-        console.log('API Response saveOnchainCollectionAttributes :', response.data);
-        console.log("Request :", requestData)
-        // You can handle the API response here
-      })
-      .catch(error => {
-        console.error('API Error:', error);
-        // Handle errors here
+      {
+        id: `e1-${rightId}`,
+        source: nodes[0].id,
+        target: rightId,
+        animated: true,
+        style: { stroke: "#FFAA9A" },
+        type: "smoothstep",
+      },
+      {
+        id: `e${leftId}-${leftBottomId}`,
+        source: leftId,
+        target: leftBottomId,
+        animated: true,
+        style: { stroke: "#FFAA9A" },
+        type: "smoothstep",
+      },
+      {
+        id: `e${rightId}-${rightBottomId}`,
+        source: rightId,
+        target: rightBottomId,
+        animated: true,
+        style: { stroke: "#FFAA9A" },
+        type: "smoothstep",
+      },
+    ];
+
+    setEdges([...edges, ...newEdges]);
+    updatedNodes.push(leftNode, rightNode, leftBottomNode, rightBottomNode);
+    setNodes(updatedNodes);
+  };
+
+  const convertObjectToNode = (outputObj) => {
+    setIsDraft(true);
+    console.log("-->out", outputObj);
+    const tempNodeArray = [];
+    const tempEdgeArray = [];
+    const processNode = (node, parentNode = null, parentPositionY = 0) => {
+      const nodeId = tempNodeArray.length + 1;
+
+      const newNode = {
+        width: 150,
+        height: 57,
+        id: nodeId.toString(),
+        type: "customInputNode",
+        position: { x: 0, y: parentPositionY },
+        draggable: false,
+        data: {
+          showType: "",
+          id: nodeId.toString(),
+          parentNode: parentNode,
+          label: { x: 0, y: parentPositionY },
+          value: "",
+          dataType: "",
+        },
+        positionAbsolute: { x: 0, y: parentPositionY },
+      };
+
+      tempNodeArray.push(newNode);
+
+      if (node.attributeName) {
+        newNode.data.showType = "selectAttributeNode";
+        newNode.data.value = node.attributeName.value;
+        newNode.data.dataType = node.attributeName.dataType;
+      }
+
+      if (node.value1) {
+        const toNode = {
+          width: 150,
+          height: 57,
+          id: (nodeId + 1).toString(),
+          type: "customInputNode",
+          position: { x: -150, y: parentPositionY + 150 },
+          draggable: false,
+          data: {
+            showType: "toNode",
+            id: (nodeId + 1).toString(),
+            parentNode: nodeId.toString(),
+            label: { x: 0, y: parentPositionY + 150 },
+            value: "toNode",
+            dataType: "toNode",
+          },
+        };
+
+        if (node.value1.type === "param_function") {
+          const paramNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 3).toString(),
+            type: "customInputNode",
+            position: { x: -150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "paramNode",
+              id: (nodeId + 3).toString(),
+              parentNode: (nodeId + 1).toString(),
+              label: { x: -150, y: parentPositionY + 300 },
+              value: node.value1.attributeName.value,
+              dataType: node.value1.attributeName.dataType,
+            },
+          };
+          tempNodeArray.push(toNode, paramNode);
+        } else {
+          const attributeNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 3).toString(),
+            type: "customInputNode",
+            position: { x: -150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "attributeNode",
+              id: (nodeId + 3).toString(),
+              parentNode: (nodeId + 1).toString(),
+              label: { x: -150, y: parentPositionY + 300 },
+              value: node.value1.attributeName.value,
+              dataType: node.value1.attributeName.dataType,
+            },
+          };
+          tempNodeArray.push(toNode, attributeNode);
+        }
+
+        const edge = {
+          id: `e${nodeId}-${nodeId + 1}`,
+          source: nodeId.toString(),
+          target: (nodeId + 1).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
+        const edge2 = {
+          id: `e${nodeId + 1}-${nodeId + 3}`,
+          source: (nodeId + 1).toString(),
+          target: (nodeId + 3).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
+
+        tempEdgeArray.push(edge, edge2);
+      }
+
+      if (node.value2) {
+        const amountNode = {
+          width: 150,
+          height: 57,
+          id: (nodeId + 2).toString(),
+          type: "customInputNode",
+          position: { x: 150, y: parentPositionY + 150 },
+          draggable: false,
+          data: {
+            showType: "amountNode",
+            id: (nodeId + 2).toString(),
+            parentNode: nodeId.toString(),
+            label: { x: 0, y: parentPositionY + 150 },
+            value: node.attributeName.value,
+            dataType: node.attributeName.dataType,
+          },
+        };
+
+        if (node.value2.type === "meta_function") {
+          const paramNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 4).toString(),
+            type: "customInputNode",
+            position: { x: 150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "attributeNode",
+              id: (nodeId + 4).toString(),
+              parentNode: (nodeId + 3).toString(),
+              label: { x: 150, y: parentPositionY + 300 },
+              value: node.value2.attributeName.value,
+              dataType: node.value2.attributeName.dataType,
+            },
+          };
+          tempNodeArray.push(amountNode, paramNode);
+        } else {
+          const valueNode = {
+            width: 150,
+            height: 57,
+            id: (nodeId + 4).toString(),
+            type: "customInputNode",
+            position: { x: 150, y: parentPositionY + 300 },
+            draggable: false,
+            data: {
+              showType: "valueNode",
+              id: (nodeId + 4).toString(),
+              parentNode: (nodeId + 3).toString(),
+              label: { x: 150, y: parentPositionY + 300 },
+              value: node.value2.value,
+              dataType: node.value2.dataType,
+            },
+          };
+          tempNodeArray.push(amountNode, valueNode);
+        }
+
+        const edge = {
+          id: `e${nodeId}-${nodeId + 2}`,
+          source: nodeId.toString(),
+          target: (nodeId + 2).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
+        const edge2 = {
+          id: `e${nodeId + 2}-${nodeId + 4}`,
+          source: (nodeId + 2).toString(),
+          target: (nodeId + 4).toString(),
+          animated: true,
+          style: { stroke: "#FFAA9A" },
+          type: "smoothstep",
+        };
+
+        tempEdgeArray.push(edge, edge2);
+      }
+      // Sort nodes.id in ascending order
+      tempNodeArray.sort((a, b) => {
+        return a.id - b.id;
       });
 
-  }
+      return nodeId;
+    };
 
+    processNode(outputObj);
+    console.log("-->nodes", tempNodeArray);
+    setNodes(tempNodeArray);
+    setEdges(tempEdgeArray);
+    return tempNodeArray;
+  };
 
+  const saveAction = async () => {
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_actions`; // Replace with your API endpoint
+    const requestData = {
+      payload: {
+        schema_code: getSCHEMA_CODE(),
+        update_then: true,
+        name: getActionName(),
+        then: [metaData],
+      },
+    };
 
-  const navigate = useNavigate();
+    await axios
+      .post(apiUrl, requestData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`, // Set the content type to JSON
+          // Add any other headers your API requires
+        },
+      })
+      .then((response) => {
+        console.log(
+          "API Response saveOnchainCollectionAttributes :",
+          response.data
+        );
+        console.log("Request :", requestData);
+        // You can handle the API response here
+      })
+      .catch((error) => {
+        console.error("API Error:", error);
+        // Handle errors here
+      });
+  };
+
+  useEffect(() => {
+    if (nodes.length > 1 && nodes.length < 10) {
+      focusNode();
+    }
+  }, [nodes]);
+
+  useEffect(() => {
+    if (nodes.length > 1) {
+      getDataFromNode();
+    }
+  }, [nodes, setNodes]);
+
+  useEffect(() => {
+    if (
+      nodes[0].data.value &&
+      nodes.length < 2 &&
+      !isDraft
+    ) {
+      createToAmountNodes();
+      setSelectedAttribute("none");
+    }
+  }, [nodes[0].data.value]);
+
+  useEffect(() => {
+    if (isGenerateGPT) {
+      console.log(`"${metaData.toString()}"`);
+      convertObjectToNode(parser_then.parse(metaData.toString()));
+      setIsGenerateGPT(false);
+      setSelectedAttribute("none")
+    }
+  }, [isGenerateGPT]);
 
   return (
     <div className="flex justify-between w-full">
@@ -645,20 +871,35 @@ const BasicFlow = () => {
           </div>
         </div>
         <div>
-          <div className="flex justify-center" onClick={async () => { await saveAction();  navigate("/newintregation/beginer") }}>
-            <NormalButton BorderRadius={0} FontSize={32} TextTitle={"SAVE"}></NormalButton>
-            <button onClick={()=>console.log(selectedAttribute)}>ccc</button>
+          <div
+            className="flex justify-center"
+            onClick={async () => {
+              await saveAction();
+              navigate("/newintregation/beginer");
+            }}
+          >
+            <NormalButton
+              BorderRadius={0}
+              FontSize={32}
+              TextTitle={"SAVE"}
+            ></NormalButton>
           </div>
         </div>
       </div>
-      <Flowbar selectedAttribute={selectedAttribute} actionName={getActionName()}></Flowbar>
+      <Flowbar
+        selectedAttribute={selectedAttribute}
+        actionName={getActionName()}
+        setIsGenerateGPT={setIsGenerateGPT}
+        setMetaData={setMetaData}
+        metaData={metaData}
+        type="transfer"
+      ></Flowbar>{" "}
     </div>
   );
 };
 
 export default function NewIntregationThenTransfer() {
   const [isShow, setIsShow] = React.useState(false);
- 
 
   return (
     <div className="w-full flex justify-center ">
