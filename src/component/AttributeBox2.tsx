@@ -150,10 +150,12 @@ export default function AttributeBox(props: MyComponentProps) {
     props.setIsShow(false);
   };
 
-  const handleSuggestTraitType = async (str: string) => {
+  const handleSuggestTraitType = async (str: string, index: number) => {
+    const updatedText = [...props.text];
     const result = str
       .replace(/(\b\w)/g, (char) => char.toUpperCase())
       .replace(/_/g, " ");
+    updatedText[index]["display_option"]["opensea"]["trait_type"] = result
     setIsSuggest(result);
   };
 
@@ -639,7 +641,7 @@ export default function AttributeBox(props: MyComponentProps) {
             onChange={async (e) => {
               await handleChange(e, "name");
               await CheckErrorI(e);
-              await handleSuggestTraitType(e.target.value);
+              await handleSuggestTraitType(e.target.value, props.index);
             }}
             className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[160px]"
             placeholder="Add attribute name"
@@ -702,6 +704,7 @@ export default function AttributeBox(props: MyComponentProps) {
             onChange={(e) => {
               handleChange(e, "display_option.opensea.trait_type");
               setIsSuggest(e.target.value);
+              console.log(e.target.value || isSuggest)
               SavecheckErrorII();
             }}
             // onBlur={fetchError}

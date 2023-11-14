@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2';
 import Darkbg from '../component/Alert/Darkbg';
@@ -15,6 +15,7 @@ import GobackButton from '../component/GobackButton';
 
 
 export default function Newintregation9() {
+    const [currentState, setCurrentState] = useState(6)
     const [isShow, setIsShow] = React.useState(false);
     const navigate = useNavigate();
     const [action, setAction] = React.useState([]);
@@ -34,9 +35,12 @@ export default function Newintregation9() {
         })
             .then((response) => {
                 // Handle successful response here
+                if (response.data.data.schema_info.current_state >= currentState) {
+                    setCurrentState(response.data.data.schema_info.current_state)
+                }
                 const Action = response.data.data.schema_info.schema_info.onchain_data.actions;
                 setAction(Action)
-                console.log('Response Action:', Action);
+                console.log('Response Action:', response.data);
                 // setactionName(response.data.data.schema_info.schema_info.onchain_data.actions[0].name);
                 // setactionDes(response.data.data.schema_info.schema_info.onchain_data.actions[0].desc);
                 // setactionWhen(response.data.data.schema_info.schema_info.onchain_data.actions[0].when);
@@ -50,7 +54,7 @@ export default function Newintregation9() {
 
     useEffect(() => {
         FindSchemaCode()
-        console.log("B")
+       
     }, [])
 
     return (
@@ -59,7 +63,7 @@ export default function Newintregation9() {
                 <div className=' relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='w-full h-full px-[20px]'>
                         <div>
-                            <Stepper2 ActiveStep={6}></Stepper2>
+                        <Stepper2 CurrentState={currentState} ActiveStep={6}></Stepper2>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
                         <div className='w-full h-5/6 overflow-scroll py-6 gap-y-6 flex  items-center flex-col'>

@@ -206,7 +206,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                     // onChange={handleInputschemaCode}
                     onChange={async (e) => {
                         await handleChange(e);
-                        if (props.index === 0) {
+                        if (props.index === 0 && (getSCHEMA_CODE() !== e.target.value) ) {
                             await props.FindSchemaCode();
                         }
                         await saveCheckErrorIOnChange(props.text[props.index].value);

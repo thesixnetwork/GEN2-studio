@@ -250,7 +250,7 @@ const Conectwalet = () => {
                   </Tooltip>
                   <Tooltip title={"Home"}>
 
-                    <img src={logo3} onClick={()=>{navigate('/')}} className="w-[18px] h-[18px] mt-2 hover:scale-125 duration-500 cursor-pointer"></img>
+                    <img src={logo3} onClick={()=>{navigate('/'); clearSCHEMA_CODE()}} className="w-[18px] h-[18px] mt-2 hover:scale-125 duration-500 cursor-pointer"></img>
                   </Tooltip>
                 </div>
               </div>

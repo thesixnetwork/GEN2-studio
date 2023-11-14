@@ -1,5 +1,5 @@
-import { useState,useEffect } from 'react'
-import {  CircularProgress } from '@mui/material'
+import { useState, useEffect } from 'react'
+import { CircularProgress } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2'
 
@@ -18,7 +18,7 @@ import {
     walletcounterSelector
 } from "../store/slices/walletcounterSlice";
 import { useAppDispatch } from "../store/store";
-import { getAccessTokenFromLocalStorage,getSCHEMA_CODE, saveSCHEMA_CODE } from '../helpers/AuthService'
+import { getAccessTokenFromLocalStorage, getSCHEMA_CODE, saveSCHEMA_CODE } from '../helpers/AuthService'
 
 
 import Swal from 'sweetalert2'
@@ -28,7 +28,7 @@ import Swal from 'sweetalert2'
 
 const NewIntregation5 = () => {
     //Redux
-    const dispatch = useAppDispatch();
+
     const walletcounterReducer = useSelector(walletcounterSelector);
 
 
@@ -57,7 +57,7 @@ const NewIntregation5 = () => {
         },
 
     ]);
-
+    const [currentState, setCurrentState] = useState(1)
     const [isLoading, setisLoading] = useState(false)
     const [isLoadingHistory, setIsLoadingHistory] = useState(false)
     const [isValidate, setisValidate] = useState(false)
@@ -156,7 +156,7 @@ const NewIntregation5 = () => {
             .then(response => {
                 console.log('API Response:', response.data);
                 saveSCHEMA_CODE(response.data.data.schema_code);
-                console.log("saveSCHEMA_CODE : " ,response.data.data.schema_code)
+                console.log("saveSCHEMA_CODE : ", response.data.data.schema_code)
                 // console.log(requestData)
                 // You can handle the API response here
             })
@@ -187,7 +187,8 @@ const NewIntregation5 = () => {
                 console.log('Response:', response.data);
 
                 const updatedText = [...text];
-                updatedText[0].value = response.data.data.schema_info.schema_info.code ;
+                setCurrentState(response.data.data.schema_info.current_state)
+                updatedText[0].value = response.data.data.schema_info.schema_info.code;
                 updatedText[1].value = response.data.data.schema_info.schema_info.name;
                 updatedText[2].value = response.data.data.schema_info.schema_info.description;
                 console.log(text)
@@ -207,7 +208,7 @@ const NewIntregation5 = () => {
     }, []);
 
     const UpdateSchemaInfo = () => {
-       
+
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`;
         const requestData = {
             "payload": {
@@ -235,7 +236,7 @@ const NewIntregation5 = () => {
                 console.log("requestData :", requestData)
                 navigate('/newintregation/6')
                 // saveSCHEMA_CODE(response.data.data.update_schema.schema_info.code);
-                console.log("getSCHEMA_CODE() : ",getSCHEMA_CODE())
+                console.log("getSCHEMA_CODE() : ", getSCHEMA_CODE())
 
                 // console.log(requestData)
                 // You can handle the API response here
@@ -248,8 +249,8 @@ const NewIntregation5 = () => {
 
     const handleNext = () => {
 
-        const allErrorsTrue = text.every(item => item.Error === true);
-        if (allErrorsTrue) {
+        // const allErrorsTrue = text.every(item => item.Error === true);
+        // if (allErrorsTrue) {
             if (!getSCHEMA_CODE()) {
                 Swal.fire({
                     title: 'Are you sure to create ?',
@@ -276,10 +277,10 @@ const NewIntregation5 = () => {
                 UpdateSchemaInfo()
 
             }
-        } else {
-            setNext(true);
-            setisError(true)
-        }
+        // } else {
+        //     setNext(true);
+        //     setisError(true)
+        // }
 
     }
 
@@ -322,12 +323,14 @@ const NewIntregation5 = () => {
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='w-full h-full flex flex-col justify-between'>
-                        <div className=''>
-                            <div className='flex flex-rows justify-between'>
-                                <Stepper2 ActiveStep={1}></Stepper2>
+                        {!isLoadingHistory &&
+                            <div className=''>
+                                <div className='flex flex-rows justify-between'>
+                                    <Stepper2 ActiveStep={1} CurrentState={currentState}></Stepper2>
+                                </div>
+                                <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                             </div>
-                            <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
-                        </div>
+                        }
                         {!isLoadingHistory &&
                             <div className=' flex flex-col justify-between items-center py-[5%] h-4/6 relative '>
                                 {text.map((item, index) => (
@@ -365,7 +368,7 @@ const NewIntregation5 = () => {
                         }
                         <div className=' w-full flex justify-start  '>
                             <div className={``}>
-                                <GobackButton BackPage='/newintregation/4'></GobackButton>
+                                <GobackButton BackPage='/'></GobackButton>
                             </div>
                         </div>
                     </div>

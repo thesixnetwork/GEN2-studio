@@ -58,15 +58,14 @@ const NewIntregation6 = () => {
 
     ]);
 
-
+    const [currentState, setCurrentState] = useState(2)
     const [ChainType, setChainType] = useState("FIVENET")
     const navigate = useNavigate();
     const [ml, setml] = useState(0)
-    const [isSelection, setisSelection] = useState(false)
+    const [isSelection, setisSelection] = useState(true)
     const [isError, setisError] = useState(false)
     const handleml = (event: any) => {
         const id = event.target.id;
-        console.log(id);
         setml(133 * id)
         setisSelection(true)
         setisError(false)
@@ -192,13 +191,18 @@ const NewIntregation6 = () => {
         })
             .then((response) => {
                 console.log('Response:', response.data);
-
+                if(response.data.data.schema_info.current_state >=currentState){
+                    setCurrentState(response.data.data.schema_info.current_state)
+                  }
                 const updatedText = [...text];
-                updatedText[2].value = response.data.data.schema_info.schema_info.origin_data.origin_contract_address ;
+              
+                updatedText[2].value = response.data.data.schema_info.schema_info.origin_data.origin_contract_address;
                 updatedText[3].value = response.data.data.schema_info.schema_info.origin_data.origin_base_uri
-                setChainType(response.data.data.schema_info.schema_info.origin_data.origin_chain) ;
+                if (response.data.data.schema_info.schema_info.origin_data.origin_chain !== "") {
+                    setChainType(response.data.data.schema_info.schema_info.origin_data.origin_chain);
+                }
                 // updatedText[2].value = response.data.data.schema_info.schema_info.description;
-                console.log(text)
+                console.log("GethistoryFormSchemaCode :", response.data.data.schema_info.current_state)
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -218,12 +222,14 @@ const NewIntregation6 = () => {
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className=' relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='w-full h-full'>
-                        <div className=' h-1/6'>
-                            <div className='flex flex-rows justify-between'>
-                                <Stepper2 ActiveStep={2}></Stepper2>
+                        {!isLoadingHistory &&
+                            <div className=' h-1/6'>
+                                <div className='flex flex-rows justify-between'>
+                                    <Stepper2 CurrentState={currentState} ActiveStep={2}></Stepper2>
+                                </div>
+                                <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                             </div>
-                            <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
-                        </div>
+                        }
                         {!isLoadingHistory &&
                             <div>
                                 <form onSubmit={handleSubmit} className=' h-5/6  flex flex-col justify-start items-center py-[1%]  '>
@@ -310,7 +316,7 @@ const NewIntregation6 = () => {
                             </div>
                         }
                         {isLoadingHistory &&
-                            <div className='w-full h-full flex justify-center items-center scale-[500%] '>
+                            <div className='w-full h-full mt-[18%] flex justify-center items-center scale-[500%] '>
                                 <CircularProgress className=" mb-[6%] text-white" sx={{
                                     width: 1000,
                                     color: 'white',

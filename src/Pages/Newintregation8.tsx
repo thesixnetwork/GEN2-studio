@@ -23,6 +23,7 @@ import {
 import axios from "axios";
 
 export default function Newintregation8() {
+  const [currentState, setCurrentState] = useState(4)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [isShow, setIsShow] = useState(false);
   const [save, setSave] = useState(false);
@@ -288,9 +289,8 @@ export default function Newintregation8() {
     // const updatedText = [...text];
     // updatedText[0].duplicate = true;
     setIsLoadingHistory(true)
-    const apiUrl = `${
-      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
-    }schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+      }schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
     const params = {
     };
     const headers = {
@@ -304,7 +304,9 @@ export default function Newintregation8() {
     })
       .then(async (response) => {
         console.log('Response:', response.data.data);
-
+        if(response.data.data.schema_info.current_state >=currentState){
+          setCurrentState(response.data.data.schema_info.current_state)
+        }
         setText(response.data.data.schema_info.schema_info.onchain_data.nft_attributes);
 
         // const updatedText = [...text];
@@ -332,10 +334,14 @@ export default function Newintregation8() {
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div>
-              <Stepper2 ActiveStep={4}></Stepper2>
-              <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
-            </div>
+            {!isLoadingHistory &&
+              <div className=' h-1/6'>
+                <div className='flex flex-rows justify-between'>
+                  <Stepper2 CurrentState={currentState} ActiveStep={4}></Stepper2>
+                </div>
+                <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
+              </div>
+            }
             <div className="w-full h-[700px] overflow-scroll flex  justify-start relative">
               {!isLoadingHistory &&
                 <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
