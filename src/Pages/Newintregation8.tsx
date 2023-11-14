@@ -1,6 +1,6 @@
-import Box from "../component/Box";
+// import Box from "../component/Box";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CircularProgress, Tooltip } from "@mui/material";
 
 import Add from "../pic/Group 40.png";
@@ -12,7 +12,7 @@ import AlertCard from "../component/Alert/AlertCard";
 
 import Swal from "sweetalert2";
 
-import AttributeBox from "../component/AttributeBox";
+// import AttributeBox from "../component/AttributeBox";
 import NormalButton from "../component/NormalButton";
 import { useNavigate } from "react-router-dom";
 import AttributeBox2 from "../component/AttributeBox2";
@@ -22,80 +22,27 @@ import {
 } from "../helpers/AuthService";
 import axios from "axios";
 
+import { ItokenAttributes } from "../types/Nftmngr";
+
 export default function Newintregation8() {
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isShow, setIsShow] = useState(false);
   const [save, setSave] = useState(false);
   const navigate = useNavigate();
-  const [text, setText] = useState([
-    // {
-    //     "name": "",
-    //     "data_type": "",
-    //     "required": false,
-    //     "display_value_field": "",
-    //     "display_option": {
-    //         "bool_true_value": "",
-    //         "bool_false_value": "",
-    //         "opensea": {
-    //             "display_type": "",
-    //             "trait_type": "",
-    //             "max_value": "0"
-    //         }
-    //     },
-    //     "default_mint_value": null,
-    //     "hidden_overide": false,
-    //     "hidden_to_marketplace": false
-    // },
-    // {
-    //     "name": "",
-    //     "data_type": "",
-    //     "required": false,
-    //     "display_value_field": "",
-    //     "display_option": {
-    //         "bool_true_value": "",
-    //         "bool_false_value": "",
-    //         "opensea": {
-    //             "display_type": "",
-    //             "trait_type": "",
-    //             "max_value": "0"
-    //         }
-    //     },
-    //     "default_mint_value": null,
-    //     "hidden_overide": false,
-    //     "hidden_to_marketplace": false
-    // },
-    // {
-    //     "name": "",
-    //     "data_type": "",
-    //     "required": false,
-    //     "display_value_field": "",
-    //     "display_option": {
-    //         "bool_true_value": "",
-    //         "bool_false_value": "",
-    //         "opensea": {
-    //             "display_type": "",
-    //             "trait_type": "",
-    //             "max_value": "0"
-    //         }
-    //     },
-    //     "default_mint_value": null,
-    //     "hidden_overide": false,
-    //     "hidden_to_marketplace": false
-    // },
-  ]);
+  const [text, setText] = useState<ItokenAttributes[]>([]);
 
-  const searchError = () => {
-    for (let i = 0; i < text.length; i++) {
-      if (text[i].Error === "F") {
-        document.getElementById(i).scrollIntoView({ behavior: "smooth" });
-        break;
-      }
-    }
-  };
+  // const searchError = () => {
+  //   for (let i = 0; i < text.length; i++) {
+  //     if (text[i].Error === "F") {
+  //       document.getElementById(i).scrollIntoView({ behavior: "smooth" });
+  //       break;
+  //     }
+  //   }
+  // };
 
   const checkALLError = () => {
-    text.filter((item) => console.log("item=", item.Error));
-    if (text.every((item) => item.Error === "T")) {
+    text.filter((item) => console.log("item=", item["Error"]));
+    if (text.every((item) => item["Error"] === "T")) {
       navigate("/newintregation/9");
       console.log("All errors are T. Do something...");
     } else {
@@ -104,8 +51,9 @@ export default function Newintregation8() {
   };
 
   const saveOnchainCollectionAttributes = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
-      }schema/set_schema_info`;
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/set_schema_info`;
     const requestData = {
       payload: {
         schema_info: {
@@ -132,7 +80,7 @@ export default function Newintregation8() {
           "API Response saveOnchainCollectionAttributes :",
           response.data
         );
-        console.log("Request :", requestData);
+        // console.log("Request :", requestData);
         // You can handle the API response here
       })
       .catch((error) => {
@@ -150,9 +98,12 @@ export default function Newintregation8() {
       timerProgressBar: true,
       didOpen: () => {
         Swal.showLoading();
-        const b = Swal.getHtmlContainer().querySelector("b");
+        const b = Swal.getHtmlContainer()?.querySelector("b");
         timerInterval = setInterval(() => {
-          b.textContent = Swal.getTimerLeft();
+          // b.textContent = Swal.getTimerLeft();
+          if (b) {
+            b.textContent = String(Swal.getTimerLeft());
+          }
         }, 100);
       },
       willClose: () => {
@@ -166,24 +117,58 @@ export default function Newintregation8() {
     });
   };
   const handleSave = () => {
-    if (isError) {
-      Swal.fire({
-        title: "At least 1 attribute must be adde or check for errors.",
-        // html: "At least 1 attribute must be added.",
-        // showCloseButton: true, // เพิ่มปุ่มปิด
-        showConfirmButton: true,
-        timerProgressBar: true,
-      });
-      return;
-    }
-    saveOnchainCollectionAttributes();
-    setSave(true);
-    // searchError()
-    setTimeout(() => {
-      checkALLError();
-      navigate("/newintregation/9");
-    }, 500);
-    LoadingCheckErro();
+    // if (isError) {
+    //   Swal.fire({
+    //     title: "At least 1 attribute must be adde or check for errors.",
+    //     // html: "At least 1 attribute must be added.",
+    //     // showCloseButton: true, // เพิ่มปุ่มปิด
+    //     showConfirmButton: true,
+    //     timerProgressBar: true,
+    //   });
+    //   return;
+    // }
+
+    Swal.fire({
+      title: "Save",
+      html: "Confirm to save attribute.",
+      // showCloseButton: true, // เพิ่มปุ่มปิด
+      showConfirmButton: true,
+      showCancelButton: true, // เพิ่มปุ่ม "ยกเลิก"
+      timerProgressBar: true,
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (isError) {
+          console.log(" Error");
+          Swal.fire({
+            title: "At least 1 attribute must be adde or check for errors.",
+            showConfirmButton: true,
+            timerProgressBar: true,
+          });
+          return;
+        }
+
+        saveOnchainCollectionAttributes();
+        setSave(true);
+        setTimeout(() => {
+          checkALLError();
+          navigate("/newintregation/9");
+        }, 500);
+        LoadingCheckErro();
+        return;
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        console.log("Dismiss");
+      }
+    });
+    return;
+    // saveOnchainCollectionAttributes();
+    // setSave(true);
+    // // searchError()
+    // setTimeout(() => {
+    //   checkALLError();
+    //   navigate("/newintregation/9");
+    // }, 500);
+    // LoadingCheckErro();
   };
 
   const handleCreateAttribute = () => {
@@ -215,22 +200,24 @@ export default function Newintregation8() {
   };
 
   const [helpStep, sethelpStep] = useState(0);
-  const handleHelp = () => {
-    const element0 = document.getElementById("0");
-    const elementDelete2 = document.getElementById("delete2");
-    const elementPlus = document.getElementById("plus");
+  // const handleHelp = () => {
+  //   const element0 = document.getElementById("0");
+  //   const elementDelete2 = document.getElementById("delete2");
+  //   const elementPlus = document.getElementById("plus");
 
-    if (element0 && elementDelete2 && elementPlus) {
-      element0.style.zIndex = "0";
-      elementDelete2.style.zIndex = "0";
-      elementPlus.style.zIndex = "0";
+  //   if (element0 && elementDelete2 && elementPlus) {
+  //     element0.style.zIndex = "0";
+  //     elementDelete2.style.zIndex = "0";
+  //     elementPlus.style.zIndex = "0";
 
-      console.log("helpStep =>", helpStep);
-      sethelpStep(helpStep + 1);
-    }
-  };
+  //     console.log("helpStep =>", helpStep);
+  //     sethelpStep(helpStep + 1);
+  //   }
+  // };
 
   const [isError, setIsError] = useState(true);
+  // const [isErrorII, setIsErrorII] = useState(true);
+  const isErrorCommponent = useRef(true);
 
   useEffect(() => {
     handCheckIsError();
@@ -244,12 +231,59 @@ export default function Newintregation8() {
         !x["default_mint_value"]
     );
 
-    if (hasEmptyNameOrValue || !Array.isArray(text) || text.length === 0) {
+    const seenNames = new Set();
+    let hasError = false;
+
+    for (const item of text) {
+      if (seenNames.has(item.name)) {
+        hasError = true;
+        break; // Exit the loop early if a duplicate is found
+      } else if (containsSpecialChars(item.name)) {
+        hasError = true;
+      } else if (containsSpace(item.name)) {
+        hasError = true;
+      } else if (containsUppercase(item.name)) {
+        hasError = true;
+      } else {
+        seenNames.add(item.name);
+        hasError = false;
+      }
+    }
+    // console.log("seenNames" ,seenNames)
+    // console.log("hasError" ,hasError)
+    // console.log("hasError" ,hasError)
+
+    if (
+      hasEmptyNameOrValue ||
+      (Array.isArray(text) && text.length === 0) ||
+      hasError === true
+    ) {
       setIsError(true);
-    } else {
+      return;
+    }
+
+    if (
+      (!hasEmptyNameOrValue && Array.isArray(text) && text.length > 0) ||
+      hasError === false
+    ) {
       setIsError(false);
     }
   };
+
+  function containsSpecialChars(str: string) {
+    const specialChars = /[`!@#$%^&*()+\-=[\]{};':"\\|,.<>?~]/;
+    return specialChars.test(str);
+  }
+
+  function containsSpace(str: string) {
+    const specialChars = / /;
+    return specialChars.test(str);
+  }
+
+  function containsUppercase(str: string) {
+    return /[A-Z]/.test(str);
+  }
+
 
   // useEffect(() => {
   //     document.getElementById("plus").style.zIndex = "0";
@@ -287,41 +321,42 @@ export default function Newintregation8() {
   const GethistoryFormSchemaCode = async () => {
     // const updatedText = [...text];
     // updatedText[0].duplicate = true;
-    setIsLoadingHistory(true)
+    setIsLoadingHistory(true);
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/get_schema_info/${getSCHEMA_CODE()}`; // Replace with your API endpoint
-    const params = {
-    };
+    const params = {};
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-    }
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
     // Make a GET request with parameters
-    await axios.get(apiUrl, {
-      params: params, // Pass parameters as an object
-      headers: headers, // Pass headers as an object
-    })
+    await axios
+      .get(apiUrl, {
+        params: params, // Pass parameters as an object
+        headers: headers, // Pass headers as an object
+      })
       .then(async (response) => {
-        console.log('Response:', response.data.data);
+        console.log("Response:", response.data.data);
 
-        setText(response.data.data.schema_info.schema_info.onchain_data.nft_attributes);
+        setText(
+          response.data.data.schema_info.schema_info.onchain_data.nft_attributes
+        );
 
         // const updatedText = [...text];
         // updatedText[0].value = response.data.data.schema_info.schema_name;
         // updatedText[1].value = response.data.data.schema_info.schema_info.name;
         // updatedText[2].value = response.data.data.schema_info.schema_info.description;
-        console.log(text)
+        // console.log(text);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
-    setIsLoadingHistory(false)
-  }
-
+    setIsLoadingHistory(false);
+  };
 
   useEffect(() => {
-    console.log("SCHEMACODE:", getSCHEMA_CODE())
+    console.log("SCHEMACODE:", getSCHEMA_CODE());
     if (getSCHEMA_CODE()) {
       GethistoryFormSchemaCode();
     }
@@ -337,7 +372,7 @@ export default function Newintregation8() {
               <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
             </div>
             <div className="w-full h-[700px] overflow-scroll flex  justify-start relative">
-              {!isLoadingHistory &&
+              {!isLoadingHistory && (
                 <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
                   {text.map((item, index) => (
                     <AttributeBox2
@@ -355,6 +390,7 @@ export default function Newintregation8() {
                       setSave={setSave}
                       isShow={isShow}
                       setIsShow={setIsShow}
+                      isErrorCommponent={isErrorCommponent}
                       helpStep={helpStep}
                     />
                   ))}
@@ -379,19 +415,18 @@ export default function Newintregation8() {
                     )}
                   </div>
                 </div>
-
-              }
-              {isLoadingHistory &&
-                <div className=' w-full h-full flex justify-center items-center scale-[500%]'>
-                  <CircularProgress className=" text-white" sx={{
-                    width: 1000,
-                    color: 'white',
-                  }}
+              )}
+              {isLoadingHistory && (
+                <div className=" w-full h-full flex justify-center items-center scale-[500%]">
+                  <CircularProgress
+                    className=" text-white"
+                    sx={{
+                      width: 1000,
+                      color: "white",
+                    }}
                   ></CircularProgress>
                 </div>
-              }
-
-
+              )}
             </div>
           </div>
           <div className="w-2/6 h-5/6 flex flex-col items-end justify-between   ">

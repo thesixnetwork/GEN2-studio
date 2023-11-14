@@ -13,6 +13,7 @@ import RedAleart from "./Alert/RedAleart";
 // import { ErrorMessage } from "@hookform/error-message";
 import AlertCard from "./Alert/AlertCard";
 // import { border } from "@chakra-ui/react";
+import { ItokenAttributes } from "../types/Nftmngr"
 
 interface MyComponentProps {
   State: number;
@@ -22,26 +23,35 @@ interface MyComponentProps {
   TraitType: string;
   Value: string | null;
   index: number;
-  text: Array<{
-    name: string;
-    dataType: string;
-    traitType: string;
-    value: string;
-  }>;
+  // text: Array<{
+  //   name: string;
+  //   dataType: string;
+  //   traitType: string;
+  //   value: string;
+  // }>;
+  text: Array<ItokenAttributes>;
+
+  // setText: React.Dispatch<
+  //   React.SetStateAction<
+  //     Array<{
+  //       name: string;
+  //       dataType: string;
+  //       traitType: string;
+  //       value: string;
+  //     }>
+  //   >
+  // >;
   setText: React.Dispatch<
     React.SetStateAction<
-      Array<{
-        name: string;
-        dataType: string;
-        traitType: string;
-        value: string;
-      }>
+      Array<ItokenAttributes>
     >
   >;
   isShow: boolean;
   setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
   save: boolean;
   setSave: React.Dispatch<React.SetStateAction<boolean>>;
+
+  isErrorCommponent: React.MutableRefObject<boolean>;
 
   helpStep: number;
 }
@@ -99,6 +109,8 @@ export default function AttributeBox(props: MyComponentProps) {
   // const [SAME, setSAME] = useState(false);
   // const [partIII, setPartIII] = useState(false);
   const [isSuggest, setIsSuggest] = useState("");
+  const [isErrorII, ] = useState<{status:boolean}[]>([]);
+  console.log(props.text)
 
   const Delete = styled(ClearIcon)({
     borderRadius: "16px",
@@ -122,12 +134,12 @@ export default function AttributeBox(props: MyComponentProps) {
     return specialChars.test(str);
   }
 
-  function containsSpace(str) {
+  function containsSpace(str: string) {
     const specialChars = / /;
     return specialChars.test(str);
   }
 
-  function containsUppercase(str) {
+  function containsUppercase(str: string) {
     return /[A-Z]/.test(str);
   }
 
@@ -176,38 +188,8 @@ export default function AttributeBox(props: MyComponentProps) {
   //   //   containsSame(updatedText[props.index].name)
   //   // );
   //   /// check name ///
-  //   if (
-  //     !updatedText[props.index].name ||
-  //     !updatedText[props.index].dataType ||
-  //     !updatedText[props.index].traitType ||
-  //     !updatedText[props.index].value
-  //   ) {
-  //     if (!updatedText[props.index].dataType) {
-  //       // console.log(22222);
-  //       setErrorMessage("Need datatype");
-  //     }
-  //     if (
-  //       !updatedText[props.index].name ||
-  //       !updatedText[props.index].traitType ||
-  //       !updatedText[props.index].value
-  //     ) {
-  //       setErrorMessage("Not Availible");
-  //     }
-  //     setIser(true);
-  //   } else if (
-  //     updatedText[props.index].name &&
-  //     updatedText[props.index].dataType &&
-  //     updatedText[props.index].traitType &&
-  //     updatedText[props.index].value
-  //   ) {
-  //     // console.log("all");
-  //   } else {
-  //     setIser(false);
-  //     setPartI(true);
-  //   }
-  // };
 
-  const saveCheckErrorI = async (str) => {
+  const saveCheckErrorI = async (str: string) => {
     setIser(false);
     setPartI(false);
     if (!str) {
@@ -231,7 +213,7 @@ export default function AttributeBox(props: MyComponentProps) {
     }
   };
 
-  function containsSame(str) {
+  function containsSame(str: string) {
     for (let i = 0; i <= props.text.length - 1; i++) {
       if (
         i != props.index &&
@@ -244,9 +226,10 @@ export default function AttributeBox(props: MyComponentProps) {
     }
   }
 
-  const CheckErrorI = async (e) => {
+  const CheckErrorI = async (e, index: number) => {
     setPartI(false);
     const updatedText = [...props.text];
+    console.log(index)
     if (!updatedText[props.index].name) {
       setErrorMessage("Not Availible");
       setIser(true);
@@ -267,6 +250,9 @@ export default function AttributeBox(props: MyComponentProps) {
       setPartI(true);
     }
   };
+
+  // console.log("Error 6 :", isErrorII)
+  // console.log("Error 6 :", props.text)
 
   const CheckErrorIIII = async (str: string) => {
     setPartI(false);
@@ -338,9 +324,7 @@ export default function AttributeBox(props: MyComponentProps) {
     } else if (props.text[props.index]["data_type"] === "string") {
       setIser(false);
     } else if (props.text[props.index]["data_type"] === "number") {
-      const isValue =
-        props.text[props.index]["default_mint_value"]["number_attribute_value"]
-          .value;
+      const isValue = props.text[props.index]["default_mint_value"]["number_attribute_value"].value;
       setErrorMessage("Value is not of type number");
       setIser(true);
       if (typeof isValue !== "number" && !isValue) {
@@ -640,7 +624,7 @@ export default function AttributeBox(props: MyComponentProps) {
             value={props.Name}
             onChange={async (e) => {
               await handleChange(e, "name");
-              await CheckErrorI(e);
+              await CheckErrorI(e, props.index);
               await handleSuggestTraitType(e.target.value, props.index);
             }}
             className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[160px]"
