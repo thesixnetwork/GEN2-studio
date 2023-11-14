@@ -4,17 +4,18 @@ import editIcon from "../pic/draft-edit.png";
 import saveIcon from "../pic/draft-save.png";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { ItokenAttributes } from "../types/Nftmngr";
 
 const DraftAttributeTableZoom = ({ type, data }) => {
   const param = useParams();
   console.log("ppp", type);
-  const [selectedItem, setSelectedItem] = useState("");
+  const [, setSelectedItem] = useState("");
 
-  const [mockData, setData] = useState(data);
+  // const [mockData, setData] = useState(data);
 
-  const [editableRow, setEditableRow] = useState(null);
+  const [editableRow, setEditableRow] = useState<null | number>(null);
 
-  const handleEditClick = (index) => {
+  const handleEditClick = (index: number) => {
     setEditableRow(index);
   };
 
@@ -22,7 +23,7 @@ const DraftAttributeTableZoom = ({ type, data }) => {
     setEditableRow(null);
   };
 
-  const handleCellChange = (index, field, value) => {
+  const handleCellChange = (index: number, field: string, value: string) => {
     console.log(`item.data_type ${index}: ${value}`);
     const newData = [...data];
     const fieldParts = field.split(".");
@@ -106,7 +107,7 @@ const DraftAttributeTableZoom = ({ type, data }) => {
             <tbody>
               {type === "originAttributes"
                 ? data !== undefined &&
-                  data.map((item, index) => (
+                  data.map((item: ItokenAttributes, index: number) => (
                     <tr
                       key={index}
                       className={`border border-white bg-[#B9BAC2] ${
@@ -116,7 +117,9 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                       <td
                         className="border border-white"
                         contentEditable={editableRow === index}
-                        onBlur={(e) =>
+                        onBlur={(
+                          e: React.FocusEvent<HTMLTableCellElement, Element>
+                        ) =>
                           handleCellChange(index, "name", e.target.innerText)
                         }
                       >
@@ -130,11 +133,16 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                           {["string", "number", "boolean"].map((type) => (
                             <button
                               key={type}
-                              onClick={(e) => {
+                              onClick={(
+                                e: React.MouseEvent<
+                                  HTMLButtonElement,
+                                  MouseEvent
+                                >
+                              ) => {
                                 handleCellChange(
                                   index,
                                   "data_type",
-                                  e.target.id
+                                  (e.target as HTMLButtonElement).id
                                 );
                               }}
                               id={type}
@@ -156,7 +164,9 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                       <td
                         className="border border-white"
                         contentEditable={editableRow === index}
-                        onBlur={(e) =>
+                        onBlur={(
+                          e: React.FocusEvent<HTMLTableCellElement, Element>
+                        ) =>
                           handleCellChange(
                             index,
                             "display_option.opensea.trait_type",
@@ -186,7 +196,7 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                     </tr>
                   ))
                 : data !== undefined &&
-                  data.map((item, index) => (
+                  data.map((item: ItokenAttributes, index: number) => (
                     <tr
                       key={index}
                       className={`border border-white bg-[#B9BAC2] ${
@@ -196,7 +206,9 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                       <td
                         className="border border-white"
                         contentEditable={editableRow === index}
-                        onBlur={(e) =>
+                        onBlur={(
+                          e: React.FocusEvent<HTMLTableCellElement, Element>
+                        ) =>
                           handleCellChange(index, "name", e.target.innerText)
                         }
                       >
@@ -213,11 +225,16 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                           {["string", "number", "boolean"].map((type) => (
                             <button
                               key={type}
-                              onClick={(e) => {
+                              onClick={(
+                                e: React.MouseEvent<
+                                  HTMLButtonElement,
+                                  MouseEvent
+                                >
+                              ) => {
                                 handleCellChange(
                                   index,
                                   "data_type",
-                                  e.target.id
+                                  (e.target as HTMLButtonElement).id
                                 );
                               }}
                               id={type}
@@ -239,7 +256,9 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                       <td
                         className="border border-white"
                         contentEditable={editableRow === index}
-                        onBlur={(e) =>
+                        onBlur={(
+                          e: React.FocusEvent<HTMLTableCellElement, Element>
+                        ) =>
                           handleCellChange(
                             index,
                             "display_option.opensea.trait_type",
@@ -267,13 +286,14 @@ const DraftAttributeTableZoom = ({ type, data }) => {
                         }
                       >
                         {item.data_type === "number"
-                          ? item.default_mint_value.number_attribute_value.value
+                          ? item.default_mint_value.number_attribute_value
+                              ?.value
                           : item.data_type === "float"
-                          ? item.default_mint_value.float_attribute_value.value
+                          ? item.default_mint_value.float_attribute_value?.value
                           : item.data_type === "boolean"
-                          ? item.default_mint_value.boolean_attribute_value.value.toString()
+                          ? item.default_mint_value.boolean_attribute_value?.value.toString()
                           : item.default_mint_value.string_attribute_value
-                              .value}
+                              ?.value}
                       </td>
                       <th className="border border-white ">
                         {editableRow === index ? (

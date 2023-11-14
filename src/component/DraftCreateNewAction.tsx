@@ -1,20 +1,23 @@
-import { Button, Tooltip } from "@mui/material";
-import editIcon from "../pic/draft-edit-rounded.png";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+// import { Button, Tooltip } from "@mui/material";
+// import editIcon from "../pic/draft-edit-rounded.png";
+// import IconButton from "@mui/material/IconButton";
+// import Menu from "@mui/material/Menu";
+// import MenuItem from "@mui/material/MenuItem";
 import * as React from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { TypeAnimation } from "react-type-animation";
 import NormalButton from "./NormalButton";
 import EastIcon from "@mui/icons-material/East";
 import { useState } from "react";
 import axios from "axios";
-import { set } from "lodash";
+// import { set } from "lodash";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import { useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+// import { 
+  // Navigate, 
+  // useNavigate 
+// } from "react-router-dom";
 import RedAleart from "./Alert/RedAleart";
 import Swal from "sweetalert2";
 
@@ -28,7 +31,7 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
   const [isDescriptionError, setIsDescriptionError] = useState(false);
   const [isActionNameError, setIsActionNameError] = useState(false);
   const param = useParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const checkDuplicateActionName = (actionNameValue)=>{
     let isDuplicate = false
@@ -93,21 +96,22 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
     }
   };
 
-  const containsSpecialChars = (str) => {
-    const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+  const containsSpecialChars = (str: string) => {
+    // const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+    const specialChars = /[`!@#$%^&*()+\-=[\]{};':"\\|,.<>?~]/;
     return specialChars.test(str);
   };
 
-  const containsSpace = (str) => {
+  const containsSpace = (str: string) => {
     const specialChars = / /;
     return specialChars.test(str);
   };
 
-  const containsUppercase = (str) => {
+  const containsUppercase = (str: string) => {
     return /[A-Z]/.test(str);
   };
 
-  const checkActionNameError = async (str) => {
+  const checkActionNameError = async (str: string) => {
     setIsActionNameError(false);
     if (!str) {
       setActionNameErrorMessage("Not Availible");
@@ -129,7 +133,7 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
     }
   };
 
-  const checkDescriptionError = async (str) => {
+  const checkDescriptionError = async (str: string) => {
     setIsDescriptionError(false);
     if (!str) {
       setDescriptionErrorMessage("Not Availible");
@@ -139,11 +143,11 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
     }
   };
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setShowActionName(true);
-    }, 2300);
-  }, []);
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     setShowActionName(true);
+  //   }, 2300);
+  // }, []);
   return (
     <div className="border border-white w-full h-80 p-4">
       <TypeAnimation
@@ -172,7 +176,7 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
                 autoFocus
                 className={`bg-transparent text-md border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
                 placeholder={""}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setActionNameValue(e.target.value);
                   checkActionNameError(e.target.value);
                 }}
@@ -217,7 +221,7 @@ const DraftCreateNewAction = ( {actions,setActions}) => {
                       autoFocus
                       className={`bg-transparent text-md border-[1px] border-transparent focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[350px] h-[${20}px]`}
                       placeholder={""}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setActionDescriptionValue(e.target.value);
                         checkDescriptionError(e.target.value);
                       }}

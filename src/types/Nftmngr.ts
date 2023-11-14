@@ -140,3 +140,11 @@ export interface ISchemaInfo {
     "isVerified": boolean,
     "mint_authorization": string
   }
+
+  export interface IisSchemaInfo {
+    "schema_code": string,
+    "schema_name": string,
+    "schema_info": InSchemaInfoTwo,
+    "status": string,
+    "current_state": number,
+  }

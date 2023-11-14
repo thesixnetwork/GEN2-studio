@@ -231,6 +231,7 @@ function App() {
     } else {
       alert("Keplr extension is not installed.");
     }
+    return;
   };
 
   const getKeplrBalance = async () => {

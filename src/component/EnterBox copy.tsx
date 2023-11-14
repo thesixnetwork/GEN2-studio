@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { TypeAnimation } from 'react-type-animation';
-import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
-import InputText from './InputText';
-import EastIcon from '@mui/icons-material/East';
-import NormalButton from './NormalButton';
+// import { TypeAnimation } from 'react-type-animation';
+// import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+// import InputText from './InputText';
+// import EastIcon from '@mui/icons-material/East';
+// import NormalButton from './NormalButton';
 import { styled } from '@mui/material';
 import ClearIcon from "@mui/icons-material/Clear";
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE, saveActionName } from '../helpers/AuthService';
@@ -21,13 +21,13 @@ interface MyComponentProps {
 
 export default function EnterBox(props: MyComponentProps) {
 
-    const [showI, setshowI] = React.useState(false)
-    const [showII, setshowII] = React.useState(false)
+    // const [showI, setshowI] = React.useState(false)
+    // const [showII, setshowII] = React.useState(false)
 
-    const [actionName, setactionName] = useState("")
-    const [actionDes, setactionDes] = useState("")
-    const [actionWhen, setactionWhen] = useState("")
-    const [actionThen, setactionThen] = useState("")
+    const [actionName, ] = useState("")
+    // const [actionDes, setactionDes] = useState("")
+    // const [actionWhen, setactionWhen] = useState("")
+    // const [actionThen, setactionThen] = useState("")
     const [params, setParams] = useState([])
 
     const Delete = styled(ClearIcon)({
