@@ -23,6 +23,7 @@ import AttributeBox2 from '../component/AttributeBox2';
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import axios from 'axios';
 import GobackButton from '../component/GobackButton';
+import GobackButtonValidate from '../component/GobackButtonValidate';
 
 
 export default function Newintregation9() {
@@ -261,6 +262,7 @@ export default function Newintregation9() {
     // }, [helpStep]);
 
     const handleClickScroll = () => {
+        console.log(text.some(item => item.name !== "" || item.display_option?.opensea?.trait_type !== "" || item.default_mint_value[`${item.data_type}_attribute_value`].value !== ""))
         const element = document.getElementById('10');
         if (element) {
             // 👇 Will scroll smoothly to the top of the next section
@@ -380,6 +382,9 @@ export default function Newintregation9() {
                             }
 
                         </div>
+                        <div className='  flex justify-start  absolute left-0 bottom-0 '>
+                            <GobackButtonValidate BackPage={'/newintregation/8'} goBackCondition={!(text.some(item => item.name !== "" || item.display_option?.opensea?.trait_type !== "" || item.default_mint_value[`${item.data_type}_attribute_value`].value !== ""))}></GobackButtonValidate>
+                        </div>
                     </div>
                     <div className="w-2/6 h-5/6 flex flex-col items-end justify-between   ">
                         <Conectwalet></Conectwalet>
@@ -414,11 +419,7 @@ export default function Newintregation9() {
                             </div>
                         </Tooltip>
                     </div>
-                    <div className='  flex justify-start  absolute left-0 bottom-0 '>
-                        <div className={``}>
-                            <GobackButton BackPage='/newintregation/8'></GobackButton>
-                        </div>
-                    </div>
+                 
                 </div>
                 {isShow && (
                     <div

@@ -21,6 +21,7 @@ import {
   getSCHEMA_CODE,
 } from "../helpers/AuthService";
 import axios from "axios";
+import GobackButtonValidate from "../component/GobackButtonValidate";
 
 export default function Newintregation8() {
   const [currentState, setCurrentState] = useState(4)
@@ -304,7 +305,7 @@ export default function Newintregation8() {
     })
       .then(async (response) => {
         console.log('Response:', response.data.data);
-        if(response.data.data.schema_info.current_state >=currentState){
+        if (response.data.data.schema_info.current_state >= currentState) {
           setCurrentState(response.data.data.schema_info.current_state)
         }
         setText(response.data.data.schema_info.schema_info.onchain_data.nft_attributes);
@@ -332,7 +333,7 @@ export default function Newintregation8() {
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
-        <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
+        <div className=" relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
             {!isLoadingHistory &&
               <div className=' h-1/6'>
@@ -396,8 +397,9 @@ export default function Newintregation8() {
                   ></CircularProgress>
                 </div>
               }
-
-
+            </div>
+            <div className='  flex justify-start  absolute left-0 bottom-0 '>
+              <GobackButtonValidate BackPage={'/newintregation/7'} goBackCondition={!(text.some(item => item.name !== "" || item.display_option?.opensea?.trait_type !== "" || item.default_mint_value[`${item.data_type}_attribute_value`].value !==""))}></GobackButtonValidate>
             </div>
           </div>
           <div className="w-2/6 h-5/6 flex flex-col items-end justify-between   ">

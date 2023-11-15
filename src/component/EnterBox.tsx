@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
 import { TypeAnimation } from 'react-type-animation';
-import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
-import InputText from './InputText';
 import EastIcon from '@mui/icons-material/East';
 import NormalButton from './NormalButton';
 import RedAleart from './Alert/RedAleart';
@@ -9,22 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import axios from 'axios';
 interface MyComponentProps {
-    Height: number;
-    Width: number;
-    detailsText: string;
-    ML: number;
-    MT: number;
     isSave: boolean;
     setIsSave: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 
 
-export default function
-
-
-
-    EnterBox(props: MyComponentProps) {
+export default function EnterBox(props: MyComponentProps) {
     const navigate = useNavigate();
     const [showI, setshowI] = React.useState(false)
     const [showII, setshowII] = React.useState(false)
@@ -33,7 +21,6 @@ export default function
     const [errorMessageII, setErrorMessageII] = React.useState("Not avaliabe")
     const [errorMessageI, setErrorMessageI] = React.useState("Not avaliabe")
     const [iser, setIser] = React.useState(false)
-    const [isLoadingPos, setisLoadingPos] = React.useState(false)
     const [iserII, setIserII] = React.useState(false)
     const [text, setText] = React.useState(
         [{
@@ -120,12 +107,10 @@ export default function
             setErrorMessageI("Uppercase")
             setIser(true)
         }
-
         else {
             setIser(false)
             setPartI(true)
         }
-
 
     }
 
@@ -206,8 +191,17 @@ export default function
 
     }
 
+    const handleKeyDown = async (event) => {
+        if (event.key === 'Enter') {
+            if (partI) {
+                setshowII(true)
+            }
+            saveCheckErrorI(text[0].name)
+        }
+    };
+
     return (
-        <div style={{ width: `${props.Width}px`, height: `${props.Height}px`, marginLeft: `${props.ML}px`, marginTop: `${props.MT}px` }}
+        <div style={{ width: `500px`, height: `300px`, marginLeft: `0px`, marginTop: `0px` }}
             className='flex-col p-3 border text-white border-white bg-transparent  rounded-xl  flex  justify-start items-start  shadow-md '>
             <TypeAnimation
                 className=' text-gray-200'
@@ -238,6 +232,9 @@ export default function
                                 onChange={async (e) => {
                                     await handleChange(e, "name");
                                     await CheckErrorI(e);
+                                }}
+                                onKeyDown={(e) => {
+                                    handleKeyDown(e);
                                 }}
                             />
                         </div>

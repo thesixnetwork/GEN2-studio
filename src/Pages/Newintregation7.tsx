@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import GobackButton from "../component/GobackButton";
 import { getAccessTokenFromLocalStorage, getOriginContractAddressFromLocalStorage, getSCHEMA_CODE } from "../helpers/AuthService";
 import axios from "axios";
+import GobackButtonValidate from "../component/GobackButtonValidate";
 
 const NewIntregation7 = () => {
   const [currentState, setCurrentState] = useState(3)
@@ -274,10 +275,10 @@ const NewIntregation7 = () => {
       headers: headers, // Pass headers as an object
     })
       .then(async (response) => {
-        if(response.data.data.schema_info.current_state >=currentState){
+        if (response.data.data.schema_info.current_state >= currentState) {
           setCurrentState(response.data.data.schema_info.current_state)
         }
-        
+
         console.log('Response:', response.data.data);
         if (response.data.data.schema_info.schema_info.origin_data.origin_attributes.length === 0) {
           await getOriginAttributFromContract()
@@ -405,9 +406,7 @@ const NewIntregation7 = () => {
 
             </div>
             <div className='  flex justify-start  absolute left-0 bottom-0 '>
-              <div className={``}>
-                <GobackButton BackPage='/newintregation/6'></GobackButton>
-              </div>
+              <GobackButtonValidate BackPage={'/newintregation/6'} goBackCondition={!(text.some(item => item.name !== "" || item.display_option?.opensea?.trait_type !== ""))}></GobackButtonValidate>
             </div>
           </div>
           <div className="w-2/6 h-5/6 flex flex-col items-end justify-between  ">

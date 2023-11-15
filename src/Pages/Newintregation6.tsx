@@ -19,7 +19,10 @@ import BoxButton from '../component/BoxButton'
 import Help from '../component/Alert/Help'
 import GobackButton from '../component/GobackButton'
 import axios from 'axios'
-import { getAccessTokenFromLocalStorage, getOriginContractAddressFromLocalStorage, getSCHEMA_CODE, saveOriginContractAddressToLocalStorage } from '../helpers/AuthService'
+import { clearOriginContractAddressFromLocalStorage, getAccessTokenFromLocalStorage, getOriginContractAddressFromLocalStorage, getSCHEMA_CODE, saveOriginContractAddressToLocalStorage } from '../helpers/AuthService'
+import GobackButtonNoNavigate from '../component/GobackButtonNoNavigate'
+import Swal from 'sweetalert2'
+import GobackButtonValidate from '../component/GobackButtonValidate'
 
 const NewIntregation6 = () => {
     const [isLoading, setisLoading] = useState(false)
@@ -93,6 +96,7 @@ const NewIntregation6 = () => {
     const HandleText = (e) => {
         const updatedText = [...text];
         updatedText[e.target.id].value = e.target.value;
+        setText(updatedText)
         console.log(text)
     }
 
@@ -134,6 +138,7 @@ const NewIntregation6 = () => {
     }
 
     const getBaseURIFromContract = async () => {
+        saveOriginContractAddressToLocalStorage("")
         console.log("text[2].value: ", text[2].value)
         const updatedText = [...text];
         updatedText[3].value = "";
@@ -191,11 +196,11 @@ const NewIntregation6 = () => {
         })
             .then((response) => {
                 console.log('Response:', response.data);
-                if(response.data.data.schema_info.current_state >=currentState){
+                if (response.data.data.schema_info.current_state >= currentState) {
                     setCurrentState(response.data.data.schema_info.current_state)
-                  }
+                }
                 const updatedText = [...text];
-              
+
                 updatedText[2].value = response.data.data.schema_info.schema_info.origin_data.origin_contract_address;
                 updatedText[3].value = response.data.data.schema_info.schema_info.origin_data.origin_base_uri
                 if (response.data.data.schema_info.schema_info.origin_data.origin_chain !== "") {
@@ -217,6 +222,7 @@ const NewIntregation6 = () => {
             GethistoryFormSchemaCode();
         }
     }, []);
+
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
@@ -303,14 +309,13 @@ const NewIntregation6 = () => {
                                             value={text[3].value}
                                             id='3'
                                             type="text"
+                                            onChange={(e) => { HandleText(e); }}
                                             placeholder={text[3].placeholder}
                                             className='placeholder-gray-300 placeholder:text-[12px] bg-transparent text-[24px] border-[1px] border-[#D9D9D9DD] border-dashed p-1  focus:outline-none focus:scale-[102%] duration-1000 w-full h-[62px]  '></input>
                                         <div className='w-[15px] h-[15px]  bg-transparent border rounded-full absolute ml-[710px] mb-[90px]'></div>
                                     </div>
                                     <div className='  flex justify-start absolute left-0 bottom-0 '>
-                                        <div className={``}>
-                                            <GobackButton BackPage='/newintregation/5'></GobackButton>
-                                        </div>
+                                        <GobackButtonValidate BackPage={'/newintregation/5'} goBackCondition={(text[2].value === "" && text[3].value === "")}></GobackButtonValidate>
                                     </div>
                                 </form>
                             </div>

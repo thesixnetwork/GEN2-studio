@@ -62,6 +62,14 @@ export const saveOriginContractAddressToLocalStorage =(OriginContractAddress :st
   localStorage.setItem(ORIGIN_CONTRACT_ADDRESS,OriginContractAddress );
 }
 
+export const getOriginContractAddressFromLocalStorage=()=>{
+  return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
+}
+
+export const clearOriginContractAddressFromLocalStorage = () => {
+  localStorage.removeItem(ORIGIN_CONTRACT_ADDRESS);
+};
+
 export const saveSCHEMA_CODE =(schema_code :string)=>{
   localStorage.setItem(SCHEMA_CODE,schema_code );
 }
@@ -73,11 +81,6 @@ export const getSCHEMA_CODE=()=>{
 export const clearSCHEMA_CODE = () => {
   localStorage.removeItem(SCHEMA_CODE);
 };
-
-
-export const getOriginContractAddressFromLocalStorage=()=>{
-  return localStorage.getItem(ORIGIN_CONTRACT_ADDRESS)
-}
 
 export const getAccessTokenFromLocalStorage = () => {
   const encryptedAccessToken = localStorage.getItem(ACCESS_TOKEN_KEY);

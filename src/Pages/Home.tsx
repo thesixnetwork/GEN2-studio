@@ -1,37 +1,22 @@
 import React, { useEffect, useState } from "react";
-import logo1 from "../pic/Keplr_Icon 1.png";
-import logo2 from "../pic/Copy.png";
-import logo3 from "../pic/Share.png";
-import logo4 from "../pic/SIX_Token_Icon 1.png";
-import logo5 from "../pic/X.png";
-import logo6 from "../pic/NFTBrowsItemFrame.png";
+
 import logo7 from "../pic/Buakaw_Collection 1.png";
 import logo8 from "../pic/Ethereum-icon-purple 1.png";
 import logo9 from "../pic/SCR-25660710-nkmd 1.png";
-import logo10 from "../pic/klaytn-klay-logo 1.png";
+
 import logoNoImgage from "../pic/logo-nftgen2-01.png";
 import Conectwalet from "../component/Connectwallet";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import WhiteBox from "../component/WhiteBox";
 import axios from "axios";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 import HomeDraftCard from "../component/HomeDraftCard";
-import { Skeleton } from "@mui/material";
+import { Skeleton, styled } from "@mui/material";
 
 import { ISchemaInfo } from "../types/Nftmngr";
-import {
-  Button,
-  Box,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  SimpleGrid,
-  Heading,
-  Flex,
-  Text,
-  Divider,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, } from "@chakra-ui/react";
+
+
 
 const Home = () => {
   const [listDraft, setlistDraft] = React.useState([]);
@@ -41,6 +26,7 @@ const Home = () => {
   console.log("countCollection", countCollection);
   const [loading, setLoading] = useState(true);
   const [loadingTestnet, setLoadingTestnet] = useState(false);
+
   const getOriginAttributFromContract = async () => {
     const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/list_draft`;
     const params = {};
@@ -57,7 +43,7 @@ const Home = () => {
       });
       setlistDraft(response.data.data.sesstion);
       setData(response.data.data);
-      console.log("Response:", response.data);
+      console.log("Response::::", response.data);
       setLoading(false);
     } catch (error) {
       console.error("Error:", error);
@@ -81,7 +67,6 @@ const Home = () => {
       });
 
       if (response.data.data.result) {
-        console.log("------------------------");
         const arr_schema_name: string[] = [];
         const countColl: string[] = [];
         await response.data.data.result.forEach((res: ISchemaInfo) => {
@@ -160,6 +145,10 @@ const Home = () => {
     return imgUrl;
   };
 
+ 
+
+
+
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7] overflow-scroll">
@@ -181,6 +170,7 @@ const Home = () => {
                   <HomeDraftCard
                     CollectionName={"New Intregation"}
                     CollectionImage={"NewIntregation"}
+                    schema_revision={""}
                   ></HomeDraftCard>
                 </div>
                 {loading ? (
@@ -210,13 +200,16 @@ const Home = () => {
                   listDraft &&
                   listDraft.map((item, index) => (
                     <div
-                      onClick={() => {
-                        navigate(`/draft/origindata/${item.schema_revision}`);
-                      }}
+                    // onClick={() => {
+                    //   navigate(`/draft/origindata/${item.schema_revision}`);
+                    // }}
                     >
                       {/* <HomeDraftCard CollectionName={item.schema_name} CollectionImage={getImg(item.schema_info[0].schema_info.origin_data.origin_base_uri)}></HomeDraftCard> */}
                       {/* <button onClick={()=>{console.log(item)}}>btn</button> */}
+
+                      
                       <HomeDraftCard
+                        schema_revision={item.schema_revision}
                         CollectionName={item.schema_name}
                         CollectionImage={
                           item.schema_info &&

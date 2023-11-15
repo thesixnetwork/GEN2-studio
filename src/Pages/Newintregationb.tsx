@@ -11,7 +11,8 @@ import Help from '../component/Alert/Help';
 import EnterBoxII from '../component/EnterBox copy';
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import axios from 'axios';
-import GobackButton from '../component/GobackButton';
+import GobackButtonValidate from '../component/GobackButtonValidate';
+
 
 
 export default function Newintregation9() {
@@ -54,7 +55,7 @@ export default function Newintregation9() {
 
     useEffect(() => {
         FindSchemaCode()
-       
+
     }, [])
 
     return (
@@ -63,7 +64,7 @@ export default function Newintregation9() {
                 <div className=' relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='w-full h-full px-[20px]'>
                         <div>
-                        <Stepper2 CurrentState={currentState} ActiveStep={6}></Stepper2>
+                            <Stepper2 CurrentState={currentState} ActiveStep={6}></Stepper2>
                             <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
                         <div className='w-full h-5/6 overflow-scroll py-6 gap-y-6 flex  items-center flex-col'>
@@ -101,10 +102,9 @@ export default function Newintregation9() {
                             </div>
                         </div>
                     </div>
+
                     <div className='  flex justify-start  absolute left-0 bottom-0 '>
-                        <div className={``}>
-                            <GobackButton BackPage='/newintregation/9'></GobackButton>
-                        </div>
+                        <GobackButtonValidate BackPage={'/newintregation/9'} goBackCondition={true}></GobackButtonValidate>
                     </div>
                 </div>
                 {isShow &&

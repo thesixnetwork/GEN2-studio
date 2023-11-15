@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import { CircularProgress } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2'
-
+import GobackButtonNoNavigate from '../component/GobackButtonNoNavigate'
+import GobackButtonValidate from '../component/GobackButtonValidate'
 import Darkbg from '../component/Alert/Darkbg'
 
 import { useNavigate } from 'react-router-dom';
-import GobackButton from '../component/GobackButton'
+
 import WhiteBox from '../component/WhiteBox'
 import InputBoxforNP5 from '../component/InputBoxforNP5'
 import BoxButton from '../component/BoxButton'
@@ -17,10 +18,7 @@ import { useSelector } from "react-redux";
 import {
     walletcounterSelector
 } from "../store/slices/walletcounterSlice";
-import { useAppDispatch } from "../store/store";
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE, saveSCHEMA_CODE } from '../helpers/AuthService'
-
-
 import Swal from 'sweetalert2'
 //Redux
 
@@ -251,32 +249,32 @@ const NewIntregation5 = () => {
 
         // const allErrorsTrue = text.every(item => item.Error === true);
         // if (allErrorsTrue) {
-            if (!getSCHEMA_CODE()) {
-                Swal.fire({
-                    title: 'Are you sure to create ?',
-                    text: "",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#7A8ED7',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, create '
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire(
-                            'Create Complete!',
-                            'Your Schema code has been Created.',
-                            'success'
-                        )
-                        setNext(true);
-                        handleFormsubmit();
-                        navigate('/newintregation/6')
+        if (!getSCHEMA_CODE()) {
+            Swal.fire({
+                title: 'Are you sure to create ?',
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#7A8ED7',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, create '
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Create Complete!',
+                        'Your Schema code has been Created.',
+                        'success'
+                    )
+                    setNext(true);
+                    handleFormsubmit();
+                    navigate('/newintregation/6')
 
-                    }
-                })
-            } else {
-                UpdateSchemaInfo()
+                }
+            })
+        } else {
+            UpdateSchemaInfo()
 
-            }
+        }
         // } else {
         //     setNext(true);
         //     setisError(true)
@@ -317,6 +315,7 @@ const NewIntregation5 = () => {
             });
         setisLoading(false)
     }
+    
 
     return (
         <div className='w-full flex justify-center ' >
@@ -367,12 +366,10 @@ const NewIntregation5 = () => {
                             </div>
                         }
                         <div className=' w-full flex justify-start  '>
-                            <div className={``}>
-                                <GobackButton BackPage='/'></GobackButton>
-                            </div>
+                            <GobackButtonValidate BackPage={'/'} goBackCondition={(text[0].value === "" && text[1].value === "" && text[2].value === "")}></GobackButtonValidate>
                         </div>
                     </div>
-                    <div className='h-5/6 flex flex-col items-end h-full'>
+                    <div className='h-5/6 flex flex-col items-end '>
                         <Conectwalet></Conectwalet>
                         <WhiteBox
                             Title={'Schema Code'}
@@ -387,7 +384,6 @@ const NewIntregation5 = () => {
                         <div onClick={() => { handleNext(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
                             <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
                         </div>
-
                         {/* <div onClick={() => { handleFormsubmitI(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
                             <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT2'}></BoxButton>
                         </div> */}
