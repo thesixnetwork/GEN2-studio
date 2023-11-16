@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import editIcon from "../pic/draft-edit.png";
 import saveIcon from "../pic/draft-save.png";
 // import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 // import narrowIcon from "../pic/draft-narrow-menu.png";
 import { PlusSquareIcon, DeleteIcon } from "@chakra-ui/icons";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
@@ -25,7 +25,7 @@ const DraftAttributeTable = ({
   const [, setSelectedItem] = useState("");
   const [editableRow, setEditableRow] = useState<null | number>(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [errorRows, setErrorRows] = useState<
+  const [errorRows] = useState<
     { index: number; value: string; status: boolean }[]
   >([]);
 
@@ -107,9 +107,9 @@ const DraftAttributeTable = ({
     // setErrorRows
     currentObj[fieldParts[fieldParts.length - 1]] = value;
     // console.log("currentObj[fieldParts[fieldParts.length - 1]]",currentObj[fieldParts[fieldParts.length - 1]])
-    console.log("Value currentObj", currentObj["default_mint_value"], type);
-    console.log("Value currentObj", isData);
-    console.log("Value", value);
+    // console.log("Value currentObj", currentObj["default_mint_value"], type);
+    // console.log("Value currentObj", isData);
+    // console.log("Value", value);
     // if (type === "originAttributes") {
     //   handdleErrorRow();
     // }
@@ -118,15 +118,7 @@ const DraftAttributeTable = ({
         currentObj["default_mint_value"] = {
           string_attribute_value: { value: "" },
         };
-        console.log("Value currentObj", currentObj["default_mint_value"], type);
       }
-      // if (newData[index].data_type !== 'number' || newData[index].value !== '123') {
-      //   currentObj.hasConflict = true;
-      // } else {
-      //   currentObj.hasConflict = false;
-      // }
-      // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
-
       setSelectedItem("string");
     } else if (value === "number") {
       if (type !== "originAttributes") {
@@ -164,21 +156,21 @@ const DraftAttributeTable = ({
     value: string
   ) => {
     if (value === "name") {
-      const duplicates = isData.filter(
-        (item: ItokenAttributes) => item.name === e.currentTarget.innerText
-      );
-      const hasDuplicates = duplicates.length > 0;
+      // const duplicates = isData.filter(
+      //   (item: ItokenAttributes) => item.name === e.currentTarget.innerText
+      // );
+      // const hasDuplicates = duplicates.length > 0;
       const seenValues = new Set();
 
       for (let i = 0; i < isData.length; i++) {
-        let element
-        if(type === "originAttributes"){
+        let element;
+        if (type === "originAttributes") {
           element = document.getElementById(`name ori ${String(i)}`);
         }
-        if(type === "collectionAttributes"){
+        if (type === "collectionAttributes") {
           element = document.getElementById(`name col ${String(i)}`);
         }
-        if(type === "tokenAttributes"){
+        if (type === "tokenAttributes") {
           element = document.getElementById(`name token ${String(i)}`);
         }
         if (element instanceof HTMLElement) {
@@ -186,23 +178,12 @@ const DraftAttributeTable = ({
           // const currentTargetInnerText = e.currentTarget.innerText.trim();
           if (seenValues.has(elementInnerText)) {
             element.classList.add("bg-red-500");
-            // if (hasDuplicates) {
-            //   element.classList.add("bg-red-500");
-            // } else if (
-            //   !currentTargetInnerText ||
-            //   containsSpecialChars(currentTargetInnerText) ||
-            //   containsSpace(currentTargetInnerText) ||
-            //   containsUppercase(currentTargetInnerText)
-            // ) {
-            //   element.classList.add("bg-red-500");
-            // } else {
-            //   element.classList.remove("bg-red-500");
-            // }
-            
-          } else if(containsSpecialChars(elementInnerText) ||
+          } else if (
+            containsSpecialChars(elementInnerText) ||
             containsSpace(elementInnerText) ||
-            containsUppercase(elementInnerText)){
-              element.classList.add("bg-red-500");
+            containsUppercase(elementInnerText)
+          ) {
+            element.classList.add("bg-red-500");
           } else {
             seenValues.add(elementInnerText);
             element.classList.remove("bg-red-500");
@@ -211,17 +192,17 @@ const DraftAttributeTable = ({
       }
     }
 
-    if (value === "value" ) {
+    if (value === "value") {
       // const currentTargetInnerText = e.currentTarget.innerText.trim();
       console.log(isData);
       // console.log(type)
       isData.forEach((item, index) => {
-        let element
-        if(type === "collectionAttributes"){
+        let element;
+        if (type === "collectionAttributes") {
           element = document.getElementById(`value ${String(index)}`);
         }
 
-        if(type === "tokenAttributes"){
+        if (type === "tokenAttributes") {
           element = document.getElementById(`token ${String(index)}`);
         }
 
@@ -636,13 +617,14 @@ const DraftAttributeTable = ({
                         }}
                       >
                         {item.data_type === "number"
-                          ? item.default_mint_value.number_attribute_value.value
+                          ? item.default_mint_value.number_attribute_value
+                              ?.value
                           : item.data_type === "float"
-                          ? item.default_mint_value.float_attribute_value.value
+                          ? item.default_mint_value.float_attribute_value?.value
                           : item.data_type === "boolean"
-                          ? item.default_mint_value.boolean_attribute_value.value.toString()
+                          ? item.default_mint_value.boolean_attribute_value?.value.toString()
                           : item.default_mint_value.string_attribute_value
-                              .value}
+                              ?.value}
                       </td>
                     )}
 
@@ -670,13 +652,14 @@ const DraftAttributeTable = ({
                         }}
                       >
                         {item.data_type === "number"
-                          ? item.default_mint_value.number_attribute_value.value
+                          ? item.default_mint_value.number_attribute_value
+                              ?.value
                           : item.data_type === "float"
-                          ? item.default_mint_value.float_attribute_value.value
+                          ? item.default_mint_value.float_attribute_value?.value
                           : item.data_type === "boolean"
-                          ? item.default_mint_value.boolean_attribute_value.value.toString()
+                          ? item.default_mint_value.boolean_attribute_value?.value.toString()
                           : item.default_mint_value.string_attribute_value
-                              .value}
+                              ?.value}
                       </td>
                     )}
 

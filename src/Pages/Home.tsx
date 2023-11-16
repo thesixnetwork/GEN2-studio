@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-import logo1 from "../pic/Keplr_Icon 1.png";
-import logo2 from "../pic/Copy.png";
-import logo3 from "../pic/Share.png";
-import logo4 from "../pic/SIX_Token_Icon 1.png";
-import logo5 from "../pic/X.png";
-import logo6 from "../pic/NFTBrowsItemFrame.png";
+// import logo1 from "../pic/Keplr_Icon 1.png";
+// import logo2 from "../pic/Copy.png";
+// import logo3 from "../pic/Share.png";
+// import logo4 from "../pic/SIX_Token_Icon 1.png";
+// import logo5 from "../pic/X.png";
+// import logo6 from "../pic/NFTBrowsItemFrame.png";
 import logo7 from "../pic/Buakaw_Collection 1.png";
 import logo8 from "../pic/Ethereum-icon-purple 1.png";
 import logo9 from "../pic/SCR-25660710-nkmd 1.png";
-import logo10 from "../pic/klaytn-klay-logo 1.png";
+// import logo10 from "../pic/klaytn-klay-logo 1.png";
 import logoNoImgage from "../pic/logo-nftgen2-01.png";
 import Conectwalet from "../component/Connectwallet";
-import { Link, useNavigate } from "react-router-dom";
+import { 
+  // Link,
+   useNavigate 
+  } from "react-router-dom";
 import WhiteBox from "../component/WhiteBox";
 import axios from "axios";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
@@ -20,17 +23,9 @@ import { Skeleton } from "@mui/material";
 
 import { ISchemaInfo } from "../types/Nftmngr";
 import {
-  Button,
   Box,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  SimpleGrid,
-  Heading,
   Flex,
   Text,
-  Divider,
 } from "@chakra-ui/react";
 
 const Home = () => {
