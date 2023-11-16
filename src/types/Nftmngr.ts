@@ -104,13 +104,13 @@ export interface ISchemaInfo {
         "value": number
       },
       "boolean_attribute_value"?: {
-        "value": false
+        "value": boolean
       },
       "string_attribute_value"?: {
         "value": string
       },
       "number_attribute_value"?: {
-        "value": string
+        "value": number
       }
     },
     "hidden_overide": boolean,

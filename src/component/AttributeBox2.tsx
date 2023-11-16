@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { 
-  // Select, 
-  // MenuItem, 
-  styled, 
-  // InputBase 
+import {
+  // Select,
+  // MenuItem,
+  styled,
+  // InputBase
 } from "@mui/material";
 import Swal from "sweetalert2";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -13,7 +13,7 @@ import RedAleart from "./Alert/RedAleart";
 // import { ErrorMessage } from "@hookform/error-message";
 import AlertCard from "./Alert/AlertCard";
 // import { border } from "@chakra-ui/react";
-import { ItokenAttributes } from "../types/Nftmngr"
+import { ItokenAttributes } from "../types/Nftmngr";
 
 interface MyComponentProps {
   State: number;
@@ -41,11 +41,7 @@ interface MyComponentProps {
   //     }>
   //   >
   // >;
-  setText: React.Dispatch<
-    React.SetStateAction<
-      Array<ItokenAttributes>
-    >
-  >;
+  setText: React.Dispatch<React.SetStateAction<Array<ItokenAttributes>>>;
   isShow: boolean;
   setIsShow: React.Dispatch<React.SetStateAction<boolean>>;
   save: boolean;
@@ -106,11 +102,12 @@ export default function AttributeBox(props: MyComponentProps) {
   // const [textInputI, settextInputI] = useState("");
   const [partI, setPartI] = useState(false);
   const [partII, setPartII] = useState(false);
+  const [, setIsbol] = useState<boolean | null>(null);
   // const [SAME, setSAME] = useState(false);
   // const [partIII, setPartIII] = useState(false);
   const [isSuggest, setIsSuggest] = useState("");
-  const [isErrorII, ] = useState<{status:boolean}[]>([]);
-  console.log(props.text)
+  // const [isErrorII] = useState<{ status: boolean }[]>([]);
+  // console.log(props.text);
 
   const Delete = styled(ClearIcon)({
     borderRadius: "16px",
@@ -143,7 +140,10 @@ export default function AttributeBox(props: MyComponentProps) {
     return /[A-Z]/.test(str);
   }
 
-  const handleChange = (e, fieldPath) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldPath: string
+  ) => {
     const updatedText = [...props.text];
     // console.log("updatedText >",updatedText)
     // console.log("props.index >",props.index)
@@ -167,27 +167,9 @@ export default function AttributeBox(props: MyComponentProps) {
     const result = str
       .replace(/(\b\w)/g, (char) => char.toUpperCase())
       .replace(/_/g, " ");
-    updatedText[index]["display_option"]["opensea"]["trait_type"] = result
+    updatedText[index]["display_option"]["opensea"]["trait_type"] = result;
     setIsSuggest(result);
   };
-
-  // const handleChangetrait_type = (e, path) => {
-  //   const updatedText = [...props.text];
-  //   updatedText[props.index].path = e.target.value;
-  //   props.setText(updatedText);
-  //   props.setIsShow(false);
-  // };
-
-  // const CheckErrorComponent = async (e: any) => {
-  //   setPartI(false);
-  //   const updatedText = [...props.text];
-  //   // console.log("props.index >", props.index);
-  //   // console.log("updatedText[index] >", updatedText[props.index].name);
-  //   // console.log(
-  //   //   "containsSame(updatedText[props.index].name) >",
-  //   //   containsSame(updatedText[props.index].name)
-  //   // );
-  //   /// check name ///
 
   const saveCheckErrorI = async (str: string) => {
     setIser(false);
@@ -226,10 +208,13 @@ export default function AttributeBox(props: MyComponentProps) {
     }
   }
 
-  const CheckErrorI = async (e, index: number) => {
+  const CheckErrorI = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     setPartI(false);
     const updatedText = [...props.text];
-    console.log(index)
+    console.log(index);
     if (!updatedText[props.index].name) {
       setErrorMessage("Not Availible");
       setIser(true);
@@ -324,7 +309,11 @@ export default function AttributeBox(props: MyComponentProps) {
     } else if (props.text[props.index]["data_type"] === "string") {
       setIser(false);
     } else if (props.text[props.index]["data_type"] === "number") {
-      const isValue = props.text[props.index]["default_mint_value"]["number_attribute_value"].value;
+      // const isValue = props.text[props.index]["default_mint_value"]["number_attribute_value"]["value"];
+      const isValue =
+        props.text[props.index]?.["default_mint_value"]?.[
+          "number_attribute_value"
+        ]?.["value"];
       setErrorMessage("Value is not of type number");
       setIser(true);
       if (typeof isValue !== "number" && !isValue) {
@@ -350,45 +339,6 @@ export default function AttributeBox(props: MyComponentProps) {
     }
   };
 
-  // const checkValueAndDataType = async (str: string) => {
-  //   if (props.DataType === "string") {
-  //     if (str === "true" || str === "false") {
-  //       return "Value is not of type string";
-  //     }
-
-  //     if (!/^[a-z]*$/.test(str) && typeof str === "string") {
-  //       if (str.includes(".")) {
-  //         return "Value is not of type string";
-  //       }
-  //       return "Value is not of type string";
-  //     }
-  //   }
-
-  //   if (props.DataType === "number") {
-  //     if (!str && str != "0") {
-  //       return "Value is not of type number";
-  //     }
-
-  //     if (str === "true" || str === "false") {
-  //       return "Value is not of type number";
-  //     }
-
-  //     if (!/^[0-9]*$/.test(str) && typeof str === "string") {
-  //       if (str.includes(".")) {
-  //         return "Value is not of type number";
-  //       }
-  //       return "Value is not of type number";
-  //     }
-  //   }
-
-  //   if (props.DataType === "boolean") {
-  //     if (str.toString() !== "true" && str.toString() !== "false") {
-  //       return "Value is not of type boolean";
-  //     }
-  //   }
-
-  //   return;
-  // };
 
   const SavecheckErrorIII = async () => {
     await setPartII(false);
@@ -462,9 +412,7 @@ export default function AttributeBox(props: MyComponentProps) {
       await SavecheckErrorIII();
       if (partII) {
         SavecheckErrorII();
-        if (
-          await SavecheckErrorII()
-        ) {
+        if (await SavecheckErrorII()) {
           SavecheckErrorII();
           //   console.log("COCO:", SavecheckErrorII(props.text[props.index].value));
           if (await SavecheckErrorII()) {
@@ -473,7 +421,8 @@ export default function AttributeBox(props: MyComponentProps) {
             updatedText[props.index]["Error"] = "T";
             props.setText(updatedText);
           } else {
-            document.getElementById(props.index.toString())!.style.zIndex = "50";
+            document.getElementById(props.index.toString())!.style.zIndex =
+              "50";
             props.setIsShow(true);
           }
         } else {
@@ -491,33 +440,59 @@ export default function AttributeBox(props: MyComponentProps) {
 
     // props.setEnum(0)
   };
-  
 
   // const [selectedItem, setSelectedItem] = useState("Icon0");
-  const [selectedItemValue, setSelectedItemValue] = useState("Icon4");
+  const [, setSelectedItemValue] = useState("Icon4");
 
-  const changeBgColorButton = async (e) => {
+  const changeBgColorButton = async (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
     await handleChangeIcon(e);
     props.setIsShow(false);
   };
 
-  const changeBgColorButtonValue = async (e) => {
-    const itemId = e.target.id;
+  const changeBgColorButtonValue = async (e, status: boolean, index: number) => {
+    let element
+    let element2
+    // console.log(status)
+    const itemId = e.target.id
+    if(status){
+      //// Icon5 ////
+      element = document.getElementById(`Icon no ${index}`);
+      element.classList.remove('bg-[#D9D9D975]')
+      element.classList.add('bg-transparent');
+      //// Icon4 ////
+      element2 = document.getElementById(`Icon yes ${index}`);
+      element2.classList.add('bg-[#D9D9D975]');
+      element2.classList.remove('bg-transparent');
+      // console.log(element)
+      // console.log(e.target)
+    } else {
+      //// Icon4 ////
+      element = document.getElementById(`Icon yes ${index}`);
+      element.classList.remove('bg-[#D9D9D975]');
+      element.classList.add('bg-transparent');
+      //// Icon5 ////
+      element2 = document.getElementById(`Icon no ${index}`);
+      element2.classList.add('bg-[#D9D9D975]');
+      element2.classList.remove('bg-transparent');
+    }
+    await handleChangeIconValue(status);
     await setSelectedItemValue(itemId);
-    await handleChangeIconValue(e);
+    // await handleChangeIconValue(e);
     props.setIsShow(false);
   };
 
-  const handleChangeIconValue = (e) => {
+  const handleChangeIconValue = (status: boolean) => {
     const updatedText = [...props.text];
 
-    if (e.target.id == "Icon4") {
+    if (status) {
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
           value: true,
         },
       };
-    } else if (e.target.id == "Icon5") {
+    } else if (!status) {
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
           value: false,
@@ -526,9 +501,11 @@ export default function AttributeBox(props: MyComponentProps) {
     }
   };
 
-  const handleChangeIcon = (e) => {
+  const handleChangeIcon = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
     const updatedText = [...props.text];
-    if (e.target.id == "string") {
+    if (((e.target as HTMLDivElement) || MouseEvent).id == "string") {
       updatedText[props.index]["data_type"] = "string";
       updatedText[props.index]["default_mint_value"] = {
         string_attribute_value: {
@@ -540,15 +517,15 @@ export default function AttributeBox(props: MyComponentProps) {
               ?.value,
         },
       };
-    } else if (e.target.id == "number") {
+    } else if ((e.target as HTMLDivElement).id == "number") {
       updatedText[props.index]["data_type"] = "number";
       updatedText[props.index]["default_mint_value"] = {
         number_attribute_value: {
           value: 0,
         },
       };
-    } else if (e.target.id == "boolean") {
-      updatedText[props.index]["data_type"] = "boolean";  
+    } else if ((e.target as HTMLDivElement).id == "boolean") {
+      updatedText[props.index]["data_type"] = "boolean";
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
           value: true,
@@ -622,7 +599,7 @@ export default function AttributeBox(props: MyComponentProps) {
           <input
             type="text"
             value={props.Name}
-            onChange={async (e) => {
+            onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
               await handleChange(e, "name");
               await CheckErrorI(e, props.index);
               await handleSuggestTraitType(e.target.value, props.index);
@@ -635,7 +612,7 @@ export default function AttributeBox(props: MyComponentProps) {
           Data type :&ensp;{" "}
           <div className="flex w-[160px] justify-between">
             <div
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 changeBgColorButton(e);
                 checkErrorIII();
               }}
@@ -649,7 +626,7 @@ export default function AttributeBox(props: MyComponentProps) {
               {props.Title[0]}
             </div>
             <div
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 changeBgColorButton(e);
                 checkErrorIII();
               }}
@@ -664,7 +641,7 @@ export default function AttributeBox(props: MyComponentProps) {
               {props.Title[1]}
             </div>
             <div
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
                 changeBgColorButton(e);
                 checkErrorIII();
               }}
@@ -685,10 +662,10 @@ export default function AttributeBox(props: MyComponentProps) {
           <input
             type="text"
             value={isSuggest}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange(e, "display_option.opensea.trait_type");
               setIsSuggest(e.target.value);
-              console.log(e.target.value || isSuggest)
+              console.log(e.target.value || isSuggest);
               SavecheckErrorII();
             }}
             // onBlur={fetchError}
@@ -738,29 +715,31 @@ export default function AttributeBox(props: MyComponentProps) {
           ] && (
             <div className="flex w-[160px]  space-evenly">
               <div
-                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-                  changeBgColorButtonValue(e);
-                  checkErrorIII();
-                }}
-                id="Icon4"
                 className={`cursor-pointer hover:scale-110 duration-500 w-16 h-8  flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                  selectedItemValue === "Icon4"
-                    ? "bg-[#D9D9D975]"
-                    : "bg-transparent"
+                  props.text[props.index]["default_mint_value"][
+                    "boolean_attribute_value"
+                  ]?.value ? "bg-[#D9D9D975]" : "bg-transparent"
                 }`}
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                  changeBgColorButtonValue(e, true, props.index);
+                  checkErrorIII();
+                  setIsbol(true);
+                }}
+                id={`Icon yes ${props.index}`}
               >
                 Yes
               </div>
               <div
                 onClick={(e) => {
-                  changeBgColorButtonValue(e);
+                  changeBgColorButtonValue(e, false, props.index);
                   checkErrorIII();
+                  setIsbol(false);
                 }}
-                id="Icon5"
+                id={`Icon no ${props.index}`}
                 className={`cursor-pointer hover:scale-110 duration-500 w-16 h-8  flex justify-center items-center border-[#D9D9D9DD] border-2 border-dashed ${
-                  selectedItemValue === "Icon5"
-                    ? "bg-[#D9D9D975]"
-                    : "bg-transparent"
+                  props.text[props.index]["default_mint_value"][
+                    "boolean_attribute_value"
+                  ]?.value ? "bg-transparent" : "bg-[#D9D9D975]"
                 }`}
               >
                 No
