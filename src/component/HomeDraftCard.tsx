@@ -78,7 +78,7 @@ export default function HomeDraftCard(props: MyComponentProps) {
           'Your Draft has been Deleted.',
           'success'
         ).then(() => {
-            handleRefresh()
+          handleRefresh()
         })
       }
     })
@@ -98,7 +98,9 @@ export default function HomeDraftCard(props: MyComponentProps) {
           />
         }
         {loading ? (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="w-full h-full flex justify-center items-center" onClick={() => {
+            navigate(`/draft/origindata/${props.schema_revision}`);
+          }}>
             <CircularProgress
               className=" text-white"
               sx={{
@@ -112,14 +114,18 @@ export default function HomeDraftCard(props: MyComponentProps) {
             New Intregation
           </div>
         ) : props.CollectionImage === "" ? (
-          <div className="h-full w-full flex justify-center items-center rounded-2xl">
+          <div className="h-full w-full flex justify-center items-center rounded-2xl" onClick={() => {
+            navigate(`/draft/origindata/${props.schema_revision}`);
+          }}>
             NO IMAGE
           </div>
         ) : (
-          <img src={imgUrl} className="h-full w-full "></img>
+          <img onClick={() => {
+            navigate(`/draft/origindata/${props.schema_revision}`);
+          }} src={imgUrl} className="h-full w-full "></img>
         )}
       </div>
-      <p className="text-white text-sm font-bold mt-3  hover:text-[#7A8ED7] duration-500 ">
+      <p onClick={() => {navigate(`/draft/origindata/${props.schema_revision}`)}}  className="text-white text-sm font-bold mt-3  hover:text-[#afbae1] duration-500 ">
         {props.CollectionName}
       </p>
     </div>

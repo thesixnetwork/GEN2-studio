@@ -10,8 +10,9 @@ import axios from 'axios';
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { createTheme } from '@mui/material';
+import { CircularProgress, createTheme } from '@mui/material';
 import NormalButton from './NormalButton';
+import GobackButtonValidate from './GobackButtonValidate';
 
 interface ComponentProps {
     Title: string[]
@@ -43,7 +44,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
         window.location.reload();
     };
 
-    const DISCARD = () => {
+    const resetSchemaInfo = () => {
         setschemaInfo(FirstschemaInfo);
         console.log("schemaInfo :", FirstschemaInfo)
         // console.log("schemaInfo :", schemaInfo)
@@ -59,10 +60,10 @@ function DraftOrigindataCard(Props: ComponentProps) {
     // console.log("schemaInfo :",schemaInfo.schema_info)
 
 
-    
+
 
     const saveData = async () => {
-        
+
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`;
 
         const requestData = {
@@ -104,6 +105,8 @@ function DraftOrigindataCard(Props: ComponentProps) {
                     timer: 1500,
                 });
             });
+        findSchemaCode();
+
     }
 
     // useEffect(() => {
@@ -146,7 +149,10 @@ function DraftOrigindataCard(Props: ComponentProps) {
 
 
 
+
+
     const findSchemaCode = async () => {
+        setLoading(false)
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${schema_revision}`;
         const params = {};
         const headers = {
@@ -245,7 +251,12 @@ function DraftOrigindataCard(Props: ComponentProps) {
             .then((response) => {
                 // Handle successful response here
                 console.log('Response:', response.data);
-                handleChangeValue(response.data.data.base_uri, "schema_info.origin_data.origin_base_uri");
+                if (response.data.statusCode === "V:0001") {
+                    handleChangeValue(response.data.data.base_uri, "schema_info.origin_data.origin_base_uri");
+                }
+                else{
+                    handleChangeValue("", "schema_info.origin_data.origin_base_uri");
+                }
             })
             .catch((error) => {
                 // Handle errors here
@@ -256,14 +267,15 @@ function DraftOrigindataCard(Props: ComponentProps) {
 
     return (
         <div className=' w-full h-full flex flex-col justify-center items-center'>
-            <div className=' mt-10 w-[90%]  h-64 border border-white rounded-xl p-5 relative'>
-                <div
-                    onClick={() => setisInputDisabledCollectionData(!isInputDisabledCollectionData)}
-                    className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
-                    <EditIcon></EditIcon>
-                </div>
-                <h1 className=' text-3xl '>{Props.Title[0]}</h1>
-                {loading && (
+            {loading && (
+                <div className=' mt-10 w-[90%]  h-64 border border-white rounded-xl p-5 relative'>
+                    <div
+                        onClick={() => setisInputDisabledCollectionData(!isInputDisabledCollectionData)}
+                        className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
+                        <EditIcon></EditIcon>
+                    </div>
+                    <h1 className=' text-3xl '>{Props.Title[0]}</h1>
+
                     <div className=' m-5 flex justify-between w-full flex-col'>
                         <div className=' flex  justify-start items-end'>
                             <p className="font-bold text-xl mr-4">Schema Code : </p>
@@ -302,18 +314,18 @@ function DraftOrigindataCard(Props: ComponentProps) {
                             ></input>
                         </div>
                     </div>
-                )}
-            </div>
-
-
-            <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
-                <div
-                    onClick={() => setisInputDisabledOriginChain(!isInputDisabledOriginChain)}
-                    className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
-                    <EditIcon></EditIcon>
                 </div>
-                <h1 className=' text-3xl '>{Props.Title[1]}</h1>
-                {loading && (
+            )}
+
+            {loading && (
+                <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
+                    <div
+                        onClick={() => setisInputDisabledOriginChain(!isInputDisabledOriginChain)}
+                        className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
+                        <EditIcon></EditIcon>
+                    </div>
+                    <h1 className=' text-3xl '>{Props.Title[1]}</h1>
+
                     <div className=' m-5'>
                         <div className=' flex  justify-start items-center'>
                             <p className="font-bold text-xl mr-2">Origin Chain : </p>
@@ -342,8 +354,8 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 value={schemaInfo.schema_info.origin_data.origin_contract_address}
                                 type="text"
                                 disabled={isInputDisabledOriginChain}
-                                onChange={ async (e) => {
-                                   await handleChangeValue(e.target.value,"schema_info.origin_data.origin_contract_address");
+                                onChange={async (e) => {
+                                    await handleChangeValue(e.target.value, "schema_info.origin_data.origin_contract_address");
                                     getBaseURIFromContract();
                                 }}
                                 className={` w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 w-[140px]`}
@@ -362,25 +374,46 @@ function DraftOrigindataCard(Props: ComponentProps) {
                             ></input>
                         </div>
                     </div>
-                )}
-            </div>
-
-            <div className="  h-[7%] mt-4 items-center w-full flex justify-center gap-x-8">
-                <div className="w-32" onClick={() => { saveData() }} >
-                    <NormalButton
-                        TextTitle="SAVE"
-                        BorderRadius={0}
-                        FontSize={24}
-                    ></NormalButton>
                 </div>
-                <div className="w-32" onClick={() => { DISCARD()}} >
-                    <NormalButton
-                        TextTitle="DISCARD"
-                        BorderRadius={0}
-                        FontSize={24}
-                    ></NormalButton>
-                </div>
+            )}
 
+            {loading && (
+                <div className="  h-[7%] mt-4 items-center w-full flex justify-center gap-x-8">
+                    <div className="w-32" onClick={() => { saveData() }} >
+                        <NormalButton
+                            TextTitle="SAVE"
+                            BorderRadius={0}
+                            FontSize={24}
+                        ></NormalButton>
+                    </div>
+                    <div className="w-32" onClick={() => { resetSchemaInfo() }} >
+                        <NormalButton
+                            TextTitle="RESET"
+                            BorderRadius={0}
+                            FontSize={24}
+                        ></NormalButton>
+                    </div>
+                    <div className="w-32" onClick={() => { console.log("schemaInfo:", schemaInfo, "FirstschemaInfo :", FirstschemaInfo) }} >
+                        <NormalButton
+                            TextTitle="CONSOLELOG"
+                            BorderRadius={0}
+                            FontSize={24}
+                        ></NormalButton>
+                    </div>
+                </div>
+            )}
+
+            {!loading &&
+                <div className=' mt-[23%] w-full h-full flex justify-center items-center scale-[500%]'>
+                    <CircularProgress className=" text-white" sx={{
+                        width: 1000,
+                        color: 'white',
+                    }}
+                    ></CircularProgress>
+                </div>
+            }
+            <div className='  flex justify-start absolute left-0 bottom-0 '>
+                <GobackButtonValidate BackPage={'/'} goBackCondition={(FirstschemaInfo === schemaInfo)}></GobackButtonValidate>
             </div>
         </div>
     )

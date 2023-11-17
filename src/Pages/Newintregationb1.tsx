@@ -34,9 +34,7 @@ export default function Newintregation9() {
 
                     </div>
 
-                    <div className='  flex justify-start  absolute left-0 bottom-0 '>
-                        <GobackButtonValidate BackPage={'/newintregation/9'} goBackCondition={true} ></GobackButtonValidate>
-                    </div>
+                  
 
                     <div className='w-2/6 h-[full] flex flex-col items-center justify-between  '>
                         

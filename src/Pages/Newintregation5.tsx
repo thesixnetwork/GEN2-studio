@@ -37,7 +37,7 @@ const NewIntregation5 = () => {
             placeholder: "sixnetwork.whalegate",
             value: "",
             require: true,
-            Error: false,
+            Error: true,
         },
         {
             Name: "Collection name",
@@ -134,7 +134,7 @@ const NewIntregation5 = () => {
         }
     };
 
-    const handleFormsubmit = async () => {
+    const createSchemaCode = async () => {
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/create_schema_info`;
         const requestData = {
             "schema_name": `${text[0].value}`,
@@ -195,18 +195,19 @@ const NewIntregation5 = () => {
                 console.error('Error:', error);
             });
         setIsLoadingHistory(false)
+        console.log( "Text 2",text)
     }
 
 
-    useEffect(() => {
+    useEffect(  () => {
         console.log("SCHEMACODE:", getSCHEMA_CODE())
         if (getSCHEMA_CODE()) {
+            console.log( "Text 1",text)
             GethistoryFormSchemaCode();
         }
     }, []);
 
     const UpdateSchemaInfo = () => {
-
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`;
         const requestData = {
             "payload": {
@@ -231,10 +232,10 @@ const NewIntregation5 = () => {
         })
             .then(response => {
                 console.log('API Response UpdateSchemaInfo:', response.data);
-                console.log("requestData :", requestData)
+                // console.log("requestData :", requestData)
                 navigate('/newintregation/6')
                 // saveSCHEMA_CODE(response.data.data.update_schema.schema_info.code);
-                console.log("getSCHEMA_CODE() : ", getSCHEMA_CODE())
+                // console.log("getSCHEMA_CODE() : ", getSCHEMA_CODE())
 
                 // console.log(requestData)
                 // You can handle the API response here
@@ -245,41 +246,38 @@ const NewIntregation5 = () => {
             });
     }
 
-    const handleNext = () => {
-
-        // const allErrorsTrue = text.every(item => item.Error === true);
-        // if (allErrorsTrue) {
-        if (!getSCHEMA_CODE()) {
-            Swal.fire({
-                title: 'Are you sure to create ?',
-                text: "",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#7A8ED7',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, create '
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Create Complete!',
-                        'Your Schema code has been Created.',
-                        'success'
-                    )
-                    setNext(true);
-                    handleFormsubmit();
-                    navigate('/newintregation/6')
-
-                }
-            })
+    const handleNext = async () => {
+        await setNext(true);
+        const allErrorsTrue = text.every(item => item.Error === true);
+        if (allErrorsTrue) {
+            if (!getSCHEMA_CODE()) {
+                Swal.fire({
+                    title: 'Are you sure to create ?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#7A8ED7',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, create '
+                }).then( async (result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire(
+                            'Create Complete!',
+                            'Your Schema code has been Created.',
+                            'success'
+                        )
+                        setNext(true);
+                        await createSchemaCode();
+                        navigate('/newintregation/6')
+                    }
+                })
+            } else {
+                UpdateSchemaInfo()
+            }
         } else {
-            UpdateSchemaInfo()
-
+            setNext(true);
+            setisError(true)
         }
-        // } else {
-        //     setNext(true);
-        //     setisError(true)
-        // }
-
     }
 
     const FindSchemaCode = async () => {
@@ -315,7 +313,7 @@ const NewIntregation5 = () => {
             });
         setisLoading(false)
     }
-    
+
 
     return (
         <div className='w-full flex justify-center ' >
@@ -384,9 +382,6 @@ const NewIntregation5 = () => {
                         <div onClick={() => { handleNext(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
                             <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
                         </div>
-                        {/* <div onClick={() => { handleFormsubmitI(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
-                            <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT2'}></BoxButton>
-                        </div> */}
                         <div className=' w-full h-full flex justify-end items-end '>
                             <Help></Help>
                         </div>

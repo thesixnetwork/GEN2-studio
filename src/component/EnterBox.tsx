@@ -6,6 +6,7 @@ import RedAleart from './Alert/RedAleart';
 import { useNavigate } from 'react-router-dom';
 import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import axios from 'axios';
+import GobackButtonValidate from './GobackButtonValidate';
 interface MyComponentProps {
     isSave: boolean;
     setIsSave: React.Dispatch<React.SetStateAction<boolean>>;
@@ -288,6 +289,9 @@ export default function EnterBox(props: MyComponentProps) {
                     }
                 </div>
             }
+            <div className='  flex justify-start  absolute left-0 bottom-0 '>
+                <GobackButtonValidate BackPage={'/newintregation/beginer'} goBackCondition={(text[0].name === "" && text[0].description === "")} ></GobackButtonValidate>
+            </div>
         </div>
     )
 }

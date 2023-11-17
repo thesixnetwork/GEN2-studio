@@ -9,9 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import NormalButton from '../component/NormalButton';
 import Help from '../component/Alert/Help';
 import EnterBoxII from '../component/EnterBox copy';
-import { getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
+import { clearOriginContractAddressFromLocalStorage, clearSCHEMA_CODE, getAccessTokenFromLocalStorage, getSCHEMA_CODE } from '../helpers/AuthService';
 import axios from 'axios';
 import GobackButtonValidate from '../component/GobackButtonValidate';
+import Swal from 'sweetalert2';
 
 
 
@@ -58,6 +59,30 @@ export default function Newintregation9() {
 
     }, [])
 
+    const nextPage = () => {
+        if (action.length === 0) {
+            navigate('/')
+        }
+        else {
+            Swal.fire({
+                title: 'Are you sure to save draft ?',
+                text: "Your draft can edit in edition page",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#7A8ED7',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Save draft'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate('/');
+                    clearSCHEMA_CODE();
+                    clearOriginContractAddressFromLocalStorage();
+                }
+            })
+
+        }
+    }
+
     return (
         <div className='w-full flex justify-center ' >
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
@@ -94,7 +119,7 @@ export default function Newintregation9() {
                             <div  >
                                 <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={24}></NormalButton>
                             </div>
-                            <div onClick={() => { navigate("/") }} >
+                            <div onClick={() => { nextPage() }} >
                                 <NormalButton TextTitle="NEXT" BorderRadius={0} FontSize={24}></NormalButton>
                             </div>
                             <div onClick={() => { setIsShow(!isShow) }}>

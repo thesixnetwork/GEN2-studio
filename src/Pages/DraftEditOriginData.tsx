@@ -35,10 +35,8 @@ function DraftEditOriginData() {
                 ></DraftOrigindataCard>
               )}
             </div>
-
-            <div className=" absolute left-0 bottom-2">
-              <GobackButton BackPage="/"></GobackButton>
-            </div>
+              
+         
           </div>
         </div>
       </div>

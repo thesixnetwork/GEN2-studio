@@ -48,7 +48,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         setInputValue(e.target.value);
         const updatedText = [...props.text];
         updatedText[props.index].value = e.target.value;
-        //props.setText(updatedText);
+        // props.setText(updatedText);
         // setIsShow(false)
         console.log(props.text)
     };
@@ -71,10 +71,10 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         document.getElementById(`box${props.index}`).style.zIndex = "0";
         const updatedText = [...props.text];
         updatedText[props.index].Error = true;
-        console.log(str)
+        console.log("str : ", str)
         setIser(false)
         if (props.text[props.index].require) {
-            if (!str) {
+            if (str==="") {
                 setErrorMessage("Not Availible")
                 setIser(true)
                 updatedText[props.index].Error = false;
@@ -132,13 +132,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         console.log(str)
         setIser(false)
         if (props.text[props.index].require) {
-            if (!str) {
-                setErrorMessage("Not Availible")
-                setIser(true)
-                updatedText[props.index].Error = false;
-                document.getElementById(`box${props.index}`).style.zIndex = "50";
-            }
-            else if (containsSpecialChars(str)) {
+             if (containsSpecialChars(str)) {
                 setErrorMessage("Speail Chars")
                 setIser(true)
                 updatedText[props.index].Error = false;
@@ -184,6 +178,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     }
 
     useEffect(() => {
+        console.log("TEXT:",props.text)
         if (props.Next) {
             saveCheckErrorI(props.text[props.index].value)
         }
@@ -194,7 +189,6 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     //         setIsDisabled(true)
     //     }
     // },[])
-   
 
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>
@@ -206,12 +200,14 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                     // onChange={handleInputschemaCode}
                     onChange={async (e) => {
                         await handleChange(e);
-                        if (props.index === 0 && (getSCHEMA_CODE() !== e.target.value) ) {
-                            await props.FindSchemaCode();
+                        if (props.index === 0 ){
+                            if((getSCHEMA_CODE() !== e.target.value )){
+                                console.log("getSCHEMA_CODE",getSCHEMA_CODE() ,"e.target.value:",e.target.value)
+                                await props.FindSchemaCode();
+                            }
+                            await saveCheckErrorIOnChange(props.text[props.index].value);
                         }
-                        await saveCheckErrorIOnChange(props.text[props.index].value);
                         props.setisError(false)
-                        console.log(props.text)
                     }}
                     placeholder={props.text[props.index].placeholder}
                     className={` placeholder-slate-300 bg-transparent text-[24px] border-[1px] ${isDisabled ? 'border-none' : ' border-[#D9D9D9DD]'} border-dashed p-1 focus:outline-none focus:scale-105 duration-1000`}>

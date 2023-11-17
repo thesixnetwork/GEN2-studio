@@ -200,14 +200,9 @@ const Home = () => {
                   listDraft &&
                   listDraft.map((item, index) => (
                     <div
-                    // onClick={() => {
-                    //   navigate(`/draft/origindata/${item.schema_revision}`);
-                    // }}
+                   
                     >
                       {/* <HomeDraftCard CollectionName={item.schema_name} CollectionImage={getImg(item.schema_info[0].schema_info.origin_data.origin_base_uri)}></HomeDraftCard> */}
-                      {/* <button onClick={()=>{console.log(item)}}>btn</button> */}
-
-                      
                       <HomeDraftCard
                         schema_revision={item.schema_revision}
                         CollectionName={item.schema_name}

@@ -2,7 +2,7 @@ import Conectwalet from "./Connectwallet";
 import NormalButton from "./NormalButton";
 import { Link } from "react-router-dom";
 
-const DraftMenu = ({ menu,schemaCode,next }) => {
+const DraftMenu = ({ menu, schemaCode, next }) => {
   console.log(menu);
   console.log(schemaCode)
 
@@ -14,10 +14,10 @@ const DraftMenu = ({ menu,schemaCode,next }) => {
             {menu === "attributes"
               ? "Draft: Attributes"
               : menu === "deployment"
-              ? "Draft: Deplotment"
-              : menu === "origin"
-              ? "Draft: Origin Data"
-              : "Draft: Actions"}
+                ? "Draft: Deplotment"
+                : menu === "origin"
+                  ? "Draft: Origin Data"
+                  : "Draft: Actions"}
           </h1>
           <div className="h-full flex items-end pb-2">
             {menu === "deployment" || !next || next === "then" ? null : (
@@ -26,34 +26,30 @@ const DraftMenu = ({ menu,schemaCode,next }) => {
                   menu === "attributes"
                     ? `/draft/actions/${schemaCode}`
                     : menu === "actions"
-                    ? `/draft/deployment/${schemaCode}`
-                    : menu === "origin"
-                    ? `/draft/attributes/${schemaCode}`
-                    : "/"
+                      ? `/draft/deployment/${schemaCode}`
+                      : menu === "origin"
+                        ? `/draft/attributes/${schemaCode}`
+                        : "/"
                 }
               >
-                <NormalButton
-                  TextTitle="NEXT"
-                  BorderRadius={0}
-                  FontSize={24}
-                ></NormalButton>
+                <NormalButton TextTitle="NEXT" BorderRadius={0} FontSize={24} ></NormalButton>
               </Link>
             )}
-            {!next || next === "then" ? ( <Link
-                to={
-                  menu === "actions"
-                    ? `/draft/actions/${schemaCode}`
-                    : next === "then" ? 
+            {!next || next === "then" ? (<Link
+              to={
+                menu === "actions"
+                  ? `/draft/actions/${schemaCode}`
+                  : next === "then" ?
                     `/draft/actions/${schemaCode}`
                     : "/"
-                }
-              >
-                <NormalButton
-                  TextTitle="BACK"
-                  BorderRadius={0}
-                  FontSize={24}
-                ></NormalButton>
-              </Link>) : null }
+              }
+            >
+              <NormalButton
+                TextTitle="BACK"
+                BorderRadius={0}
+                FontSize={24}
+              ></NormalButton>
+            </Link>) : null}
           </div>
         </div>
         <Conectwalet></Conectwalet>
