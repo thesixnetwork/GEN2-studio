@@ -26,6 +26,7 @@ import GobackButton from '../component/GobackButton';
 
 
 export default function Newintregation9() {
+    const [currentState, setCurrentState] = useState(5)
     const [isLoadingHistory, setIsLoadingHistory] = useState(false)
     const [isShow, setIsShow] = useState(false);
     const [save, setSave] = useState(false);
@@ -117,7 +118,7 @@ export default function Newintregation9() {
     }
 
     const saveOnchainCollectionAttributes = async () => {
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`; 
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`;
         const requestData = {
             "payload": {
                 "schema_info": {
@@ -285,7 +286,9 @@ export default function Newintregation9() {
         })
             .then(async (response) => {
                 console.log('Response:', response.data.data);
-
+                if (response.data.data.schema_info.current_state >= currentState) {
+                    setCurrentState(response.data.data.schema_info.current_state)
+                }
                 setText(response.data.data.schema_info.schema_info.onchain_data.token_attributes);
 
                 // const updatedText = [...text];
@@ -313,10 +316,14 @@ export default function Newintregation9() {
             <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
                 <div className=" relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
                     <div className="w-full h-full px-[20px]">
-                        <div>
-                            <Stepper2 ActiveStep={5}></Stepper2>
-                            <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
-                        </div>
+                        {!isLoadingHistory &&
+                            <div className=' h-1/6'>
+                                <div className='flex flex-rows justify-between'>
+                                    <Stepper2 CurrentState={currentState} ActiveStep={5}></Stepper2>
+                                </div>
+                                <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
+                            </div>
+                        }
                         <div className="w-full h-[700px] overflow-scroll flex  justify-start relative">
                             {!isLoadingHistory &&
                                 <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">

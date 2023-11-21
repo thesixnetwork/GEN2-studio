@@ -7,6 +7,7 @@ import { Button, Modal, Box, Typography } from "@mui/material";
 import { useState } from "react";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { styled } from "@mui/material";
+import Swal from "sweetalert2";
 
 const style = {
   position: "absolute" as "absolute",
@@ -25,6 +26,7 @@ interface MetaDataProps {
   actionName: string;
   setMetaData: React.Dispatch<React.SetStateAction<string>>;
   setIsGenerateGPT: React.Dispatch<React.SetStateAction<boolean>>;
+  handleDoubleClickAddNode: (type: string) => void;
 }
 
 export default function Flowbar(props: MetaDataProps) {
@@ -82,8 +84,17 @@ export default function Flowbar(props: MetaDataProps) {
 
   const handleCreate = () => {
     setOpen(false);
-    props.setMetaData(outputFromGPT);
-    props.setIsGenerateGPT(true);
+    if (!outputFromGPT.startsWith("meta")) {
+      Swal.fire({
+        icon: "error",
+        title: "Output must start with meta",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    } else {
+      props.setMetaData(outputFromGPT);
+      props.setIsGenerateGPT(true);
+    }
     console.log(">>", props.metaData);
   };
 
@@ -178,23 +189,23 @@ export default function Flowbar(props: MetaDataProps) {
       </div>
       <div className="flex w-90 ">
         <div className="flex flex-col gap-y-2 border-r-2 pr-4 border-gray-100">
-          <Menu nodeName="orNode" title="OR" />
-          <Menu nodeName="andNode" title="AND" />
+          <Menu nodeName="orNode" title="OR" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+          <Menu nodeName="andNode" title="AND" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
         </div>
         <div className="items-end flex flex-col	pl-4">
           <div className="gap-y-2 flex flex-col">
             <div className="flex">
-              <Menu nodeName="valueNode" title="V" />
-              <Menu nodeName="attributeNode" title="@" />
-              <Menu nodeName="paramNode" title="P" />
+              <Menu nodeName="notEqualNode" title="!=" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="equalNode" title="=" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="moreThanNode" title=">" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="moreThanAndEqualNode" title=">=" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="lessThanNode" title="<" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="lessThanAndEqualNode" title="<=" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
             </div>
             <div className="flex">
-              <Menu nodeName="notEqualNode" title="!=" />
-              <Menu nodeName="equalNode" title="=" />
-              <Menu nodeName="moreThanNode" title=">" />
-              <Menu nodeName="moreThanAndEqualNode" title=">=" />
-              <Menu nodeName="lessThanNode" title="<" />
-              <Menu nodeName="lessThanAndEqualNode" title="<=" />
+              <Menu nodeName="valueNode" title="V" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="attributeNode" title="@" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="paramNode" title="P" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
             </div>
           </div>
         </div>

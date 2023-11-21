@@ -12,8 +12,9 @@ interface CircleNodeProps {
   data: {
     id: string;
     showType: string;
-    value: string;
+    value: any;
     dataType: string;
+    isFetch: boolean;
   };
 }
 
@@ -32,6 +33,10 @@ const DynamicNode = (props: CircleNodeProps) => {
   const [attributeOption, setAttributeOption] = useState([]);
   const [attributesObj, setAttributesObj] = useState();
   const [inputValue, setInputValue] = useState(props.data.value);
+  const [valueNodeType, setValueNodeType] = useState(props.data.dataType);
+  const [selectedValueNode, setSelectedValueNode] = useState(
+    props.data.value === true ? "yes" : "no"
+  );
   const [selectValue, setSelectValue] = useState({
     name: props.data.value,
     dataType: props.data.dataType,
@@ -65,7 +70,9 @@ const DynamicNode = (props: CircleNodeProps) => {
   };
 
   const fetchData = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${getSCHEMA_CODE()}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -77,11 +84,9 @@ const DynamicNode = (props: CircleNodeProps) => {
         headers: headers,
       })
       .then((response) => {
-        console.log("Response:", response.data);
         setAttributesObj(
           response.data.data.schema_info.schema_info.onchain_data
         );
-        console.log("actionName:", attributesObj);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -93,7 +98,6 @@ const DynamicNode = (props: CircleNodeProps) => {
     setInputValue(e.target.value);
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
-        // console.log("props.data.id", props.data);
         if (node.id === props.data.id) {
           node.data.value = e.target.value;
         }
@@ -114,8 +118,8 @@ const DynamicNode = (props: CircleNodeProps) => {
     const { nodeInternals } = store.getState();
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
-        // console.log("props.data.id", props.data);
         if (node.id === props.data.id) {
+          props.data.isFetch = false;
           props.data.value = selectedOption.name;
           props.data.dataType = selectedOption.dataType;
         }
@@ -124,6 +128,66 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   };
 
+  const handleClickValueNode = (e) => {
+    const itemId = e.target.id;
+    setSelectedValueNode(itemId);
+    const { nodeInternals } = store.getState();
+    setNodes(
+      Array.from(nodeInternals.values()).map((node) => {
+        if (itemId === "yes") {
+          props.data.value = true;
+        } else {
+          props.data.value = false;
+        }
+        return node;
+      })
+    );
+  };
+
+  // useEffect(() => {
+  //   console.log("!valuenodetype: ", valueNodeType);
+  // }, [valueNodeType]);
+
+  useEffect(() => {
+    setValueNodeType(props.data.dataType);
+    const { nodeInternals } = store.getState();
+    console.log("+++++++", window.location.pathname);
+    if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "boolean" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = "false";
+          return node;
+        })
+      );
+    } else if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "number" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = 0;
+          return node;
+        })
+      );
+    } else if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "string" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = "";
+          return node;
+        })
+      );
+    }
+  }, [props.data.dataType, props.data.isFetch]);
+
   useEffect(() => {
     const asyncFetchData = async () => {
       await fetchData();
@@ -131,20 +195,20 @@ const DynamicNode = (props: CircleNodeProps) => {
     asyncFetchData();
   }, [props.data.showType]);
 
-  useEffect(()=>{
-    console.log("--->", props.data.value)
-  },[props.data.value])
-
   useEffect(() => {
-    if(props.data.showType === "valueNode"){
-      setInputValue(props.data.value)
-    }else if(props.data.showType === "attributeNode"){
+    if (props.data.showType === "valueNode") {
+      if (props.data.dataType === "boolean") {
+        setSelectedValueNode(props.data.value === true ? "yes" : "no");
+      } else {
+        setInputValue(props.data.value);
+      }
+    } else if (props.data.showType === "attributeNode") {
       setSelectValue({
         name: props.data.value,
         dataType: props.data.dataType,
       });
     }
-  }, [props.data.value]);
+  }, [props.data.value, props.data.showType, props.data.dataType]);
 
   useEffect(() => {
     if (attributesObj !== undefined) {
@@ -153,8 +217,6 @@ const DynamicNode = (props: CircleNodeProps) => {
       combineArrays(tokenAttributes, nftAttributes);
     }
   }, [attributesObj]);
-
-
 
   return props.data.showType === "valueNode" ? (
     <div
@@ -168,20 +230,56 @@ const DynamicNode = (props: CircleNodeProps) => {
     >
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
-        <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
-          {" "}
-          V:&nbsp;{" "}
-        </p>
-        <input
-          type="text"
-          name=""
-          id=""
-          className="w-16 rounded-full pl-1"
-          onChange={(e) => {
-            onChange(e);
-          }}
-          value={inputValue}
-        />
+        <button onClick={() => console.log(valueNodeType)}>log</button>
+        {valueNodeType === "boolean" ? (
+          <>
+            <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
+              {" "}
+              V:&nbsp;{" "}
+            </p>
+            <div className="flex w-full  space-evenly">
+              <div
+                onClick={(e) => handleClickValueNode(e)}
+                id="yes"
+                className={`cursor-pointer rounded-l-full hover:scale-110 duration-500 w-10 h-6  flex justify-center items-center bg-white ${
+                  selectedValueNode === "yes"
+                    ? "bg-opacity-100"
+                    : "bg-opacity-40"
+                }`}
+              >
+                Yes
+              </div>
+              <div
+                onClick={(e) => handleClickValueNode(e)}
+                id="no"
+                className={`cursor-pointer rounded-r-full hover:scale-110 duration-500 w-10 h-6  flex justify-center items-center bg-white ${
+                  selectedValueNode === "no"
+                    ? "bg-opacity-100"
+                    : "bg-opacity-40"
+                }`}
+              >
+                No
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
+              {" "}
+              V:&nbsp;{" "}
+            </p>
+            <input
+              type="text"
+              name=""
+              id=""
+              className="w-16 rounded-full pl-1"
+              onChange={(e) => {
+                onChange(e);
+              }}
+              value={inputValue}
+            />
+          </>
+        )}
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />
     </div>

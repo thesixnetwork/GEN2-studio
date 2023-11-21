@@ -11,6 +11,7 @@ interface FlowbarProps {
   actionName: string;
   setMetaData: React.Dispatch<React.SetStateAction<string>>;
   setIsGenerateGPT: React.Dispatch<React.SetStateAction<boolean>>;
+  handleDoubleClickAddNode: (type: string) => void;
   type: string;
 }
 
@@ -171,24 +172,24 @@ export default function Flowbar(props: FlowbarProps) {
               {props.selectedAttribute === "number" ||
               props.selectedAttribute === "float" ? (
                 <>
-                  <Menu nodeName="increaseNode" />
-                  <Menu nodeName="decreaseNode" />
-                  <Menu nodeName="setNode" />
+                  <Menu nodeName="increaseNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode} />
+                  <Menu nodeName="decreaseNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode} />
+                  <Menu nodeName="setNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode} />
                 </>
               ) : props.selectedAttribute === "boolean" ? (
                 <>
-                  <Menu nodeName="setNode" />
+                  <Menu nodeName="setNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
                 </>
               ) : props.selectedAttribute === "string" ? (
-                <Menu nodeName="setNode" />
+                <Menu nodeName="setNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
               ) : null}
             </div>
             <div className="flex flex-col justify-center items-center gap-y-2 mb-20">
               <h2>Available Operand</h2>
               <div className="flex">
-                <Menu nodeName="valueNode" />
-                <Menu nodeName="attributeNode" />
-                <Menu nodeName="paramNode" />
+                <Menu nodeName="valueNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                <Menu nodeName="attributeNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                <Menu nodeName="paramNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
               </div>
             </div>
           </>
@@ -197,9 +198,9 @@ export default function Flowbar(props: FlowbarProps) {
             <div className="flex flex-col items-center justify-center">
               <h2 className="pb-2">Available Operand</h2>
               <div className="flex">
-                <Menu nodeName="valueNode" />
-                <Menu nodeName="attributeNode" />
-                <Menu nodeName="paramNode" />
+                <Menu nodeName="valueNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                <Menu nodeName="attributeNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                <Menu nodeName="paramNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
               </div>
             </div>
           </div>

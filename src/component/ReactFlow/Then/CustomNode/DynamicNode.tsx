@@ -6,14 +6,14 @@ import {
   getSCHEMA_CODE,
 } from "../../../../helpers/AuthService";
 import axios from "axios";
-import { set } from "lodash";
 
 interface CircleNodeProps {
   data: {
     id: string;
     showType: string;
-    value: string;
+    value: string | number | boolean;
     dataType: string;
+    isFetch: boolean;
   };
 }
 
@@ -32,6 +32,10 @@ const DynamicNode = (props: CircleNodeProps) => {
   const [hovered, setHovered] = useState(false);
   const [attributeOption, setAttributeOption] = useState([]);
   const [attributesObj, setAttributesObj] = useState();
+  const [valueNodeType, setValueNodeType] = useState(props.data.dataType);
+  const [selectedValueNode, setSelectedValueNode] = useState(
+    props.data.value === true ? "yes" : "no"
+  );
   const [selectAttributeValue, setSelectAttributeValue] = useState({
     name: props.data.value,
     dataType: props.data.dataType,
@@ -43,6 +47,8 @@ const DynamicNode = (props: CircleNodeProps) => {
   // console.log("props-->", props.data.value);
   // console.log("-->atb", typeof props.data.value + ">" + props.data.value);
   // console.log("atbot--->", selectAttributeValue);
+
+  console.log(":: valueNodeType :: ", valueNodeType)
   const handleDragEnter = () => {
     setHovered(true);
   };
@@ -70,7 +76,9 @@ const DynamicNode = (props: CircleNodeProps) => {
   };
 
   const fetchData = async () => {
-    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${getSCHEMA_CODE()}`;
     const params = {};
     const headers = {
       "Content-Type": "application/json",
@@ -128,8 +136,8 @@ const DynamicNode = (props: CircleNodeProps) => {
 
   const handleSelectAttribute = (e: EventProps) => {
     const selectedOption = JSON.parse(e.target.value);
-    props.data.value = selectedOption.name
-    props.data.dataType = selectedOption.dataType
+    props.data.value = selectedOption.name;
+    props.data.dataType = selectedOption.dataType;
     setSelectAttributeValue({
       name: selectedOption.name,
       dataType: selectedOption.dataType,
@@ -138,6 +146,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     setNodes(
       Array.from(nodeInternals.values()).map((node) => {
         if (node.id === props.data.id) {
+          props.data.isFetch = false;
           props.data.value = selectedOption.name;
           props.data.dataType = selectedOption.dataType;
         }
@@ -150,7 +159,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     setIsSelected(true);
     const selectedOption = JSON.parse(e.target.value);
     // props.data.value = selectedOption.name
-    props.data.dataType = selectedOption.dataType
+    props.data.dataType = selectedOption.dataType;
     setSelectValue({
       name: selectedOption.name,
       dataType: selectedOption.dataType,
@@ -167,49 +176,120 @@ const DynamicNode = (props: CircleNodeProps) => {
     );
   };
 
+  const handleClickValueNode = (e) => {
+    const itemId = e.target.id;
+    setSelectedValueNode(itemId);
+    const { nodeInternals } = store.getState();
+    setNodes(
+      Array.from(nodeInternals.values()).map((node) => {
+        if (itemId === "yes") {
+          props.data.value = true;
+        } else {
+          props.data.value = false;
+        }
+        return node;
+      })
+    );
+  };
+
   useEffect(() => {
     const asyncFetchData = async () => {
       await fetchData();
     };
-      asyncFetchData();
-  
+    asyncFetchData();
   }, []);
 
   useEffect(() => {
-
-      setSelectAttributeValue(
-        {
-          name: props.data.value,
-          dataType: props.data.dataType,
-        }
-        )
-    console.log("Select Attribute Value:", selectAttributeValue, props.data.value);
-  }, [ props.data.value]);
+    setSelectAttributeValue({
+      name: props.data.value,
+      dataType: props.data.dataType,
+    });
+    console.log(
+      "Select Attribute Value:",
+      selectAttributeValue,
+      props.data.value
+    );
+  }, [props.data.value]);
 
   useEffect(() => {
-      if (attributesObj !== undefined) {
-        const tokenAttributes = attributesObj.token_attributes;
-        const nftAttributes = attributesObj.nft_attributes;
-        getAttributeOption(tokenAttributes, nftAttributes);
+    if (attributesObj !== undefined) {
+      const tokenAttributes = attributesObj.token_attributes;
+      const nftAttributes = attributesObj.nft_attributes;
+      getAttributeOption(tokenAttributes, nftAttributes);
     }
   }, [attributesObj]);
 
   useEffect(() => {
-    if(props.data.showType === "valueNode"){
-      setInputValue(props.data.value)
-    }else if(props.data.showType === "attributeNode"){
+    if (props.data.showType === "valueNode") {
+      setInputValue(props.data.value);
+    } else if (props.data.showType === "attributeNode") {
       setSelectValue({
         name: props.data.value,
         dataType: props.data.dataType,
       });
-    }else if (props.data.showType === "paramNode"){
-      setInputValue(props.data.value)
+    } else if (props.data.showType === "paramNode") {
+      setInputValue(props.data.value);
       setSelectValue({
         name: props.data.value,
         dataType: props.data.dataType,
       });
     }
   }, [props.data.value]);
+
+  useEffect(() => {
+    if (props.data.showType === "valueNode") {
+      if (props.data.dataType === "boolean") {
+        setSelectedValueNode(props.data.value === true ? "yes" : "no");
+      } else {
+        setInputValue(props.data.value);
+      }
+    } else if (props.data.showType === "attributeNode") {
+      setSelectValue({
+        name: props.data.value,
+        dataType: props.data.dataType,
+      });
+    }
+  }, [props.data.value, props.data.showType, props.data.dataType]);
+
+  useEffect(() => {
+    console.log("props.data.datatype: ", props.data.dataType)
+    setValueNodeType(props.data.dataType);
+    const { nodeInternals } = store.getState();
+    if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "boolean" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = "false";
+          return node;
+        })
+      );
+    } else if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "number" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = 0;
+          return node;
+        })
+      );
+    } else if (
+      props.data.showType === "valueNode" &&
+      props.data.dataType === "string" &&
+      props.data.isFetch === false
+    ) {
+      setNodes(
+        Array.from(nodeInternals.values()).map((node) => {
+          props.data.value = "";
+          return node;
+        })
+      );
+    }
+  }, [props.data.dataType, props.data.isFetch]);
 
   return props.data.showType === "selectAttributeNode" ? (
     <div
@@ -223,7 +303,6 @@ const DynamicNode = (props: CircleNodeProps) => {
     >
       <Handle type="target" position={Position.Top} />
       <div className="flex flex-col items-center justify-center">
-
         <p
           className={`text-white ${
             hovered ? "text-indigo-600 " : "text-gray-600"
@@ -328,7 +407,7 @@ const DynamicNode = (props: CircleNodeProps) => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <Handle type="target" position={Position.Top} />
+      {/* <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
         <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
           V: &nbsp;
@@ -344,7 +423,60 @@ const DynamicNode = (props: CircleNodeProps) => {
           value={inputValue}
         />
       </div>
-      <Handle type="source" position={Position.Bottom} id="a" />
+      <Handle type="source" position={Position.Bottom} id="a" /> */}
+      <Handle type="target" position={Position.Top} />
+      <div className="flex items-center justify-center">
+        <button onClick={() => console.log(valueNodeType)}>log</button>
+        {valueNodeType === "boolean" ? (
+          <>
+            <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
+              {" "}
+              V:&nbsp;{" "}
+            </p>
+            <div className="flex w-full  space-evenly">
+              <div
+                onClick={(e) => handleClickValueNode(e)}
+                id="yes"
+                className={`cursor-pointer rounded-l-full hover:scale-110 duration-500 w-10 h-6  flex justify-center items-center bg-white ${
+                  selectedValueNode === "yes"
+                    ? "bg-opacity-100"
+                    : "bg-opacity-40"
+                }`}
+              >
+                Yes
+              </div>
+              <div
+                onClick={(e) => handleClickValueNode(e)}
+                id="no"
+                className={`cursor-pointer rounded-r-full hover:scale-110 duration-500 w-10 h-6  flex justify-center items-center bg-white ${
+                  selectedValueNode === "no"
+                    ? "bg-opacity-100"
+                    : "bg-opacity-40"
+                }`}
+              >
+                No
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
+              {" "}
+              V:&nbsp;{" "}
+            </p>
+            <input
+              type="text"
+              name=""
+              id=""
+              className="w-16 rounded-full pl-1"
+              onChange={(e) => {
+                onChange(e);
+              }}
+              value={inputValue}
+            />
+          </>
+        )}
+      </div>
     </div>
   ) : props.data.showType === "attributeNode" ? (
     <div
@@ -410,10 +542,10 @@ const DynamicNode = (props: CircleNodeProps) => {
             onChange={handleSelectParamNode}
           >
             <option value={selectValue.dataType} disabled selected hidden>
-            {selectValue.dataType === "" || selectValue.dataType === undefined
-              ? "-- select type --"
-              : selectValue.dataType}
-          </option>
+              {selectValue.dataType === "" || selectValue.dataType === undefined
+                ? "-- select type --"
+                : selectValue.dataType}
+            </option>
             <option
               value={JSON.stringify({ name: "number", dataType: "number" })}
             >
@@ -426,17 +558,17 @@ const DynamicNode = (props: CircleNodeProps) => {
             </option>
           </select>
           {/* {isSelected ? ( */}
-            <div className="flex items-center justify-center">
-              <input
-                type="text"
-                name=""
-                id=""
-                className="w-32 rounded-full text-black"
-                onChange={onChange}
-                placeholder="  Input Param Name"
-                value={inputValue}
-              />
-            </div>
+          <div className="flex items-center justify-center">
+            <input
+              type="text"
+              name=""
+              id=""
+              className="w-32 rounded-full text-black"
+              onChange={onChange}
+              placeholder="  Input Param Name"
+              value={inputValue}
+            />
+          </div>
           {/* ) : (
             <div></div>
           )} */}

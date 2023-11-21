@@ -14,16 +14,6 @@ export default function Flowbar() {
   return (
     <div className='w-full h-[124px]  bg-[#D9D9D980] rounded-2xl flex justify-between px-[50px] items-center text-3xl'>
       <div className='flex justify-center items-center '>
-        
-        <div  onDragStart={(event: DragEvent) => onDragStart(event, 'input', "OR")} draggable>
-          <Node1  TextTitle='OR'></Node1>
-        </div>
-        <div  onDragStart={(event: DragEvent) => onDragStart(event, 'input', "OR")} draggable>
-          <Node1  TextTitle='AND'></Node1>
-        </div>
-       
-      </div>
-
       <div className=' grid-cols-5 grid'>
         <div onDragStart={(event: DragEvent) => onDragStart(event, 'output', "V")} draggable>
           <Node2 TextTitle='V'></Node2>
@@ -53,6 +43,16 @@ export default function Flowbar() {
             <Node2 TextTitle='>'></Node2>
         </div>
       </div>
+        
+        <div  onDragStart={(event: DragEvent) => onDragStart(event, 'input', "OR")} draggable>
+          <Node1  TextTitle='OR'></Node1>
+        </div>
+        <div  onDragStart={(event: DragEvent) => onDragStart(event, 'input', "OR")} draggable>
+          <Node1  TextTitle='AND'></Node1>
+        </div>
+       
+      </div>
+
 
     </div>
   )

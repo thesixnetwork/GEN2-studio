@@ -17,7 +17,7 @@ import { getAccessTokenFromLocalStorage, getOriginContractAddressFromLocalStorag
 import axios from "axios";
 
 const NewIntregation7 = () => {
-
+  const [currentState, setCurrentState] = useState(3)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [isShow, setIsShow] = useState(false);
   const [save, setSave] = useState(false);
@@ -95,7 +95,7 @@ const NewIntregation7 = () => {
 
   const checkALLError = () => {
     const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~ ]/;
-    if (text.every((item) => item.name !== "" && item.display_option.opensea.trait_type!=="" && !specialChars.test(item.name)  )) {
+    if (text.every((item) => item.name !== "" && item.display_option.opensea.trait_type !== "" && !specialChars.test(item.name))) {
       navigate('/newintregation/8')
     }
   }
@@ -134,7 +134,7 @@ const NewIntregation7 = () => {
     }, 500);
     LoadingCheckErro()
     await saveOriginTokenAttributes()
-    
+
   };
 
   const handleCreateAttribute = () => {
@@ -273,10 +273,14 @@ const NewIntregation7 = () => {
       params: params, // Pass parameters as an object
       headers: headers, // Pass headers as an object
     })
-      .then( async (response) => {
+      .then(async (response) => {
+        if(response.data.data.schema_info.current_state >=currentState){
+          setCurrentState(response.data.data.schema_info.current_state)
+        }
+        
         console.log('Response:', response.data.data);
         if (response.data.data.schema_info.schema_info.origin_data.origin_attributes.length === 0) {
-         await getOriginAttributFromContract()
+          await getOriginAttributFromContract()
         } else {
           setText(response.data.data.schema_info.schema_info.origin_data.origin_attributes);
         }
@@ -335,10 +339,14 @@ const NewIntregation7 = () => {
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px] relative">
-            <div>
-              <Stepper2 ActiveStep={3}></Stepper2>
-              <div className="w-[931px] h-[1px] bg-[#D9D9D9]"></div>
-            </div>
+            {!isLoadingHistory &&
+              <div className=' h-1/6'>
+                <div className='flex flex-rows justify-between'>
+                  <Stepper2 CurrentState={currentState} ActiveStep={3}></Stepper2>
+                </div>
+                <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
+              </div>
+            }
             <div className="w-full h-[80%] overflow-scroll flex  justify-start relative">
               {!isLoadingHistory &&
                 <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-3   absolute ">

@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import DraftMenu from "../component/DraftMenu";
 import DraftAttributeTable from "../component/DraftAttributeTable";
 import NormalButton from "../component/NormalButton";
+import GobackButton from "../component/GobackButton";
 import axios from "axios";
 import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
 
@@ -48,7 +49,7 @@ const DraftAttributes = () => {
   };
 
   const saveData = async () => {
-    if(isCheckErrorName.current){
+    if (isCheckErrorName.current) {
       await Swal.fire({
         position: "center",
         icon: "error",
@@ -62,23 +63,27 @@ const DraftAttributes = () => {
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/set_schema_info`;
     const requestData = {
-      "payload": {
-        "schema_info": data,
-        "schema_code": schema_revision,
-        "status": "Draft",
-        "current_state": "0"
-      }
+      payload: {
+        schema_info: data,
+        schema_code: schema_revision,
+        status: "Draft",
+        current_state: "0",
+      },
     };
-    if (Object.values(isSave).every(attribute => attribute === true)) {
-      await axios.post(apiUrl, requestData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`, 
-        },
-      })
-        .then(response => {
-          console.log('API Response saveOriginContractAddressAndOriginBaseURI :', response.data);
-          console.log("Request :",requestData)
+    if (Object.values(isSave).every((attribute) => attribute === true)) {
+      await axios
+        .post(apiUrl, requestData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+          },
+        })
+        .then((response) => {
+          console.log(
+            "API Response saveOriginContractAddressAndOriginBaseURI :",
+            response.data
+          );
+          console.log("Request :", requestData);
           Swal.fire({
             position: "center",
             icon: "success",
@@ -105,17 +110,15 @@ const DraftAttributes = () => {
         showConfirmButton: true,
       });
     }
+  };
 
-  }
-
-  
   useEffect(() => {
     findSchemaCode();
   }, []);
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
-        <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
+        <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40 relative">
           <div className="w-full h-full">
             <div className="flex justify-between">
               <DraftMenu
@@ -148,7 +151,6 @@ const DraftAttributes = () => {
                         whichExpand={whichExpand}
                         setWhichExpand={setWhichExpand}
                         isCheckErrorName={isCheckErrorName}
-
                       />
                     </div>
                     <DraftAttributeTable
@@ -174,25 +176,25 @@ const DraftAttributes = () => {
                   </div>
                 ) : whichExpand === "collectionAttributes" ? (
                   <div className="flex w-full justify-center gap-8 ">
-                  <DraftAttributeTable
-                    type="collectionAttributes"
-                    expand={true}
-                    data={data.onchain_data.nft_attributes}
-                    setIsSave={setIsSave}
-                    whichExpand={whichExpand}
-                    setWhichExpand={setWhichExpand}
-                  />
+                    <DraftAttributeTable
+                      type="collectionAttributes"
+                      expand={true}
+                      data={data.onchain_data.nft_attributes}
+                      setIsSave={setIsSave}
+                      whichExpand={whichExpand}
+                      setWhichExpand={setWhichExpand}
+                    />
                   </div>
                 ) : whichExpand === "tokenAttributes" ? (
                   <div className="flex w-full justify-center gap-8 ">
-                  <DraftAttributeTable
-                    type="tokenAttributes"
-                    expand={true}
-                    data={data.onchain_data.token_attributes}
-                    setIsSave={setIsSave}
-                    whichExpand={whichExpand}
-                    setWhichExpand={setWhichExpand}
-                  />
+                    <DraftAttributeTable
+                      type="tokenAttributes"
+                      expand={true}
+                      data={data.onchain_data.token_attributes}
+                      setIsSave={setIsSave}
+                      whichExpand={whichExpand}
+                      setWhichExpand={setWhichExpand}
+                    />
                   </div>
                 ) : (
                   <div className="h-full w-full flex items-center justify-center">
@@ -207,23 +209,30 @@ const DraftAttributes = () => {
                 )}
               </div>
             </div>
-            <div className="h-[7%] items-center w-full flex justify-center gap-x-8">
-              <div className="w-32" onClick={saveData}>
-                <NormalButton
-                  TextTitle="SAVE"
-                  BorderRadius={0}
-                  FontSize={24}
-                ></NormalButton>
-              </div>
-              <div className="w-32" onClick={findSchemaCode} >
-                <NormalButton
-                  TextTitle="RESET"
-                  BorderRadius={0}
-                  FontSize={24}
-                ></NormalButton>
+            <div className="h-[7%] w-full relative">
+              <div className="w-full items-center flex justify-center gap-x-8">
+                <div className="w-32" onClick={saveData}>
+                  <NormalButton
+                    TextTitle="SAVE"
+                    BorderRadius={0}
+                    FontSize={24}
+                  ></NormalButton>
+                </div>
+                <div className="w-32" onClick={findSchemaCode}>
+                  <NormalButton
+                    TextTitle="RESET"
+                    BorderRadius={0}
+                    FontSize={24}
+                  ></NormalButton>
+                </div>
               </div>
             </div>
           </div>
+            <div className="absolute left-0 bottom-2">
+              <GobackButton
+                BackPage={`/draft/origindata/${schema_revision}`}
+              ></GobackButton>
+            </div>
         </div>
       </div>
     </div>

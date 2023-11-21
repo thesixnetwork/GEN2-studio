@@ -20,6 +20,7 @@ interface ComponentProps {
 }
 
 function DraftOrigindataCard(Props: ComponentProps) {
+    const [isLoading, setisLoading] = useState(false)
     const navigate = useNavigate();
     const { schema_revision } = useParams();
     // console.log("Info :", Props.Info)
@@ -187,20 +188,20 @@ function DraftOrigindataCard(Props: ComponentProps) {
         setSelectedNetwork('1'); // Reset to the default value
     };
 
-    const handleChangeValue = (e, stateVariable) => {
+    const handleChangeValue = (str, stateVariable) => {
         setschemaInfo((prevState) => {
             const newState = { ...prevState };
 
             if (stateVariable === "schema_info.origin_data.origin_base_uri") {
-                newState.schema_info.origin_data.origin_base_uri = e.target.value;
+                newState.schema_info.origin_data.origin_base_uri = str;
             } else if (stateVariable === "schema_info.origin_data.origin_contract_address") {
-                newState.schema_info.origin_data.origin_contract_address = e.target.value;
+                newState.schema_info.origin_data.origin_contract_address = str;
             } else if (stateVariable === "schema_info.schema_name") {
-                newState.schema_name = e.target.value;
+                newState.schema_info.code = str;
             } else if (stateVariable === "schema_info.schema_info.name") {
-                newState.schema_info.name = e.target.value;
+                newState.schema_info.name = str;
             } else if (stateVariable === "schema_info.schema_info.description") {
-                newState.schema_info.description = e.target.value;
+                newState.schema_info.description = str;
             }
 
             return newState;
@@ -223,9 +224,39 @@ function DraftOrigindataCard(Props: ComponentProps) {
         },
     };
 
+    const getBaseURIFromContract = async () => {
+        setisLoading(true)
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/base_uri_from_contract`; // Replace with your API endpoint
+        const params = {
+            contract_address: `${schemaInfo.schema_info.origin_data.origin_contract_address}`,
+            chain_id: "98",
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+        }
+
+        // Make a GET request with parameters
+        await axios.get(apiUrl, {
+            params: params, // Pass parameters as an object
+            headers: headers, // Pass headers as an object
+        })
+            .then((response) => {
+                // Handle successful response here
+                console.log('Response:', response.data);
+                handleChangeValue(response.data.data.base_uri, "schema_info.origin_data.origin_base_uri");
+            })
+            .catch((error) => {
+                // Handle errors here
+                console.error('Error:', error);
+            });
+        setisLoading(false)
+    }
+
     return (
-        <div className=' w-full flex flex-col justify-center items-center'>
-            <div className=' mt-10 w-[90%] border border-white rounded-xl p-5 relative'>
+        <div className=' w-full h-full flex flex-col justify-center items-center'>
+            <div className=' mt-10 w-[90%]  h-64 border border-white rounded-xl p-5 relative'>
                 <div
                     onClick={() => setisInputDisabledCollectionData(!isInputDisabledCollectionData)}
                     className=' flex justify-center items-center absolute right-2 top-2 border-white border rounded-full w-10 h-10 hover:scale-105 duration-500 cursor-pointer ' >
@@ -233,17 +264,17 @@ function DraftOrigindataCard(Props: ComponentProps) {
                 </div>
                 <h1 className=' text-3xl '>{Props.Title[0]}</h1>
                 {loading && (
-                    <div className=' m-5 flex flex-col'>
+                    <div className=' m-5 flex justify-between w-full flex-col'>
                         <div className=' flex  justify-start items-end'>
                             <p className="font-bold text-xl mr-4">Schema Code : </p>
                             <input
-                                value={schemaInfo.schema_name}
+                                value={schemaInfo.schema_info.code}
                                 type="text"
-                                disabled={true}
+                                disabled={isInputDisabledCollectionData}
                                 onChange={(e) => {
-                                    handleChangeValue(e, "schema_info.schema_name");
+                                    handleChangeValue(e.target.value, "schema_info.schema_name");
                                 }}
-                                className={` w-[20%]  bg-transparent text-[14px] border-[1px] border-none placeholder-gray-300  p-1 focus:outline-none focus:scale-105 duration-500 `}
+                                className={` w-[20%]  bg-transparent text-[14px] border-[1px] ${isInputDisabledCollectionData ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed  p-1 focus:outline-none focus:scale-105  `}
                             ></input>
                         </div>
                         <div className=' flex  justify-start items-end mt-5'>
@@ -253,7 +284,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 type="text"
                                 disabled={isInputDisabledCollectionData}
                                 onChange={(e) => {
-                                    handleChangeValue(e, "schema_info.schema_info.name");
+                                    handleChangeValue(e.target.value, "schema_info.schema_info.name");
                                 }}
                                 className={` w-[30%] bg-transparent text-[14px] border-[1px] ${isInputDisabledCollectionData ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105  w-[140px]`}
                             ></input>
@@ -265,7 +296,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 type="text"
                                 disabled={isInputDisabledCollectionData}
                                 onChange={(e) => {
-                                    handleChangeValue(e, "schema_info.schema_info.description");
+                                    handleChangeValue(e.target.value, "schema_info.schema_info.description");
                                 }}
                                 className={`w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledCollectionData ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105  w-[140px]`}
                             ></input>
@@ -311,8 +342,9 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 value={schemaInfo.schema_info.origin_data.origin_contract_address}
                                 type="text"
                                 disabled={isInputDisabledOriginChain}
-                                onChange={(e) => {
-                                    handleChangeValue(e, "schema_info.origin_data.origin_contract_address");
+                                onChange={ async (e) => {
+                                   await handleChangeValue(e.target.value,"schema_info.origin_data.origin_contract_address");
+                                    getBaseURIFromContract();
                                 }}
                                 className={` w-[50%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 w-[140px]`}
                             ></input>
@@ -324,7 +356,7 @@ function DraftOrigindataCard(Props: ComponentProps) {
                                 type="text"
                                 disabled={isInputDisabledOriginChain}
                                 onChange={(e) => {
-                                    handleChangeValue(e, "schema_info.origin_data.origin_base_uri");
+                                    handleChangeValue(e.target.value, "schema_info.origin_data.origin_base_uri");
                                 }}
                                 className={` w-[70%] bg-transparent text-[14px] border-[1px] ${isInputDisabledOriginChain ? 'border-none' : 'border-[#D9D9D9DD]'} placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 w-[140px]`}
                             ></input>

@@ -37,7 +37,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     const [errorMessage, setErrorMessage] = useState("Error message")
     const [iser, setIser] = useState(false)
     const [inputValue, setInputValue] = useState(props.text[props.index].value);
-    const [isDisabled,setIsDisabled] = useState(false)
+    const [isDisabled, setIsDisabled] = useState(false)
     console.log("inputValue :", inputValue)
 
     useEffect(() => {
@@ -125,6 +125,64 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         }
     }
 
+    const saveCheckErrorIOnChange = async (str) => {
+        document.getElementById(`box${props.index}`).style.zIndex = "0";
+        const updatedText = [...props.text];
+        updatedText[props.index].Error = true;
+        console.log(str)
+        setIser(false)
+        if (props.text[props.index].require) {
+            if (!str) {
+                setErrorMessage("Not Availible")
+                setIser(true)
+                updatedText[props.index].Error = false;
+                document.getElementById(`box${props.index}`).style.zIndex = "50";
+            }
+            else if (containsSpecialChars(str)) {
+                setErrorMessage("Speail Chars")
+                setIser(true)
+                updatedText[props.index].Error = false;
+                document.getElementById(`box${props.index}`).style.zIndex = "50";
+            }
+            else if (containsSpace(str)) {
+                setErrorMessage("Space")
+                setIser(true)
+                updatedText[props.index].Error = false;
+                document.getElementById(`box${props.index}`).style.zIndex = "50";
+            }
+            else if (containsUppercase(str)) {
+                setErrorMessage("Uppercase")
+                setIser(true)
+                updatedText[props.index].Error = false;
+                document.getElementById(`box${props.index}`).style.zIndex = "50";
+            }
+            else if (!props.text[0].duplicate) {
+                setErrorMessage("Duplicate schema_code")
+                setIser(true)
+                updatedText[props.index].Error = false;
+                document.getElementById(`box${props.index}`).style.zIndex = "50";
+            }
+            else {
+                setIser(false)
+                updatedText[props.index].Error = true;
+                document.getElementById(`box${props.index}`).style.zIndex = "0";
+            }
+        }
+        else if (props.text[props.index].Name !== "Description") {
+            if (containsSpecialChars(str)) {
+                setErrorMessage("Speail Chars")
+                setIser(true)
+                updatedText[props.index].Error = false;
+                document.getElementById(`box${props.index}`).style.zIndex = "50";
+            }
+        }
+        else {
+            setIser(false)
+            document.getElementById(`box${props.index}`).style.zIndex = "0";
+            updatedText[props.index].Error = true;
+        }
+    }
+
     useEffect(() => {
         if (props.Next) {
             saveCheckErrorI(props.text[props.index].value)
@@ -136,22 +194,22 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     //         setIsDisabled(true)
     //     }
     // },[])
+   
 
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>
             <div className=' w-4/5 flex justify-start items-center '>
                 <p className='font-bold text-[24px] w-2/5 mr-[5%]'>{props.text[props.index].Name}</p>
                 <input
-                    disabled={isDisabled}
                     value={inputValue}
                     type="text"
                     // onChange={handleInputschemaCode}
                     onChange={async (e) => {
                         await handleChange(e);
-                        if (props.index === 0) {
+                        if (props.index === 0 && (getSCHEMA_CODE() !== e.target.value) ) {
                             await props.FindSchemaCode();
                         }
-                        await saveCheckErrorI(props.text[props.index].value);
+                        await saveCheckErrorIOnChange(props.text[props.index].value);
                         props.setisError(false)
                         console.log(props.text)
                     }}

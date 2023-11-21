@@ -14,7 +14,7 @@ const DraftMenu = ({ menu,schemaCode,next }) => {
             {menu === "attributes"
               ? "Draft: Attributes"
               : menu === "deployment"
-              ? "Draft: Deplotment"
+              ? "Draft: Deployment"
               : menu === "origin"
               ? "Draft: Origin Data"
               : "Draft: Actions"}

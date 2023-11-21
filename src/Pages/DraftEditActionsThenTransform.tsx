@@ -1,18 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { Tooltip } from "@mui/material";
-
-import Add from "../pic/Group 40.png";
-
-import Conectwalet from "../component/Connectwallet";
-import Stepper2 from "../component/Stepper2";
-import Darkbg from "../component/Alert/Darkbg";
+import { useState, useEffect } from "react";
 import ActionTransformCard from "../component/ActionTransformCard";
-import { Link } from "react-router-dom";
+import DraftActionTransformPreview from "../component/DraftActionTransformPreview";
 import DraftMenu from "../component/DraftMenu";
 import { useParams } from "react-router-dom";
+import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
+import axios from "axios";
 
 const DraftEditActionsThenTransform = () => {
   const param = useParams();
+  const [actions, setActions] = useState([]);
+
+  const findSchemaCode = async () => {
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${param.schema_revision}`;
+    const params = {};
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
+    await axios
+      .get(apiUrl, {
+        params: params,
+        headers: headers,
+      })
+      .then((response) => {
+        console.log("Response:", response);
+        const actions =
+          response.data.data.schema_info.schema_info.onchain_data.actions.filter(
+            (action) => action.name === param.action_name
+          );
+        setActions(actions);
+        console.log("->>>", actions);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  useEffect(() => {
+    findSchemaCode();
+  }, []);
+
+
   return (
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
@@ -25,15 +55,18 @@ const DraftEditActionsThenTransform = () => {
                 next="then"
               ></DraftMenu>
             </div>
-            <div className="w-full flex items-center justify-center gap-x-20 min-h-[89.8%]">
-              <ActionTransformCard
-                type="static"
-                draft={true}
-              ></ActionTransformCard>
-              <ActionTransformCard
-                type="dynamic"
-                draft={true}
-              ></ActionTransformCard>
+            <div className="w-full flex flex-col gap-y-10 items-center justify-center min-h-[89.8%]">
+              <DraftActionTransformPreview actions={actions} />
+              <div className="w-full flex items-center justify-center gap-x-20">
+                <ActionTransformCard
+                  type="static"
+                  draft={true}
+                ></ActionTransformCard>
+                <ActionTransformCard
+                  type="dynamic"
+                  draft={true}
+                ></ActionTransformCard>
+              </div>
             </div>
           </div>
         </div>

@@ -25,16 +25,18 @@ const DraftActionThenPreview = (actions) => {
 
         <p>When: {actions.actions[0].when} </p>
         <p>Then: </p>
-        <ul className="ml-8">
-          {actions.actions[0].then !== undefined &&
-            actions.actions[0].then.map((item, index) => (
-              <li key={index} className="list-disc">
-                <span className="whitespace-nowrap">
-                  {convertStringIfTooLong(item, 60)}
-                </span>
-              </li>
-            ))}
-        </ul>
+        <div className="h-32 overflow-scroll">
+          <ul className="ml-8">
+            {actions.actions[0].then !== undefined &&
+              actions.actions[0].then.map((item, index) => (
+                <li key={index} className="list-disc">
+                  <span className="whitespace-nowrap">
+                    {convertStringIfTooLong(item, 60)}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

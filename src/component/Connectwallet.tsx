@@ -26,7 +26,7 @@ import {
 } from "@mui/material";
 import axios from 'axios'
 
-import { clearTokensFromLocalStorage, getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage, } from '../helpers/AuthService';
+import { clearSCHEMA_CODE, clearTokensFromLocalStorage, getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, saveTokensToLocalStorage, } from '../helpers/AuthService';
 import { ABCDE } from "../App";
 
 
@@ -250,7 +250,10 @@ const Conectwalet = () => {
                       }
                     ></img>
                   </Tooltip>
-                  <img src={logo3} className="w-[18px] h-[18px] mt-2"></img>
+                  <Tooltip title={"Home"}>
+
+                    <img src={logo3} onClick={()=>{navigate('/'); clearSCHEMA_CODE()}} className="w-[18px] h-[18px] mt-2 hover:scale-125 duration-500 cursor-pointer"></img>
+                  </Tooltip>
                 </div>
               </div>
               <div className="mt-3 flex ">

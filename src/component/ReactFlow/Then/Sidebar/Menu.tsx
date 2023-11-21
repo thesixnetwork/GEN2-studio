@@ -8,63 +8,65 @@ const onDragStart = (event: DragEvent, nodeType: string) => {
 interface MenuProps {
   nodeName: string;
   backgroundColor?: string;
+  handleDoubleClickAddNode: (type: string) => void;
 }
 
-const Menu = (prop: MenuProps) => {
-
+const Menu = (props: MenuProps) => {
   return (
     <>
-      {prop.nodeName === "increaseNode" ||
-      prop.nodeName === "decreaseNode" ||
-      prop.nodeName === "trueNode" ||
-      prop.nodeName === "falseNode" ||
-      prop.nodeName === "setNode" ? (
+      {props.nodeName === "increaseNode" ||
+      props.nodeName === "decreaseNode" ||
+      props.nodeName === "trueNode" ||
+      props.nodeName === "falseNode" ||
+      props.nodeName === "setNode" ? (
         <div
           className="h-14 w-48 flex items-center justify-center border-2 transform translate-x-0 translate-y-0"
-          onDragStart={(event: DragEvent) => onDragStart(event, prop.nodeName)}
+          onDragStart={(event: DragEvent) => onDragStart(event, props.nodeName)}
           draggable
-        >
+          onDoubleClick={() => props.handleDoubleClickAddNode(props.nodeName)}
+          >
           <p className="text-base">
-            {prop.nodeName === "increaseNode"
+            {props.nodeName === "increaseNode"
               ? "INCREASE"
-              : prop.nodeName === "decreaseNode"
+              : props.nodeName === "decreaseNode"
               ? "DECREASE"
-              : prop.nodeName === "trueNode"
+              : props.nodeName === "trueNode"
               ? "TRUE"
-              : prop.nodeName === "falseNode"
+              : props.nodeName === "falseNode"
               ? "FALSE"
-              : prop.nodeName === "setNode"
+              : props.nodeName === "setNode"
               ? "SET"
               : null}
           </p>
         </div>
-      ) : prop.nodeName === "valueNode" ||
-        prop.nodeName === "paramNode" ||
-        prop.nodeName === "attributeNode" ? (
+      ) : props.nodeName === "valueNode" ||
+        props.nodeName === "paramNode" ||
+        props.nodeName === "attributeNode" ? (
         <div className="flex flex-col items-center w-12">
           <div
             className="w-10 h-10 rounded-full flex items-center justify-center border-2 transform translate-x-0 translate-y-0"
             onDragStart={(event: DragEvent) =>
-              onDragStart(event, prop.nodeName)
+              onDragStart(event, props.nodeName)
             }
             draggable
+            onDoubleClick={() => props.handleDoubleClickAddNode(props.nodeName)}
           >
             <p className="text-base">
-              {prop.nodeName === "valueNode"
+              {props.nodeName === "valueNode"
                 ? "V"
-                : prop.nodeName === "paramNode"
+                : props.nodeName === "paramNode"
                 ? "P"
-                : prop.nodeName === "attributeNode"
+                : props.nodeName === "attributeNode"
                 ? "@"
                 : null}
             </p>
           </div>
           <p className="text-xs">
-            {prop.nodeName === "valueNode"
+            {props.nodeName === "valueNode"
               ? "Value"
-              : prop.nodeName === "paramNode"
+              : props.nodeName === "paramNode"
               ? "Param"
-              : prop.nodeName === "attributeNode"
+              : props.nodeName === "attributeNode"
               ? "Attribute"
               : null}
           </p>

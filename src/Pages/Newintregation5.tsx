@@ -1,14 +1,12 @@
-import { useState, useRef, SetStateAction, useEffect } from 'react'
-import { Button, CircularProgress } from '@mui/material'
+import { useState, useEffect } from 'react'
+import { CircularProgress } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2'
-import { Link, Navigate } from 'react-router-dom'
+
 import Darkbg from '../component/Alert/Darkbg'
-import AlertCard from '../component/Alert/AlertCard'
-import RedAleart from '../component/Alert/RedAleart'
+
 import { useNavigate } from 'react-router-dom';
 import GobackButton from '../component/GobackButton'
-import NextPageButton from '../component/NextPageButton'
 import WhiteBox from '../component/WhiteBox'
 import InputBoxforNP5 from '../component/InputBoxforNP5'
 import BoxButton from '../component/BoxButton'
@@ -17,13 +15,11 @@ import axios from 'axios'
 //Redux
 import { useSelector } from "react-redux";
 import {
-    walletcounterSelector,
-    setAccess_token,
-    setRefresh_token,
+    walletcounterSelector
 } from "../store/slices/walletcounterSlice";
 import { useAppDispatch } from "../store/store";
-import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage, getSCHEMA_CODE, saveSCHEMA_CODE, saveTokensToLocalStorage } from '../helpers/AuthService'
-import { ABCDE } from '../App'
+import { getAccessTokenFromLocalStorage, getSCHEMA_CODE, saveSCHEMA_CODE } from '../helpers/AuthService'
+
 
 import Swal from 'sweetalert2'
 //Redux
@@ -32,7 +28,7 @@ import Swal from 'sweetalert2'
 
 const NewIntregation5 = () => {
     //Redux
-    const dispatch = useAppDispatch();
+
     const walletcounterReducer = useSelector(walletcounterSelector);
 
 
@@ -61,7 +57,7 @@ const NewIntregation5 = () => {
         },
 
     ]);
-
+    const [currentState, setCurrentState] = useState(1)
     const [isLoading, setisLoading] = useState(false)
     const [isLoadingHistory, setIsLoadingHistory] = useState(false)
     const [isValidate, setisValidate] = useState(false)
@@ -141,7 +137,7 @@ const NewIntregation5 = () => {
     };
 
     const handleFormsubmit = async () => {
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/create_schema_info`; 
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/create_schema_info`;
         const requestData = {
             "schema_name": `${text[0].value}`,
             "status": "Draft",
@@ -160,6 +156,7 @@ const NewIntregation5 = () => {
             .then(response => {
                 console.log('API Response:', response.data);
                 saveSCHEMA_CODE(response.data.data.schema_code);
+                console.log("saveSCHEMA_CODE : ", response.data.data.schema_code)
                 // console.log(requestData)
                 // You can handle the API response here
             })
@@ -169,7 +166,7 @@ const NewIntregation5 = () => {
             });
     }
 
-   
+
     const GethistoryFormSchemaCode = async () => {
         // const updatedText = [...text];
         // updatedText[0].duplicate = true;
@@ -190,7 +187,8 @@ const NewIntregation5 = () => {
                 console.log('Response:', response.data);
 
                 const updatedText = [...text];
-                updatedText[0].value = response.data.data.schema_info.schema_name;
+                setCurrentState(response.data.data.schema_info.current_state)
+                updatedText[0].value = response.data.data.schema_info.schema_info.code;
                 updatedText[1].value = response.data.data.schema_info.schema_info.name;
                 updatedText[2].value = response.data.data.schema_info.schema_info.description;
                 console.log(text)
@@ -210,13 +208,15 @@ const NewIntregation5 = () => {
     }, []);
 
     const UpdateSchemaInfo = () => {
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`; 
+
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`;
         const requestData = {
             "payload": {
                 "schema_info": {
                     "name": `${text[1].value}`,
                     "description": `${text[2].value}`,
                     "owner": walletcounterReducer.cosmosaddress,
+                    "code": `${text[0].value}`,
                 },
                 "schema_code": getSCHEMA_CODE(),
                 "status": "Draft",
@@ -233,8 +233,10 @@ const NewIntregation5 = () => {
         })
             .then(response => {
                 console.log('API Response UpdateSchemaInfo:', response.data);
-                console.log("requestData :" , requestData)
+                console.log("requestData :", requestData)
                 navigate('/newintregation/6')
+                // saveSCHEMA_CODE(response.data.data.update_schema.schema_info.code);
+                console.log("getSCHEMA_CODE() : ", getSCHEMA_CODE())
 
                 // console.log(requestData)
                 // You can handle the API response here
@@ -246,43 +248,47 @@ const NewIntregation5 = () => {
     }
 
     const handleNext = () => {
-        if (!getSCHEMA_CODE()) {
-            Swal.fire({
-                title: 'Are you sure to create ?',
-                text: "You won't be able to duplicate this Schema code!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#7A8ED7',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, create '
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Create Complete!',
-                        'Your Schema code has been Created.',
-                        'success'
-                    )
-                    setNext(true);
-                    handleFormsubmit();
-                    const allErrorsTrue = text.every(item => item.Error === true);
-                    if (allErrorsTrue) {
+
+        // const allErrorsTrue = text.every(item => item.Error === true);
+        // if (allErrorsTrue) {
+            if (!getSCHEMA_CODE()) {
+                Swal.fire({
+                    title: 'Are you sure to create ?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#7A8ED7',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, create '
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire(
+                            'Create Complete!',
+                            'Your Schema code has been Created.',
+                            'success'
+                        )
+                        setNext(true);
+                        handleFormsubmit();
                         navigate('/newintregation/6')
-                    } else {
-                        setisError(true)
+
                     }
-                }
-            })
-        } else {
-            UpdateSchemaInfo()
-            
-        }
+                })
+            } else {
+                UpdateSchemaInfo()
+
+            }
+        // } else {
+        //     setNext(true);
+        //     setisError(true)
+        // }
+
     }
 
     const FindSchemaCode = async () => {
         const updatedText = [...text];
         updatedText[0].duplicate = true;
         setisLoading(true)
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/validate_schema_code`; 
+        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/validate_schema_code`;
         const params = {
             schema_code: `${text[0].value}`,
         };
@@ -317,12 +323,14 @@ const NewIntregation5 = () => {
             <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
                 <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
                     <div className='w-full h-full flex flex-col justify-between'>
-                        <div className=''>
-                            <div className='flex flex-rows justify-between'>
-                                <Stepper2 ActiveStep={1}></Stepper2>
+                        {!isLoadingHistory &&
+                            <div className=''>
+                                <div className='flex flex-rows justify-between'>
+                                    <Stepper2 ActiveStep={1} CurrentState={currentState}></Stepper2>
+                                </div>
+                                <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                             </div>
-                            <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
-                        </div>
+                        }
                         {!isLoadingHistory &&
                             <div className=' flex flex-col justify-between items-center py-[5%] h-4/6 relative '>
                                 {text.map((item, index) => (
@@ -360,7 +368,7 @@ const NewIntregation5 = () => {
                         }
                         <div className=' w-full flex justify-start  '>
                             <div className={``}>
-                                <GobackButton BackPage='/newintregation/4'></GobackButton>
+                                <GobackButton BackPage='/'></GobackButton>
                             </div>
                         </div>
                     </div>

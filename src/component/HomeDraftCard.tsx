@@ -11,6 +11,10 @@ import { set } from "lodash";
 export default function HomeDraftCard(props: MyComponentProps) {
   const [imgUrl, setImgUrl] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const handleError = () => {
+    setError(true);
+  };
 
   useEffect(() => {
     const getImage = async () => {
@@ -18,7 +22,7 @@ export default function HomeDraftCard(props: MyComponentProps) {
         await axios.get(props.CollectionImage).then((res) => {
           console.log("res", res);
           setImgUrl(res.data.image);
-            setLoading(false);
+          setLoading(false);
         });
       } catch (err) {
         console.log(err);
@@ -49,8 +53,16 @@ export default function HomeDraftCard(props: MyComponentProps) {
           <div className="h-full w-full flex justify-center items-center rounded-2xl">
             NO IMAGE
           </div>
+        ) : error ? (
+          <div className="h-full w-full text-xs flex justify-center items-center rounded-2xl">
+            Image Could Not Be Loaded
+          </div>
         ) : (
-          <img src={imgUrl} className="h-full w-full "></img>
+          <img
+            src={imgUrl}
+            className="h-full w-full"
+            onError={()=>handleError()}
+          ></img>
         )}
       </div>
       <p className="text-white text-sm font-bold mt-3  hover:text-[#7A8ED7] duration-500 ">
