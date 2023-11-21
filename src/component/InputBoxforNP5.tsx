@@ -196,6 +196,8 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     // },[])
    
 
+    console.log("FindSchemaCode ==>",props.FindSchemaCode())
+
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>
             <div className=' w-4/5 flex justify-start items-center '>

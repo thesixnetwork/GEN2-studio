@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-// import expandIcon from "../pic/draft-expand-menu.png";
+import expandIcon from "../pic/draft-expand-menu.png";
 import editIcon from "../pic/draft-edit.png";
 import saveIcon from "../pic/draft-save.png";
-// import { Link } from "react-router-dom";
-// import { useParams } from "react-router-dom";
-// import narrowIcon from "../pic/draft-narrow-menu.png";
+import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import narrowIcon from "../pic/draft-narrow-menu.png";
 import { PlusSquareIcon, DeleteIcon } from "@chakra-ui/icons";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { styled } from "@mui/material";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { ItokenAttributes } from "../types/Nftmngr";
 
 const DraftAttributeTable = ({
   type,
@@ -19,15 +18,14 @@ const DraftAttributeTable = ({
   setIsSave,
   setWhichExpand,
 }) => {
-  // const param = useParams();
+  const param = useParams();
   const [isData, setIsData] = useState(data);
 
-  const [, setSelectedItem] = useState("");
-  const [editableRow, setEditableRow] = useState<null | number>(null);
+  const [selectedItem, setSelectedItem] = useState("");
+  const [editableRow, setEditableRow] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [errorRows] = useState<
-    { index: number; value: string; status: boolean }[]
-  >([]);
+  const [errorRows, setErrorRows] = useState([]);
+
 
   const Expand = styled(AspectRatioIcon)({
     cursor: "pointer",
@@ -50,15 +48,15 @@ const DraftAttributeTable = ({
   const handleExpand = () => {
     setWhichExpand(type);
   };
-  const handleEditClick = (index: number) => {
+  const handleEditClick = (index) => {
     setIsEdit(true);
     if (type === "originAttributes") {
       setIsSave((prevState) => ({
         ...prevState,
         originattributes: false,
       }));
-      console.log("index", index);
-      console.log("index", data[index]);
+      console.log("index", index)
+      console.log("index", data[index])
     } else if (type === "collectionAttributes") {
       setIsSave((prevState) => ({
         ...prevState,
@@ -95,7 +93,7 @@ const DraftAttributeTable = ({
     setEditableRow(null);
   };
 
-  const handleCellChange = (index: number, field: string, value: string) => {
+  const handleCellChange = (index, field, value) => {
     console.log(`item.data_type ${index}: ${value}`);
     const newData = [...data];
     const fieldParts = field.split(".");
@@ -104,21 +102,25 @@ const DraftAttributeTable = ({
     for (let i = 0; i < fieldParts.length - 1; i++) {
       currentObj = currentObj[fieldParts[i]];
     }
-    // setErrorRows
     currentObj[fieldParts[fieldParts.length - 1]] = value;
     // console.log("currentObj[fieldParts[fieldParts.length - 1]]",currentObj[fieldParts[fieldParts.length - 1]])
-    // console.log("Value currentObj", currentObj["default_mint_value"], type);
-    // console.log("Value currentObj", isData);
-    // console.log("Value", value);
-    // if (type === "originAttributes") {
-    //   handdleErrorRow();
-    // }
+    console.log("Value currentObj", currentObj["default_mint_value"])
+    console.log("Value", value)
     if (value === "string") {
       if (type !== "originAttributes") {
         currentObj["default_mint_value"] = {
           string_attribute_value: { value: "" },
         };
+        console.log("Value currentObj", currentObj["default_mint_value"])
       }
+      // if (newData[index].data_type !== 'number' || newData[index].value !== '123') {
+      //   currentObj.hasConflict = true;
+      // } else {
+      //   currentObj.hasConflict = false;
+      // }
+    // console.log("Value currentObj", currentObj["display_option"]["default_mint_value"])
+
+
       setSelectedItem("string");
     } else if (value === "number") {
       if (type !== "originAttributes") {
@@ -137,139 +139,23 @@ const DraftAttributeTable = ({
     }
   };
 
-  // const handleCellChange2 = (index, field, value) => {
-  //   // ทำการตรวจสอบค่า value ที่คุณต้องการ
-  //   const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
-
-  //   if (!isValid) {
-  //     // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
-  //   } else {
-  //     setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
-  //   }
-
-  //   if (isValid) {
-  //     // บันทึกข้อมูลเมื่อค่าถูกต้อง
-  //   }
-  // };
-  const handdleErrorRow = (
-    e: React.FormEvent<HTMLTableCellElement>,
-    value: string
-  ) => {
-    if (value === "name") {
-      // const duplicates = isData.filter(
-      //   (item: ItokenAttributes) => item.name === e.currentTarget.innerText
-      // );
-      // const hasDuplicates = duplicates.length > 0;
-      const seenValues = new Set();
-
-      for (let i = 0; i < isData.length; i++) {
-        let element;
-        if (type === "originAttributes") {
-          element = document.getElementById(`name ori ${String(i)}`);
-        }
-        if (type === "collectionAttributes") {
-          element = document.getElementById(`name col ${String(i)}`);
-        }
-        if (type === "tokenAttributes") {
-          element = document.getElementById(`name token ${String(i)}`);
-        }
-        if (element instanceof HTMLElement) {
-          const elementInnerText = element.innerText.trim();
-          // const currentTargetInnerText = e.currentTarget.innerText.trim();
-          if (seenValues.has(elementInnerText)) {
-            element.classList.add("bg-red-500");
-          } else if (
-            containsSpecialChars(elementInnerText) ||
-            containsSpace(elementInnerText) ||
-            containsUppercase(elementInnerText)
-          ) {
-            element.classList.add("bg-red-500");
-          } else {
-            seenValues.add(elementInnerText);
-            element.classList.remove("bg-red-500");
-          }
-        }
-      }
+  const handleCellChange2 = (index, field, value) => {
+    // ทำการตรวจสอบค่า value ที่คุณต้องการ
+    const isValid = true; // เพิ่มตรวจสอบค่าตรงนี้
+    
+    if (!isValid) {
+      // setErrorRows((prevErrorRows) => [...prevErrorRows, index]);
+    } else {
+      setErrorRows((prevErrorRows) => prevErrorRows.filter((rowIndex) => rowIndex !== index));
     }
-
-    if (value === "value") {
-      // const currentTargetInnerText = e.currentTarget.innerText.trim();
-      console.log(isData);
-      // console.log(type)
-      isData.forEach((item, index) => {
-        let element;
-        if (type === "collectionAttributes") {
-          element = document.getElementById(`value ${String(index)}`);
-        }
-
-        if (type === "tokenAttributes") {
-          element = document.getElementById(`token ${String(index)}`);
-        }
-
-        if (element instanceof HTMLElement) {
-          const elementInnerText = element.innerText.trim();
-          // const currentTargetInnerText = e.currentTarget.innerText.trim();
-          if (item.data_type === "boolean") {
-            if (elementInnerText !== "true" && elementInnerText !== "false") {
-              element.classList.add("bg-red-500");
-            } else {
-              element.classList.remove("bg-red-500");
-            }
-          }
-
-          if (item.data_type === "number") {
-            if (!containsNumber(elementInnerText)) {
-              element.classList.add("bg-red-500");
-            } else {
-              element.classList.remove("bg-red-500");
-            }
-          }
-
-          if (item.data_type === "string") {
-            if (containsSpecialChars(elementInnerText)) {
-              element.classList.add("bg-red-500");
-            } else {
-              element.classList.remove("bg-red-500");
-            }
-          }
-        }
-      });
+  
+    if (isValid) {
+      // บันทึกข้อมูลเมื่อค่าถูกต้อง
     }
   };
-  console.log(" errorRows:  ", errorRows);
-  function containsSpecialChars(str: string) {
-    // const specialChars = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
-    const specialChars = /[`!@#$%^&*()+\-=[\]{};':"\\|,.<>?~]/;
-    return specialChars.test(str);
-  }
+  
+  
 
-  function containsSpace(str: string) {
-    const specialChars = / /;
-    return specialChars.test(str);
-  }
-
-  function containsUppercase(str: string) {
-    return /[A-Z]/.test(str);
-  }
-
-  function containsNumber(str: string) {
-    return /^[0-9.]*$/.test(str);
-  }
-  // handdleErrorRoweee();
-
-  // useEffect(() => {
-  //   const seenValues = new Set();
-  //   const updatedErrorRows = errorRows.map((errorRow) => {
-  //     const { value } = errorRow;
-  //     const isDuplicate = seenValues.has(value);
-  //     seenValues.add(value);
-  //     return { ...errorRow, status: isDuplicate };
-  //   });
-
-  //   setErrorRows(updatedErrorRows);
-  // }, [errorRows,isData]);
-  // console.log(isData);
-  // console.log(errorRows);
 
   useEffect(() => {
     console.log("---?");
@@ -336,13 +222,13 @@ const DraftAttributeTable = ({
   const handelDel = (index: number) => {
     data.splice(index, 1);
     setIsData(data);
-  };
+  }
 
-  // const handelErrValue = (e) => {
-  //   console.log("kkkk ==>",e)
-  // }
-
-  // console.log(data);
+  const handelErrValue = (e) => {
+    console.log("kkkk ==>",e)
+  }
+  
+  console.log(data);
 
   return (
     <div
@@ -434,83 +320,28 @@ const DraftAttributeTable = ({
             </thead>
             <tbody>
               {data !== undefined &&
-                data.map((item: ItokenAttributes, index: number) => (
+                data.map((item, index) => (
                   <tr
                     key={index}
-                    //   className={`border border-white bg-[#B9BAC2]
-                    //   ${
-                    //     editableRow === index ? "bg-blue-200" : ""
-                    //   }`
-                    // }
-                    className={`border border-white 
-                  ${item.hasConflict ? "bg-red-500" : "bg-[#B9BAC2]"}
+                  //   className={`border border-white bg-[#B9BAC2] 
+                  //   ${
+                  //     editableRow === index ? "bg-blue-200" : ""
+                  //   }`
+                  // }
+                  className={`border border-white 
+                  ${item.hasConflict ? 'bg-red-500' : 'bg-[#B9BAC2]'}
                   ${editableRow === index ? "bg-blue-200" : ""}`}
                   >
-                    {/* <td
+                    <td
                       className="border border-white"
-                      id={String(index)}
                       contentEditable={editableRow === index}
                       onBlur={(e) =>
                         handleCellChange(index, "name", e.target.innerText)
                       }
                       onDoubleClick={() => handleEditClick(index)}
-                      onInput={(e: React.FormEvent<HTMLTableCellElement>) => {
-                        handdleErrorRow(e, "name");
-                      }}
                     >
                       {item.name}
-                    </td> */}
-
-                    {type === "originAttributes" && (
-                      <td
-                        className="border border-white"
-                        id={`name ori ${String(index)}`}
-                        contentEditable={editableRow === index}
-                        onBlur={(e) =>
-                          handleCellChange(index, "name", e.target.innerText)
-                        }
-                        onDoubleClick={() => handleEditClick(index)}
-                        onInput={(e: React.FormEvent<HTMLTableCellElement>) => {
-                          handdleErrorRow(e, "name");
-                        }}
-                      >
-                        {item.name}
-                      </td>
-                    )}
-
-                    {type === "collectionAttributes" && (
-                      <td
-                        className="border border-white"
-                        id={`name col ${String(index)}`}
-                        contentEditable={editableRow === index}
-                        onBlur={(e) =>
-                          handleCellChange(index, "name", e.target.innerText)
-                        }
-                        onDoubleClick={() => handleEditClick(index)}
-                        onInput={(e: React.FormEvent<HTMLTableCellElement>) => {
-                          handdleErrorRow(e, "name");
-                        }}
-                      >
-                        {item.name}
-                      </td>
-                    )}
-
-                    {type === "tokenAttributes" && (
-                      <td
-                        className="border border-white"
-                        id={`name token ${String(index)}`}
-                        contentEditable={editableRow === index}
-                        onBlur={(e) =>
-                          handleCellChange(index, "name", e.target.innerText)
-                        }
-                        onDoubleClick={() => handleEditClick(index)}
-                        onInput={(e: React.FormEvent<HTMLTableCellElement>) => {
-                          handdleErrorRow(e, "name");
-                        }}
-                      >
-                        {item.name}
-                      </td>
-                    )}
+                    </td>
                     <td
                       className="border border-white"
                       onDoubleClick={() => handleEditClick(index)}
@@ -524,7 +355,7 @@ const DraftAttributeTable = ({
                                 handleCellChange(
                                   index,
                                   "data_type",
-                                  (e.target as HTMLButtonElement).id
+                                  e.target.id
                                 );
                               }
                             }}
@@ -547,9 +378,7 @@ const DraftAttributeTable = ({
                     <td
                       className="border border-white"
                       contentEditable={editableRow === index}
-                      onBlur={(
-                        e: React.FocusEvent<HTMLTableDataCellElement, Element>
-                      ) =>
+                      onBlur={(e) =>
                         handleCellChange(
                           index,
                           "display_option.opensea.trait_type",
@@ -560,10 +389,9 @@ const DraftAttributeTable = ({
                     >
                       {item.display_option.opensea.trait_type}
                     </td>
-                    {/* {type === "originAttributes" ? null : (
+                    {type === "originAttributes" ? null : (
                       <td
                         className="border border-white"
-                        id={`value ${String(index)}`}
                         contentEditable={editableRow === index}
                         onDoubleClick={() => handleEditClick(index)}
                         onBlur={(e) =>
@@ -579,9 +407,6 @@ const DraftAttributeTable = ({
                             e.target.innerText
                           )
                         }
-                        onInput={(e: React.FormEvent<HTMLTableCellElement>) => {
-                          handdleErrorRow(e, "value");
-                        }}
                       >
                         {item.data_type === "number"
                           ? item.default_mint_value.number_attribute_value.value
@@ -592,83 +417,12 @@ const DraftAttributeTable = ({
                           : item.default_mint_value.string_attribute_value
                               .value}
                       </td>
-                    )} */}
-                    {type === "collectionAttributes" && (
-                      <td
-                        className="border border-white"
-                        id={`value ${String(index)}`}
-                        contentEditable={editableRow === index}
-                        onDoubleClick={() => handleEditClick(index)}
-                        onBlur={(e) =>
-                          handleCellChange(
-                            index,
-                            item.data_type === "number"
-                              ? "default_mint_value.number_attribute_value.value"
-                              : item.data_type === "float"
-                              ? "default_mint_value.float_attribute_value.value"
-                              : item.data_type === "boolean"
-                              ? "default_mint_value.boolean_attribute_value.value"
-                              : "default_mint_value.string_attribute_value.value",
-                            e.target.innerText
-                          )
-                        }
-                        onInput={(e: React.FormEvent<HTMLTableCellElement>) => {
-                          handdleErrorRow(e, "value");
-                        }}
-                      >
-                        {item.data_type === "number"
-                          ? item.default_mint_value.number_attribute_value
-                              ?.value
-                          : item.data_type === "float"
-                          ? item.default_mint_value.float_attribute_value?.value
-                          : item.data_type === "boolean"
-                          ? item.default_mint_value.boolean_attribute_value?.value.toString()
-                          : item.default_mint_value.string_attribute_value
-                              ?.value}
-                      </td>
                     )}
-
-                    {type === "tokenAttributes" && (
-                      <td
-                        className="border border-white"
-                        id={`token ${String(index)}`}
-                        contentEditable={editableRow === index}
-                        onDoubleClick={() => handleEditClick(index)}
-                        onBlur={(e) =>
-                          handleCellChange(
-                            index,
-                            item.data_type === "number"
-                              ? "default_mint_value.number_attribute_value.value"
-                              : item.data_type === "float"
-                              ? "default_mint_value.float_attribute_value.value"
-                              : item.data_type === "boolean"
-                              ? "default_mint_value.boolean_attribute_value.value"
-                              : "default_mint_value.string_attribute_value.value",
-                            e.target.innerText
-                          )
-                        }
-                        onInput={(e: React.FormEvent<HTMLTableCellElement>) => {
-                          handdleErrorRow(e, "value");
-                        }}
-                      >
-                        {item.data_type === "number"
-                          ? item.default_mint_value.number_attribute_value
-                              ?.value
-                          : item.data_type === "float"
-                          ? item.default_mint_value.float_attribute_value?.value
-                          : item.data_type === "boolean"
-                          ? item.default_mint_value.boolean_attribute_value?.value.toString()
-                          : item.default_mint_value.string_attribute_value
-                              ?.value}
-                      </td>
-                    )}
-
-                    <td
-                      className="border border-white  "
-                      onDoubleClick={() => handleEditClick(index)}
-                    >
+                    <td className="border border-white  "
+                                          onDoubleClick={() => handleEditClick(index)}
+                                          >
                       <Flex>
-                        <DeleteIcon onClick={() => handelDel(index)} />
+                        <DeleteIcon onClick={() => handelDel(index)}/>
                         {editableRow === index ? (
                           <img
                             src={saveIcon}
