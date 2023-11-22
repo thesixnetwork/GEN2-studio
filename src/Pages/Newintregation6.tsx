@@ -23,6 +23,7 @@ import { clearOriginContractAddressFromLocalStorage, getAccessTokenFromLocalStor
 import GobackButtonNoNavigate from '../component/GobackButtonNoNavigate'
 import Swal from 'sweetalert2'
 import GobackButtonValidate from '../component/GobackButtonValidate'
+import { loadingNext } from '../App'
 
 const NewIntregation6 = () => {
     const [isLoading, setisLoading] = useState(false)
@@ -90,6 +91,7 @@ const NewIntregation6 = () => {
         else {
             setisError(true)
         }
+        loadingNext()
         await saveOriginContractAddressAndOriginBaseURI();
     }
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { CircularProgress } from '@mui/material'
 import Conectwalet from '../component/Connectwallet'
 import Stepper2 from '../component/Stepper2'
-import GobackButtonNoNavigate from '../component/GobackButtonNoNavigate'
 import GobackButtonValidate from '../component/GobackButtonValidate'
 import Darkbg from '../component/Alert/Darkbg'
 
@@ -38,6 +37,7 @@ const NewIntregation5 = () => {
             value: "",
             require: true,
             Error: true,
+            duplicate: true,
         },
         {
             Name: "Collection name",
@@ -183,7 +183,6 @@ const NewIntregation5 = () => {
         })
             .then((response) => {
                 console.log('Response:', response.data);
-
                 const updatedText = [...text];
                 setCurrentState(response.data.data.schema_info.current_state)
                 updatedText[0].value = response.data.data.schema_info.schema_info.code;
@@ -195,19 +194,18 @@ const NewIntregation5 = () => {
                 console.error('Error:', error);
             });
         setIsLoadingHistory(false)
-        console.log( "Text 2",text)
+        console.log("Text 2", text)
     }
 
-
-    useEffect(  () => {
+    useEffect(() => {
         console.log("SCHEMACODE:", getSCHEMA_CODE())
         if (getSCHEMA_CODE()) {
-            console.log( "Text 1",text)
+            console.log("Text 1", text)
             GethistoryFormSchemaCode();
         }
     }, []);
 
-    const UpdateSchemaInfo = () => {
+    const UpdateSchemaInfo = async () => {
         const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/set_schema_info`;
         const requestData = {
             "payload": {
@@ -223,7 +221,7 @@ const NewIntregation5 = () => {
             }
         };
 
-        axios.post(apiUrl, requestData, {
+        await axios.post(apiUrl, requestData, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,  // Set the content type to JSON
@@ -246,156 +244,179 @@ const NewIntregation5 = () => {
             });
     }
 
+    const loadingNext = () => {
+        let timerInterval = 500
+        Swal.fire({
+            title: 'Loading ...',
+            html: 'I will close in <b></b> milliseconds.',
+            timer: 500,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading()
+                const b = Swal.getHtmlContainer().querySelector('b')
+                timerInterval = setInterval(() => {
+                    b.textContent = Swal.getTimerLeft()
+                }, 100)
+            },
+            willClose: () => {
+                clearInterval(timerInterval)
+            }
+        }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === Swal.DismissReason.timer) {
+            }
+        })
+    }
+
     const handleNext = async () => {
+
         await setNext(true);
         const allErrorsTrue = text.every(item => item.Error === true);
         if (allErrorsTrue) {
             if (!getSCHEMA_CODE()) {
-                Swal.fire({
-                    title: 'Are you sure to create ?',
-                    text: "",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#7A8ED7',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, create '
-                }).then( async (result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire(
-                            'Create Complete!',
-                            'Your Schema code has been Created.',
-                            'success'
-                        )
-                        setNext(true);
-                        await createSchemaCode();
-                        navigate('/newintregation/6')
-                    }
-                })
-            } else {
-                UpdateSchemaInfo()
-            }
+
+                Swal.fire(
+                    'Create Complete!',
+                    'Your Schema code has been Created.',
+                    'success'
+                )
+                setNext(true);
+                await createSchemaCode();
+                navigate('/newintregation/6')
+
         } else {
-            setNext(true);
-            setisError(true)
+            loadingNext()
+            await UpdateSchemaInfo()
         }
+    } else {
+        setNext(false);
+    setisError(true)
+}
+
     }
 
-    const FindSchemaCode = async () => {
-        const updatedText = [...text];
-        updatedText[0].duplicate = true;
-        setisLoading(true)
-        const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/validate_schema_code`;
-        const params = {
-            schema_code: `${text[0].value}`,
-        };
+const FindSchemaCode = async () => {
+    const updatedText = [...text];
+    updatedText[0].duplicate = true;
+    setisLoading(true)
+    const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/validate_schema_code`;
+    const params = {
+        schema_code: `${text[0].value}`,
+    };
 
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
-        }
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessTokenFromLocalStorage()}`,
+    }
 
-        // Make a GET request with parameters
-        await axios.get(apiUrl, {
-            params: params, // Pass parameters as an object
-            headers: headers, // Pass headers as an object
+    // Make a GET request with parameters
+    await axios.get(apiUrl, {
+        params: params, // Pass parameters as an object
+        headers: headers, // Pass headers as an object
+    })
+        .then((response) => {
+            // Handle successful response here
+            console.log('Response:', response.data.data.status);
+            console.log("text[0].value:", text[0].value, "getSCHEMA_CODE:", getSCHEMA_CODE())
+            if (!response.data.data.status && (getSCHEMA_CODE() !== text[0].value)) {
+                const updatedText = [...text];
+                updatedText[0].duplicate = response.data.data.status;
+            }
+
         })
-            .then((response) => {
-                // Handle successful response here
-                console.log('Response:', response.data.data.status);
-                if (!response.data.data.status) {
-                    const updatedText = [...text];
-                    updatedText[0].duplicate = response.data.data.status;
-                }
-                setisValidate(true)
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        setisLoading(false)
-    }
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    setisLoading(false)
+}
 
 
-    return (
-        <div className='w-full flex justify-center ' >
-            <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
-                <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
-                    <div className='w-full h-full flex flex-col justify-between'>
-                        {!isLoadingHistory &&
-                            <div className=''>
-                                <div className='flex flex-rows justify-between'>
-                                    <Stepper2 ActiveStep={1} CurrentState={currentState}></Stepper2>
-                                </div>
-                                <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
+return (
+    <div className='w-full flex justify-center ' >
+        <div className='w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]'>
+            <div className='w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40'>
+                <div className='w-full h-full flex flex-col justify-between'>
+                    {!isLoadingHistory &&
+                        <div className=''>
+                            <div className='flex flex-rows justify-between'>
+                                <Stepper2 ActiveStep={1} CurrentState={currentState}></Stepper2>
                             </div>
-                        }
-                        {!isLoadingHistory &&
-                            <div className=' flex flex-col justify-between items-center py-[5%] h-4/6 relative '>
-                                {text.map((item, index) => (
-                                    <InputBoxforNP5
-                                        Next={Next}
-                                        index={index}
-                                        text={text}
-                                        setisError={setisError}
-                                        isDuplicateShemaCode={isDuplicateShemaCode}
-                                        setisDuplicateShemaCode={setisDuplicateShemaCode}
-                                        FindSchemaCode={FindSchemaCode}
-                                        InitialData={[text[0].value, text[1].value, text[2].value]}
-                                    >
-                                    </InputBoxforNP5>
-                                ))}
-                                {isLoading &&
-                                    <div className=' absolute ml-[52%] mt-[4%] scale-50'>
-                                        <CircularProgress className=" text-white" sx={{
-                                            width: 100,
-                                            color: 'white',
-                                        }}
-                                        ></CircularProgress>
-                                    </div>
-                                }
-                            </div>
-                        }
-                        {isLoadingHistory &&
-                            <div className=' w-full h-full flex justify-center items-center scale-[500%]'>
-                                <CircularProgress className=" text-white" sx={{
-                                    width: 1000,
-                                    color: 'white',
-                                }}
-                                ></CircularProgress>
-                            </div>
-                        }
-                        <div className=' w-full flex justify-start  '>
-                            <GobackButtonValidate BackPage={'/'} goBackCondition={(text[0].value === "" && text[1].value === "" && text[2].value === "")}></GobackButtonValidate>
+                            <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
                         </div>
+                    }
+                    {!isLoadingHistory &&
+                        <div className=' flex flex-col justify-between items-center py-[5%] h-4/6 relative '>
+                            {text.map((item, index) => (
+                                <InputBoxforNP5
+                                    setNext={setNext}
+                                    Next={Next}
+                                    index={index}
+                                    text={text}
+                                    setisError={setisError}
+                                    isDuplicateShemaCode={isDuplicateShemaCode}
+                                    setisDuplicateShemaCode={setisDuplicateShemaCode}
+                                    FindSchemaCode={FindSchemaCode}
+                                    InitialData={[text[0].value, text[1].value, text[2].value]}
+                                >
+                                </InputBoxforNP5>
+                            ))}
+                            {isLoading &&
+                                <div className=' z-50 absolute ml-[52%] mt-[4%] scale-50'>
+                                    <CircularProgress className=" text-white" sx={{
+                                        width: 100,
+                                        color: 'white',
+                                    }}
+                                    ></CircularProgress>
+                                </div>
+                            }
+                        </div>
+                    }
+                    {isLoadingHistory &&
+                        <div className=' w-full h-full flex justify-center items-center scale-[500%]'>
+                            <CircularProgress className=" text-white" sx={{
+                                width: 1000,
+                                color: 'white',
+                            }}
+                            ></CircularProgress>
+                        </div>
+                    }
+                    <div className=' w-full flex justify-start  '>
+                        <GobackButtonValidate BackPage={'/'} goBackCondition={(text[0].value === "" && text[1].value === "" && text[2].value === "")}></GobackButtonValidate>
                     </div>
-                    <div className='h-5/6 flex flex-col items-end '>
-                        <Conectwalet></Conectwalet>
+                </div>
+                <div className='h-5/6 flex flex-col items-end '>
+                    <Conectwalet></Conectwalet>
+                    <div className='z-50 h-[414px]'>
                         <WhiteBox
                             Title={'Schema Code'}
                             DeTail={'A schema code serves as an identifier for your Gen 2 NFT definition. It can be in a formatted or free-text format. In the case of a formatted code, the initial set of characters before the full stop (".") represents your organization code. This organization code is unique to you and enables you to create other schemas using the same code.'}
-                            Height={414} Width={266} TitleSize={20} DetailSize={15}>
+                            Height={380} Width={266} TitleSize={20} DetailSize={15}>
                         </WhiteBox>
+                    </div>
+                    <div className=' z-50 h-[414px]'>
                         <WhiteBox
                             Title={'Collection Name'}
                             DeTail={'The term "Collection name" is exclusively used within the SIX Protocol Ecosystem (Gen2 Studio, SIX Scan, etc.) and does not refer to the actual collection name.'}
-                            Height={414} Width={266} TitleSize={20} DetailSize={15}>
+                            Height={214} Width={266} TitleSize={20} DetailSize={15}>
                         </WhiteBox>
-                        <div onClick={() => { handleNext(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
-                            <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
-                        </div>
-                        <div className=' w-full h-full flex justify-end items-end '>
-                            <Help></Help>
-                        </div>
+                    </div>
+                    <div onClick={() => { handleNext(); }} className=' w-full h-full flex justify-center items-end  mt-8'>
+                        <BoxButton BorderRadius={0} FontSize={30} TextTitle={'NEXT'}></BoxButton>
+                    </div>
+                    <div className=' w-full h-full flex justify-end items-end '>
+                        <Help></Help>
                     </div>
                 </div>
-                {isError &&
-                    <div className='absolute duration-500' onClick={handleReset}>
-                        <Darkbg ></Darkbg>
-                        {/* <AlertCard BG={1} ML={250} MT={-150} Width={300} Height={150} heaDer="Error" detailsText="This code has already been taken or include space , empthy text."  ></AlertCard> */}
-                    </div>
-                }
             </div>
+            {isError &&
+                <div className='absolute duration-500' onClick={handleReset}>
+                    <Darkbg ></Darkbg>
+                    {/* <AlertCard BG={1} ML={250} MT={-150} Width={300} Height={150} heaDer="Error" detailsText="This code has already been taken or include space , empthy text."  ></AlertCard> */}
+                </div>
+            }
         </div>
-    )
+    </div>
+)
 }
 
 export default NewIntregation5

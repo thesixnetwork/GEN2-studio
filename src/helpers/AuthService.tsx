@@ -43,6 +43,7 @@ const ORIGIN_CONTRACT_ADDRESS='origin_contract_address';
 const SCHEMA_CODE ="SCHEMA_CODE";
 const ACTION_NAME= "";
 
+
 export const saveTokensToLocalStorage = (accessToken: string, refreshToken: string) => {
   const encryptedAccessToken = encryptWithAES(accessToken);
   const encryptedRefreshToken = encryptWithAES(refreshToken);
@@ -53,6 +54,8 @@ export const saveTokensToLocalStorage = (accessToken: string, refreshToken: stri
 export const saveActionName = (ActionName :string) => {
   localStorage.setItem(ACTION_NAME, ActionName);
 };
+
+
 
 export const getActionName = () => {
   return localStorage.getItem(ACTION_NAME)

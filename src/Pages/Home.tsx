@@ -9,16 +9,20 @@ import Conectwalet from "../component/Connectwallet";
 import { useNavigate } from "react-router-dom";
 import WhiteBox from "../component/WhiteBox";
 import axios from "axios";
-import { getAccessTokenFromLocalStorage } from "../helpers/AuthService";
+import { getAccessTokenFromLocalStorage, getOriginContractAddressFromLocalStorage } from "../helpers/AuthService";
 import HomeDraftCard from "../component/HomeDraftCard";
 import { Skeleton, styled } from "@mui/material";
 
 import { ISchemaInfo } from "../types/Nftmngr";
 import { Box, Flex, Text, } from "@chakra-ui/react";
 
+import walletcounterSlice, {walletcounterSelector} from "../store/slices/walletcounterSlice";
+import { useSelector } from "react-redux";
+
 
 
 const Home = () => {
+  const walletcounterReducer = useSelector(walletcounterSelector);
   const [listDraft, setlistDraft] = React.useState([]);
   const [Data, setData] = React.useState([]);
   const [listTestnet, setListTestnet] = React.useState<ISchemaInfo[]>([]);
@@ -122,11 +126,11 @@ const Home = () => {
 
   useEffect(() => {
     getOriginAttributFromContract();
-  }, []);
+  }, [walletcounterReducer.cosmosaddress]);
 
   useEffect(() => {
     getDataTestnet();
-  }, []);
+  }, [walletcounterReducer.cosmosaddress]);
 
   useEffect(() => {
     console.log("Listdraft:", listDraft);
@@ -145,7 +149,7 @@ const Home = () => {
     return imgUrl;
   };
 
- 
+
 
 
 
@@ -200,7 +204,7 @@ const Home = () => {
                   listDraft &&
                   listDraft.map((item, index) => (
                     <div
-                   
+
                     >
                       {/* <HomeDraftCard CollectionName={item.schema_name} CollectionImage={getImg(item.schema_info[0].schema_info.origin_data.origin_base_uri)}></HomeDraftCard> */}
                       <HomeDraftCard

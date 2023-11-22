@@ -7,7 +7,7 @@ import logo5 from "../pic/X.png";
 import { StargateClient } from "@cosmjs/stargate";
 import { Navigate, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
+
 //Redux
 import { useSelector } from "react-redux";
 import {

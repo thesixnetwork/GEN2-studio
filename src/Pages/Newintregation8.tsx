@@ -336,14 +336,14 @@ export default function Newintregation8() {
         <div className=" relative w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
             {!isLoadingHistory &&
-              <div className=' h-1/6'>
+              <div className=' h-[10%]'>
                 <div className='flex flex-rows justify-between'>
                   <Stepper2 CurrentState={currentState} ActiveStep={4}></Stepper2>
                 </div>
                 <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
               </div>
             }
-            <div className="w-full h-[700px] overflow-scroll flex  justify-start relative">
+            <div className="w-full h-[80%] mt-4 overflow-scroll flex  justify-start relative">
               {!isLoadingHistory &&
                 <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-5  absolute">
                   {text.map((item, index) => (

@@ -34,7 +34,7 @@ export default function GobackButton(props: MyComponentProps) {
     }
 
     return (
-        <Tooltip title="Go back">
+        <Tooltip title="Go back" className='justify-center items-center '>
             <img onClick={goback} width="50px" height="50px" src={Goblackbutton} className='hover:scale-125 duration-500 hover:opacity-70 cursor-pointer'></img>
         </Tooltip>
 

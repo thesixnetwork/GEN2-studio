@@ -211,6 +211,29 @@ const NewIntregation7 = () => {
 
   }
 
+  const handleReset = () => {
+
+    Swal.fire({
+      title: 'Are you sure reset ?',
+      text: "Your draft will be reset",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#7A8ED7',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, reset data'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        if (getSCHEMA_CODE()) {
+          GethistoryFormSchemaCode()
+        } else {
+          getOriginAttributFromContract()
+        }
+      }
+    })
+
+  }
+
   const getOriginAttributFromContract = async () => {
 
     const apiUrl = `${import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO}schema/origin_attribute_from_baseuri/${getOriginContractAddressFromLocalStorage()}`; // Replace with your API endpoint
@@ -229,17 +252,6 @@ const NewIntregation7 = () => {
       headers: headers, // Pass headers as an object
     })
       .then((response) => {
-        // Handle successful response here
-        // console.log('Response:', response.data.data.origin_attributes);
-
-        // Map the "origin_attributes" data and update the state
-        // const updatedText = response.data.data.origin_attributes.map((attribute, index) => ({
-        //   name: attribute.name,
-        //   dataType: attribute.data_type,
-        //   traitType: attribute.display_option.opensea.trait_type,
-        //   Error: "",
-        // }));
-        // console.log(response.data)
         if (response.data.data.origin_attributes === undefined) {
           setText([])
         } else {
@@ -253,10 +265,6 @@ const NewIntregation7 = () => {
       });
   }
 
-  // useEffect(() => {
-  //   getOriginAttributFromContract()
-
-  // }, [])
 
   const GethistoryFormSchemaCode = async () => {
     // const updatedText = [...text];
@@ -285,11 +293,6 @@ const NewIntregation7 = () => {
         } else {
           setText(response.data.data.schema_info.schema_info.origin_data.origin_attributes);
         }
-        // const updatedText = [...text];
-        // updatedText[0].value = response.data.data.schema_info.schema_name;
-        // updatedText[1].value = response.data.data.schema_info.schema_info.name;
-        // updatedText[2].value = response.data.data.schema_info.schema_info.description;
-        // console.log(text)
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -339,18 +342,18 @@ const NewIntregation7 = () => {
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
-          <div className="w-full h-full px-[20px] relative">
+          <div className="w-full h-full px-[20px] relative ">
             {!isLoadingHistory &&
-              <div className=' h-1/6'>
+              <div className=' h-[10%]'>
                 <div className='flex flex-rows justify-between'>
                   <Stepper2 CurrentState={currentState} ActiveStep={3}></Stepper2>
                 </div>
                 <div className='w-[931px] h-[1px] bg-[#D9D9D9]'></div>
               </div>
             }
-            <div className="w-full h-[80%] overflow-scroll flex  justify-start relative">
+            <div className="w-full h-[80%] mt-4 overflow-scroll flex  justify-start     relative">
               {!isLoadingHistory &&
-                <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-3   absolute ">
+                <div className="grid-cols-3 grid gap-y-8 gap-x-10 px-2 py-3 absolute ">
                   {text !== undefined && text.map((item, index) => (
                     <AttributeBox
                       Title={["abc", "123", "Y/N"]}
@@ -430,7 +433,7 @@ const NewIntregation7 = () => {
 
               className=" w-full mt-[20px] flex items-center justify-between px-2 "
             >
-              <div onClick={getOriginAttributFromContract} >
+              <div onClick={handleReset} >
                 <NormalButton TextTitle="RESET" BorderRadius={0} FontSize={32}></NormalButton>
               </div>
               <div onClick={handleSave} >

@@ -27,6 +27,7 @@ interface MyComponentProps {
     >;
     helpStep: number;
     Next: boolean;
+    setNext: React.Dispatch<React.SetStateAction<boolean>>;
     FindSchemaCode: any;
     isDuplicateShemaCode: boolean;
     setisDuplicateShemaCode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,7 +39,6 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     const [iser, setIser] = useState(false)
     const [inputValue, setInputValue] = useState(props.text[props.index].value);
     const [isDisabled, setIsDisabled] = useState(false)
-    console.log("inputValue :", inputValue)
 
     useEffect(() => {
         setInputValue(props.text[props.index].value);
@@ -74,32 +74,38 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         console.log("str : ", str)
         setIser(false)
         if (props.text[props.index].require) {
-            if (str==="") {
+            if (str === "") {
                 setErrorMessage("Not Availible")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (containsSpecialChars(str)) {
-                setErrorMessage("Speail Chars")
+                setErrorMessage("Special characters are not allowed")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (containsSpace(str)) {
-                setErrorMessage("Space")
+                setErrorMessage("Space are not allowed")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (containsUppercase(str)) {
-                setErrorMessage("Uppercase")
+                setErrorMessage("Uppercase are not allowed")
+                setIser(true)
+                updatedText[props.index].Error = false;
+                document.getElementById(`box${props.index}`).style.zIndex = "50";
+            }
+            else if (!(str.includes(".") && /^[^.]+\.[^.]+$/.test(str))){
+                setErrorMessage('Should separate with full stop (".")')
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (!props.text[0].duplicate) {
-                setErrorMessage("Duplicate schema_code")
+                setErrorMessage("Schema code is Duplicate")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
@@ -108,14 +114,6 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                 setIser(false)
                 updatedText[props.index].Error = true;
                 document.getElementById(`box${props.index}`).style.zIndex = "0";
-            }
-        }
-        else if (props.text[props.index].Name !== "Description") {
-            if (containsSpecialChars(str)) {
-                setErrorMessage("Speail Chars")
-                setIser(true)
-                updatedText[props.index].Error = false;
-                document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
         }
         else {
@@ -132,26 +130,26 @@ export default function InputBoxforNP5(props: MyComponentProps) {
         console.log(str)
         setIser(false)
         if (props.text[props.index].require) {
-             if (containsSpecialChars(str)) {
-                setErrorMessage("Speail Chars")
+            if (containsSpecialChars(str)) {
+                setErrorMessage("Special characters are not allowed")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (containsSpace(str)) {
-                setErrorMessage("Space")
+                setErrorMessage("Space are not allowed")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (containsUppercase(str)) {
-                setErrorMessage("Uppercase")
+                setErrorMessage("Uppercase are not allowed")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
             }
             else if (!props.text[0].duplicate) {
-                setErrorMessage("Duplicate schema_code")
+                setErrorMessage("Schema code is Duplicate")
                 setIser(true)
                 updatedText[props.index].Error = false;
                 document.getElementById(`box${props.index}`).style.zIndex = "50";
@@ -178,10 +176,12 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     }
 
     useEffect(() => {
-        console.log("TEXT:",props.text)
+        console.log("TEXT:asdasdas", props.text)
         if (props.Next) {
             saveCheckErrorI(props.text[props.index].value)
         }
+        props.setNext(false)
+    
     }, [, props.Next])
 
     // useEffect(()=>{
@@ -189,6 +189,7 @@ export default function InputBoxforNP5(props: MyComponentProps) {
     //         setIsDisabled(true)
     //     }
     // },[])
+    
 
     return (
         <div id={`box${props.index}`} className='relative w-[658px] h-[121px] border-[1px] border-white rounded-xl p-2 flex items-center justify-center  '>
@@ -200,9 +201,9 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                     // onChange={handleInputschemaCode}
                     onChange={async (e) => {
                         await handleChange(e);
-                        if (props.index === 0 ){
-                            if((getSCHEMA_CODE() !== e.target.value )){
-                                console.log("getSCHEMA_CODE",getSCHEMA_CODE() ,"e.target.value:",e.target.value)
+                        if (props.index === 0) {
+                            if ((getSCHEMA_CODE() !== props.text[0].value)) {
+                                console.log("getSCHEMA_CODE", getSCHEMA_CODE(), "e.target.value:", props.text[0].value)
                                 await props.FindSchemaCode();
                             }
                             await saveCheckErrorIOnChange(props.text[props.index].value);
@@ -215,8 +216,8 @@ export default function InputBoxforNP5(props: MyComponentProps) {
                 <div className={`w-[15px] h-[15px]  ${props.text[props.index].require ? 'bg-[#D9D9D9]' : 'bg-transparent'} rounded-full absolute border top-2 right-2`}></div>
             </div>
             {iser &&
-                <div className='mt-[8%] mr-[9%] absolute '>
-                    <RedAleart Height={20} Width={260} Rotate={0} ML={0} MT={2} detailsText={errorMessage} />
+                <div className='mt-[8%] mr-[12%] absolute '>
+                    <RedAleart Height={20} Width={280} Rotate={0} ML={0} MT={2} detailsText={errorMessage} />
                 </div>
             }
         </div>

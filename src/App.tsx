@@ -51,8 +51,33 @@ import DraftEditActionsThenTransfer from './Pages/DraftEditActionsThenTransfer.t
 import DraftEditActionsThenTranformStatic from './Pages/DraftEditActionsThenTranformStatic.tsx';
 import DraftEditActionsThenTranformDynamic from './Pages/DraftEditActionsThenTranformDynamic.tsx';
 import DraftEditOriginData from './Pages/DraftEditOriginData.tsx';
+import Swal from 'sweetalert2';
 export const ABCDE = () => {
   console.log("ABC")
+}
+
+export const loadingNext = () => {
+  let timerInterval = 500
+  Swal.fire({
+      title: 'Loading ...',
+      html: 'I will close in <b></b> milliseconds.',
+      timer: 500,
+      timerProgressBar: true,
+      didOpen: () => {
+          Swal.showLoading()
+          const b = Swal.getHtmlContainer().querySelector('b')
+          timerInterval = setInterval(() => {
+              b.textContent = Swal.getTimerLeft()
+          }, 100)
+      },
+      willClose: () => {
+          clearInterval(timerInterval)
+      }
+  }).then((result) => {
+      /* Read more about handling dismissals below */
+      if (result.dismiss === Swal.DismissReason.timer) {
+      }
+  })
 }
 // import dotenv from "dotenv";
 
