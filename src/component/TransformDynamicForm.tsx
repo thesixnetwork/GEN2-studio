@@ -18,7 +18,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
   const [isNext, setIsNext] = useState(false);
   const [imgFormat, setImgFormat] = useState("");
   const [tokenId, setTokenId] = useState("1");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onChange = (e: any) => {
@@ -50,6 +50,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
   };
 
   const saveAction = async () => {
+    setLoading(true);
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/set_actions`;
@@ -61,7 +62,6 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
         then: [convertMetaFunction(imgFormat, postfix)],
       },
     };
-
     await axios
       .post(apiUrl, requestData, {
         headers: {
@@ -133,11 +133,13 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
       })
       .catch((error) => {
         console.error("Error:", error);
+        setLoading(false);
       });
   };
 
   useEffect(() => {
-    props.isDraft && findImageUrl();
+    console.log("logger", props.schemaRevision)
+    props.schemaRevision !== "create-new-action" && props.isDraft && findImageUrl() && setIsNext(true);
   }, []);
 
   return (
@@ -152,9 +154,9 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
         ></CircularProgress>
       ) : (
         <>
-          <div className="border-2 border-white rounded-lg h-[600px] flex justify-center p-8">
+          <div className="border-2 border-white rounded-lg h-[560px] flex justify-center p-8">
             <div className="w-96 flex flex-col justify-between ">
-              <div className="mb-4">
+              <div className="mb-2">
                 <h2>Enter dynamic image path</h2>
                 <EastIcon></EastIcon>
                 <input
@@ -169,7 +171,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
                   value={imgSource}
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-2">
                 <h2>Enter origin image format</h2>
                 <EastIcon></EastIcon>
                 <select
@@ -189,7 +191,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
                   <option value=".gif">gif</option>
                 </select>
               </div>
-              <div className="mb-4">
+              <div className="mb-2">
                 <h2>Enter dynamic image prefix</h2>
                 <EastIcon></EastIcon>
                 <input
@@ -202,7 +204,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
                   value={postfix}
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-2">
                 <h2>Enter dynamic image postfix</h2>
                 <EastIcon></EastIcon>
                 <input
@@ -215,7 +217,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
                   value={postfix}
                 />
               </div>
-              <div className="flex flex-col justify-center items-center mb-4">
+              <div className="flex flex-col justify-center items-center mb-2">
                 <div className="bg-[#A2A3AA] border-2 border-white py-1 px-2">
                   Preview
                 </div>
@@ -261,7 +263,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
             </div>
           </div>
           {isNext && (
-            <div className="border-2 border-white rounded-lg h-[600px] flex  justify-center p-12">
+            <div className="border-2 border-white rounded-lg h-[560px] flex  justify-center p-12">
               <div className="w-96 flex flex-col justify-between items-center">
                 <div className=" flex flex-col justify-center items-center">
                   <h2 className="w-96 px-4 py-2 bg-[#A2A3AA] border-2 border-white text-center ">
@@ -289,7 +291,7 @@ const TransformDynamicForm = (props: TransformDynamicFormProps) => {
                         )}${tokenId}${postfix}${imgFormat}`}
                     </p>
                   </div>
-                  <div className=" h-60 object-contain my-8">
+                  <div className=" h-60 object-contain">
                     {imgSource !== "" && (
                       <img
                         src={`${checkBackslash(

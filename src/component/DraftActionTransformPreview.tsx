@@ -13,7 +13,7 @@ const DraftActionTransformPreview = (
     console.log("props.actions", props.actions);
     }, [props.actions]);
   return (
-    <div className="w-96 h-36 bg-[#D9D9D980] flex flex-col items-center justify-center rounded-md">
+    <div className="w-96 h-24 bg-[#D9D9D980] flex flex-col items-center justify-center rounded-md">
       {props.actions[0] == undefined ? (
         <CircularProgress
           className=" text-white"

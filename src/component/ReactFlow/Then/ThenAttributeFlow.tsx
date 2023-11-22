@@ -629,9 +629,9 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
             nodes[j].data.isSet = false;
           }
 
-          if (nodes[j].data.dataType === "boolean" && nodes[i].data.showType !== "setNode" ){
-            nodes[i].data.showType === "setNode"
-          }
+          // if (nodes[j].data.dataType === "boolean" && nodes[i].data.showType !== "setNode" ){
+          //   nodes[i].data.showType === "setNode"
+          // }
         }
 
         if (nodes[i].data.showType === "valueNode") {
@@ -1102,7 +1102,6 @@ const ThenAttributeFlow = (props: ThenAttributeFlowProps) => {
               TextTitle={"SAVE"}
             ></NormalButton>
           </div>
-          <button onClick={()=>console.log(nodes)}>here</button>
         </div>
       </div>
       <Flowbar

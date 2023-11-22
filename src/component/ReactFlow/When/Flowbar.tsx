@@ -195,7 +195,7 @@ export default function Flowbar(props: MetaDataProps) {
         <div className="items-end flex flex-col	pl-4">
           <div className="gap-y-2 flex flex-col">
             <div className="flex">
-              <Menu nodeName="notEqualNode" title="!=" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+              <Menu nodeName="notEqualNode" title="≠" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
               <Menu nodeName="equalNode" title="=" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
               <Menu nodeName="moreThanNode" title=">" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
               <Menu nodeName="moreThanAndEqualNode" title=">=" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>

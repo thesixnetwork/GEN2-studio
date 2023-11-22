@@ -184,7 +184,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
                 ></input>
               ) : (
                 <Tooltip title={data.desc}>
-                <span>
+                <span className="underline">
                   {data.desc !== undefined &&
                     convertStringIfTooLong(data.desc, 70)}
                 </span>
@@ -214,7 +214,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
                 />
               </button>
               <Tooltip title={data.when}>
-                <span>{convertStringIfTooLong(data.when, 70)}</span>
+                <span className="underline">{convertStringIfTooLong(data.when, 70)}</span>
               </Tooltip>
             </Link>
           </div>
@@ -223,7 +223,7 @@ const DraftActionPreviewCard = ({ data, param }) => {
           <p>Then:&nbsp;</p>
           <ul className="ml-8">
             {data.then.map((item, index) => (
-              <li key={index} className="list-disc w-96 flex items-center">
+              <li key={index} className="list-disc w-96 flex items-center underline">
                 <div className="flex items-center">
                   <Link
                     to={

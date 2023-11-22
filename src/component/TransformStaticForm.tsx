@@ -183,7 +183,7 @@ const TransformStaticForm = (props: TransformStaticFormProps) => {
       });
   };
   return (
-    <div className="h-[600px] border-2 border-white rounded-lg p-14">
+    <div className="h-[560px] border-2 border-white rounded-lg p-8">
       <h2>Enter static image path</h2>
       <div>
         <EastIcon></EastIcon>

@@ -19,6 +19,7 @@ const DraftEditActionsThenTranformDynamic = () => {
   const param = useParams();
 
   const findSchemaCode = async () => {
+    setLoading(true)
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
     }schema/get_schema_info/${param.schema_revision}`;
@@ -40,9 +41,11 @@ const DraftEditActionsThenTranformDynamic = () => {
           );
         setActions(actions);
         console.log("->>>", actions);
+        setLoading(false)
       })
       .catch((error) => {
         console.error("Error:", error);
+        setLoading(false)
       });
   };
 
@@ -54,7 +57,7 @@ const DraftEditActionsThenTranformDynamic = () => {
     <div className="w-full flex justify-center ">
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
-          <div className="w-full h-full flex flex-col items-center justify-center my-4">
+          <div className="w-full h-full flex flex-col items-center justify-center my-4 py-12">
             {loading ? (
               <div className="w-full h-full flex justify-center items-center">
                 <CircularProgress

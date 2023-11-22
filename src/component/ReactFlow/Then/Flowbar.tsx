@@ -4,6 +4,7 @@ import { styled } from "@mui/material";
 import { Button, Modal, Box, Typography } from "@mui/material";
 import { useState } from "react";
 import OpenAI from "openai";
+import Swal from "sweetalert2";
 
 interface FlowbarProps {
   metaData: string;
@@ -88,9 +89,17 @@ export default function Flowbar(props: FlowbarProps) {
 
   const handleCreate = () => {
     setOpen(false);
-    props.setMetaData(outputFromGPT);
-    props.setIsGenerateGPT(true);
-    console.log(">>", props.metaData);
+    if (!outputFromGPT.startsWith("meta")) {
+      Swal.fire({
+        icon: "error",
+        title: "Output must start with meta",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    } else {
+      props.setMetaData(outputFromGPT);
+      props.setIsGenerateGPT(true);
+    }
   };
 
   const handleInput = (e) => {
@@ -125,15 +134,15 @@ export default function Flowbar(props: FlowbarProps) {
                 Generate trees by input
               </Typography>
               <input
-                  id="1"
-                  type="text"
-                  autoFocus
-                  className={`text-black bg-transparent text-md border-[1px] focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed border-[#D9D9D9DD] p-1 focus:outline-none focus:scale-105 duration-1000 w-[100%] h-[${20}px]`}
-                  placeholder={""}
-                  onChange={(e) => {
-                    handleInput(e);
-                  }}
-                />
+                id="1"
+                type="text"
+                autoFocus
+                className={`text-black bg-transparent text-md border-[1px] focus:border-[#D9D9D9DD] placeholder-gray-300 border-dashed border-[#D9D9D9DD] p-1 focus:outline-none focus:scale-105 duration-1000 w-[100%] h-[${20}px]`}
+                placeholder={""}
+                onChange={(e) => {
+                  handleInput(e);
+                }}
+              />
               <div className="w-full flex justify-center gap-x-4">
                 <Button variant="outlined" onClick={processGPT}>
                   processGPT
@@ -172,24 +181,48 @@ export default function Flowbar(props: FlowbarProps) {
               {props.selectedAttribute === "number" ||
               props.selectedAttribute === "float" ? (
                 <>
-                  <Menu nodeName="increaseNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode} />
-                  <Menu nodeName="decreaseNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode} />
-                  <Menu nodeName="setNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode} />
+                  <Menu
+                    nodeName="increaseNode"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="decreaseNode"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
+                  <Menu
+                    nodeName="setNode"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
                 </>
               ) : props.selectedAttribute === "boolean" ? (
                 <>
-                  <Menu nodeName="setNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                  <Menu
+                    nodeName="setNode"
+                    handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                  />
                 </>
               ) : props.selectedAttribute === "string" ? (
-                <Menu nodeName="setNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                <Menu
+                  nodeName="setNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
               ) : null}
             </div>
             <div className="flex flex-col justify-center items-center gap-y-2 mb-20">
               <h2>Available Operand</h2>
               <div className="flex">
-                <Menu nodeName="valueNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
-                <Menu nodeName="attributeNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
-                <Menu nodeName="paramNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                <Menu
+                  nodeName="valueNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="attributeNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="paramNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
               </div>
             </div>
           </>
@@ -198,9 +231,18 @@ export default function Flowbar(props: FlowbarProps) {
             <div className="flex flex-col items-center justify-center">
               <h2 className="pb-2">Available Operand</h2>
               <div className="flex">
-                <Menu nodeName="valueNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
-                <Menu nodeName="attributeNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
-                <Menu nodeName="paramNode" handleDoubleClickAddNode={props.handleDoubleClickAddNode}/>
+                <Menu
+                  nodeName="valueNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="attributeNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
+                <Menu
+                  nodeName="paramNode"
+                  handleDoubleClickAddNode={props.handleDoubleClickAddNode}
+                />
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Tooltip } from "@mui/material";
 
 import Conectwalet from "../component/Connectwallet";
@@ -13,7 +13,7 @@ import {
   getSCHEMA_CODE,
 } from "../helpers/AuthService";
 import axios from "axios";
-
+import DraftActionTransformPreview from "../component/DraftActionTransformPreview";
 import TransformDynamicForm from "../component/TransformDynamicForm";
 
 const NewIntregationThenTransformDynamic = () => {
@@ -24,6 +24,7 @@ const NewIntregationThenTransformDynamic = () => {
   const [isNext, setIsNext] = useState(false);
   const [imgFormat, setImgFormat] = useState("");
   const [tokenId, setTokenId] = useState("1");
+  const [actions, setActions] = useState([]);
 
   const onChange = (e: any) => {
     setImgSource(e.target.value);
@@ -89,6 +90,36 @@ const NewIntregationThenTransformDynamic = () => {
       });
   };
 
+  const findSchemaCode = async () => {
+    const apiUrl = `${
+      import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
+    }schema/get_schema_info/${getSCHEMA_CODE()}`;
+    const params = {};
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`,
+    };
+    await axios
+      .get(apiUrl, {
+        params: params,
+        headers: headers,
+      })
+      .then((response) => {
+        const actions =
+          response.data.data.schema_info.schema_info.onchain_data.actions.filter(
+            (action) => action.name === getActionName()
+          );
+        setActions(actions);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  useEffect(() => {
+    findSchemaCode();
+  }, []);
+
   const saveImageUrl = async () => {
     const apiUrl = `${
       import.meta.env.VITE_APP_API_ENDPOINT_SCHEMA_INFO
@@ -132,11 +163,14 @@ const NewIntregationThenTransformDynamic = () => {
               </div>
               <Conectwalet></Conectwalet>
             </div>
+            <div className="w-full h-[88%] flex flex-col items-center justify-between py-4">
+            <DraftActionTransformPreview actions={actions} />
             <TransformDynamicForm
               isDraft={false}
               actionName={getActionName()}
               schemaRevision={getSCHEMA_CODE()}
             />
+            </div>
           </div>
         </div>
         <Tooltip title={"help"}>

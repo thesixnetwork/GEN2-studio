@@ -106,7 +106,7 @@ const WhenFlow = (props: WhenFlowProps) => {
   const [updatedNodes, setUpdatedNodes] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [isGenerateGPT, setIsGenerateGPT] = useState(false);
-  
+
   const nodeTypes = useMemo(() => {
     return {
       customInputNode: InputNode,
@@ -604,6 +604,16 @@ const WhenFlow = (props: WhenFlowProps) => {
               Swal.fire(
                 "First node can't be value node, attribute node or param node"
               );
+            } else if (
+              (type == "moreThanNode" ||
+              type == "lessThanNode" ||
+              type == "moreThanAndEqualNode" ||
+              type == "lessThanAndEqualNode")
+              && node.data.dataType === "boolean"
+            ) {
+              Swal.fire(
+                "The boolean type can only be used with the equal node (==) or not equal node (!=) ."
+              );
             } else {
               updatedNodes.push(updateNode(node, type));
               setNodes(updatedNodes);
@@ -634,6 +644,19 @@ const WhenFlow = (props: WhenFlowProps) => {
           ) {
             nodes[j].data.dataType = nodes[i].data.dataType;
             nodes[j].data.isFetch = nodes[i].data.isFetch;
+          }
+
+          if (
+            nodes[i].id === nodes[j].data.parentNode &&
+            (nodes[i].data.showType === "equalNode" ||
+              nodes[i].data.showType === "notEqualNode" ||
+              nodes[i].data.showType === "moreThanNode" ||
+              nodes[i].data.showType === "lessThanNode" ||
+              nodes[i].data.showType === "moreThanAndEqualNode" ||
+              nodes[i].data.showType === "lessThanAndEqualNode") &&
+            nodes[j].data.showType === "attributeNode"
+          ) {
+            nodes[j].data.condition = nodes[i].data.value;
           }
 
           if (
@@ -1030,7 +1053,7 @@ const WhenFlow = (props: WhenFlowProps) => {
                 type == "paramNode")
             ) {
               Swal.fire(
-                "First node can't be value node, attribute node, or param node"
+                "First node can't be value node, attribute node or param node"
               );
             } else {
               updatedNodes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
@@ -1175,9 +1198,8 @@ const WhenFlow = (props: WhenFlowProps) => {
                 TextTitle={"SAVE"}
               ></NormalButton>
             </div>
-            <button onClick={() => console.log(nodes)}>here</button>
-            <button onClick={handleDoubleClickAddNode}>let's go</button>
           </div>
+          <button onClick={() => console.log(nodes)}>here</button>
         </div>
       </div>
     </div>

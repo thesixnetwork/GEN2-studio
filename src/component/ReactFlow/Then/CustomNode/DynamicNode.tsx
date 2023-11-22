@@ -443,18 +443,35 @@ const DynamicNode = (props: CircleNodeProps) => {
                     : "bg-opacity-40"
                 }`}
               >
-                Yes
+                <span
+                  onClick={(e) => handleClickValueNode(e)}
+                  id="yes"
+                  className={
+                    selectedValueNode === "yes" ? "font-bold" : "font-normal"
+                  }
+                >
+                  Yes
+                </span>
               </div>
               <div
                 onClick={(e) => handleClickValueNode(e)}
                 id="no"
+              
                 className={`cursor-pointer rounded-r-full hover:scale-110 duration-500 w-10 h-6  flex justify-center items-center bg-white ${
                   selectedValueNode === "no"
                     ? "bg-opacity-100"
                     : "bg-opacity-40"
                 }`}
               >
-                No
+                <span
+                  onClick={(e) => handleClickValueNode(e)}
+                  id="no"
+                  className={
+                    selectedValueNode === "no" ? "font-bold" : "font-normal"
+                  }
+                >
+                  No
+                </span>
               </div>
             </div>
           </>

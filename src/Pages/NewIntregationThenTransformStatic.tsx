@@ -1,11 +1,14 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Tooltip } from "@mui/material";
-
 
 import Conectwalet from "../component/Connectwallet";
 import Stepper2 from "../component/Stepper2";
 import Darkbg from "../component/Alert/Darkbg";
-import {  getAccessTokenFromLocalStorage,getActionName, getSCHEMA_CODE } from "../helpers/AuthService";
+import {
+  getAccessTokenFromLocalStorage,
+  getActionName,
+  getSCHEMA_CODE,
+} from "../helpers/AuthService";
 import TransformStaticForm from "../component/TransformStaticForm";
 import DraftActionTransformPreview from "../component/DraftActionTransformPreview";
 import axios from "axios";
@@ -55,7 +58,7 @@ const NewIntregationThenTransformStatic = () => {
               </div>
               <Conectwalet></Conectwalet>
             </div>
-               <div className="w-full h-full flex flex-col items-center justify-between py-4">
+            <div className="w-full h-[88%] flex flex-col items-center justify-between py-4">
               <DraftActionTransformPreview actions={actions} />
               <TransformStaticForm
                 isDraft={false}

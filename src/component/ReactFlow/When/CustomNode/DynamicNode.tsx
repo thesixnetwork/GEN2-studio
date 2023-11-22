@@ -12,9 +12,10 @@ interface CircleNodeProps {
   data: {
     id: string;
     showType: string;
-    value: any;
+    value: string | boolean | number;
     dataType: string;
     isFetch: boolean;
+    condition: string;
   };
 }
 
@@ -55,6 +56,7 @@ const DynamicNode = (props: CircleNodeProps) => {
     });
 
     setAttributeOption(tempArr);
+    console.log("!!---->", attributeOption);
   };
 
   const handleDragEnter = () => {
@@ -151,7 +153,6 @@ const DynamicNode = (props: CircleNodeProps) => {
   useEffect(() => {
     setValueNodeType(props.data.dataType);
     const { nodeInternals } = store.getState();
-    console.log("+++++++", window.location.pathname);
     if (
       props.data.showType === "valueNode" &&
       props.data.dataType === "boolean" &&
@@ -230,7 +231,6 @@ const DynamicNode = (props: CircleNodeProps) => {
     >
       <Handle type="target" position={Position.Top} />
       <div className="flex items-center justify-center">
-        <button onClick={() => console.log(valueNodeType)}>log</button>
         {valueNodeType === "boolean" ? (
           <>
             <p className={`${hovered ? "text-indigo-600" : "text-gray-600"}`}>
@@ -247,18 +247,34 @@ const DynamicNode = (props: CircleNodeProps) => {
                     : "bg-opacity-40"
                 }`}
               >
-                Yes
+                <span
+                  onClick={(e) => handleClickValueNode(e)}
+                  id="yes"
+                  className={
+                    selectedValueNode === "yes" ? "font-bold" : "font-normal"
+                  }
+                >
+                  Yes
+                </span>
               </div>
               <div
                 onClick={(e) => handleClickValueNode(e)}
                 id="no"
                 className={`cursor-pointer rounded-r-full hover:scale-110 duration-500 w-10 h-6  flex justify-center items-center bg-white ${
                   selectedValueNode === "no"
-                    ? "bg-opacity-100"
-                    : "bg-opacity-40"
+                    ? "bg-opacity-100 font-bold"
+                    : "bg-opacity-40 font-normal"
                 }`}
               >
-                No
+                <span
+                  onClick={(e) => handleClickValueNode(e)}
+                  id="no"
+                  className={
+                    selectedValueNode === "no" ? "font-bold" : "font-normal"
+                  }
+                >
+                  No
+                </span>
               </div>
             </div>
           </>
@@ -281,7 +297,6 @@ const DynamicNode = (props: CircleNodeProps) => {
           </>
         )}
       </div>
-      <Handle type="source" position={Position.Bottom} id="a" />
     </div>
   ) : props.data.showType === "attributeNode" ? (
     <div
@@ -319,6 +334,11 @@ const DynamicNode = (props: CircleNodeProps) => {
                 name: item.name,
                 dataType: item.dataType,
               })}
+              disabled={
+                props.data.condition !== "equal" &&
+                props.data.condition !== "notEqual" &&
+                item.dataType === "boolean"
+              }
             >
               {item.name}
             </option>
@@ -418,7 +438,7 @@ const DynamicNode = (props: CircleNodeProps) => {
           : props.data.showType === "equalNode"
           ? "="
           : props.data.showType === "notEqualNode"
-          ? "!="
+          ? "≠"
           : props.data.showType === "moreThanNode"
           ? ">"
           : props.data.showType === "moreThanAndEqualNode"

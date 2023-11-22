@@ -44,7 +44,7 @@ const DraftEditActionsThenTranformStatic = () => {
       <div className="w-full h-full fixed  flex justify-center items-center bg-gradient-24  from-white to-[#7A8ED7]">
         <div className="w-[1280px] h-[832px] bg-gradient-24 to-gray-700 from-gray-300 rounded-2xl flex justify-between p-4 shadow-lg shadow-black/20 dark:shadow-black/40">
           <div className="w-full h-full px-[20px]">
-            <div className="w-full h-full flex flex-col items-center justify-between py-4">
+            <div className="w-full h-full flex flex-col items-center justify-between py-12">
               <DraftActionTransformPreview actions={actions} />
               <TransformStaticForm
                 isDraft={true}
