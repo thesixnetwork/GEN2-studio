@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { 
-  // Select, 
-  // MenuItem, 
-  styled, 
-  // InputBase 
+import {
+  // Select,
+  // MenuItem,
+  styled,
+  // InputBase
 } from "@mui/material";
 import Swal from "sweetalert2";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -13,6 +13,54 @@ import RedAleart from "./Alert/RedAleart";
 // import { ErrorMessage } from "@hookform/error-message";
 import AlertCard from "./Alert/AlertCard";
 // import { border } from "@chakra-ui/react";
+
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useAutocomplete } from "@mui/base/useAutocomplete";
+
+const Label = styled("label")({
+  display: "block",
+});
+
+const Input = styled("input")(({ theme }) => ({
+  width: "140px",
+  backgroundColor:
+    theme.palette.mode === "light" ? "transparent" : "transparent",
+  color: theme.palette.mode === "light" ? "#000" : "#fff",
+  fontSize: "14px",
+  border: "1px solid #D9D9D9DD",
+  "border-style": "dashed",
+  outline: "none",
+  padding: "1px",
+  "&:focus": {
+    outline: "none",
+    transform: "scale(1.05)",
+    transition: "all 1000ms",
+  },
+}));
+
+const Listbox = styled("ul")(({ theme }) => ({
+  width: 200,
+  margin: 0,
+  padding: 0,
+  zIndex: 1,
+  position: "absolute",
+  listStyle: "none",
+  backgroundColor: theme.palette.mode === "light" ? "#fff" : "#000",
+  overflow: "auto",
+  maxHeight: 200,
+  border: "1px solid rgba(0,0,0,.25)",
+  "& li.Mui-focused": {
+    backgroundColor: "#4a8df6",
+    color: "white",
+    cursor: "pointer",
+  },
+  "& li:active": {
+    backgroundColor: "#2977f5",
+    color: "white",
+  },
+}));
 
 interface MyComponentProps {
   State: number;
@@ -155,6 +203,8 @@ export default function AttributeBox(props: MyComponentProps) {
       .replace(/(\b\w)/g, (char) => char.toUpperCase())
       .replace(/_/g, " ");
     setIsSuggest(result);
+    const resultArray = [result];
+    setOptionsArray(resultArray);
   };
 
   // const handleChangetrait_type = (e, path) => {
@@ -476,9 +526,7 @@ export default function AttributeBox(props: MyComponentProps) {
       await SavecheckErrorIII();
       if (partII) {
         SavecheckErrorII();
-        if (
-          await SavecheckErrorII()
-        ) {
+        if (await SavecheckErrorII()) {
           SavecheckErrorII();
           //   console.log("COCO:", SavecheckErrorII(props.text[props.index].value));
           if (await SavecheckErrorII()) {
@@ -487,7 +535,8 @@ export default function AttributeBox(props: MyComponentProps) {
             updatedText[props.index]["Error"] = "T";
             props.setText(updatedText);
           } else {
-            document.getElementById(props.index.toString())!.style.zIndex = "50";
+            document.getElementById(props.index.toString())!.style.zIndex =
+              "50";
             props.setIsShow(true);
           }
         } else {
@@ -505,7 +554,6 @@ export default function AttributeBox(props: MyComponentProps) {
 
     // props.setEnum(0)
   };
-  
 
   // const [selectedItem, setSelectedItem] = useState("Icon0");
   const [selectedItemValue, setSelectedItemValue] = useState("Icon4");
@@ -562,7 +610,7 @@ export default function AttributeBox(props: MyComponentProps) {
         },
       };
     } else if (e.target.id == "boolean") {
-      updatedText[props.index]["data_type"] = "boolean";  
+      updatedText[props.index]["data_type"] = "boolean";
       updatedText[props.index]["default_mint_value"] = {
         boolean_attribute_value: {
           value: true,
@@ -600,6 +648,33 @@ export default function AttributeBox(props: MyComponentProps) {
       };
     }
     props.setText(updatedText);
+  };
+
+  // const optionsArray = ["Option 1", "Option 2", "Option 3"];
+  const [optionsArray, setOptionsArray] = useState<string[]>([]);
+
+  const {
+    getRootProps,
+    getInputLabelProps,
+    getInputProps,
+    getListboxProps,
+    getOptionProps,
+    groupedOptions,
+  } = useAutocomplete({
+    id: "use-autocomplete-demo",
+    options: optionsArray,
+    getOptionLabel: (option) => option,
+    onInputChange: (event, newValue) => {
+      const inputValue = newValue;
+      handleSuggest(inputValue);
+      handleChange(event, "display_option.opensea.trait_type");
+      setIsSuggest(inputValue);
+      SavecheckErrorII();
+    },
+  });
+
+  const handleSuggest = (e) => {
+    console.log("ddddddd", e);
   };
 
   return (
@@ -694,7 +769,7 @@ export default function AttributeBox(props: MyComponentProps) {
             </div>
           </div>
         </div>
-        <div className="flex text-[14px] items-center">
+        {/* <div className="flex text-[14px] items-center">
           Trait type :&ensp;{" "}
           <input
             type="text"
@@ -708,7 +783,26 @@ export default function AttributeBox(props: MyComponentProps) {
             className="bg-transparent text-[14px] border-[1px] border-[#D9D9D9DD] placeholder-gray-300 border-dashed p-1 focus:outline-none focus:scale-105 duration-1000 w-[140px]"
             placeholder="Add trait type here"
           />
+        </div> */}
+        <div>
+          <div
+            className="flex text-[14px] items-center h-8"
+            {...getRootProps()}
+          >
+            <Label {...getInputLabelProps()}>Trait type : </Label>
+            <Input
+              {...getInputProps()}
+            />
+          </div>
+          {groupedOptions.length > 0 ? (
+            <Listbox {...getListboxProps()}>
+              {(groupedOptions as typeof optionsArray).map((option, index) => (
+                <li {...getOptionProps({ option, index })}>{option}</li>
+              ))}
+            </Listbox>
+          ) : null}
         </div>
+
         <div className="flex text-[14px] items-center h-8">
           Value :&ensp;{" "}
           {props.text[props.index]["default_mint_value"][

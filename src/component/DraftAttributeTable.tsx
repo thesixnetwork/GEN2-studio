@@ -159,6 +159,7 @@ const DraftAttributeTable = ({
 
   useEffect(() => {
     console.log("---?");
+    
   }, [type, data]);
 
   const addDataTable = async () => {
@@ -220,9 +221,15 @@ const DraftAttributeTable = ({
   };
 
   const handelDel = (index: number) => {
+    console.log(index)
     data.splice(index, 1);
+    console.log("data, ",data)
     setIsData(data);
   }
+
+  useEffect(() => {
+    setIsData(isData)
+  }, [isData]);
 
   const handelErrValue = (e) => {
     console.log("kkkk ==>",e)
