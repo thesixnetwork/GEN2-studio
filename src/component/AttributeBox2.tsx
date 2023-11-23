@@ -14,9 +14,9 @@ import RedAleart from "./Alert/RedAleart";
 import AlertCard from "./Alert/AlertCard";
 // import { border } from "@chakra-ui/react";
 
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
-import Autocomplete from "@mui/material/Autocomplete";
+// import TextField from "@mui/material/TextField";
+// import Stack from "@mui/material/Stack";
+// import Autocomplete from "@mui/material/Autocomplete";
 import { useAutocomplete } from "@mui/base/useAutocomplete";
 
 const Label = styled("label")({
@@ -27,12 +27,12 @@ const Input = styled("input")(({ theme }) => ({
   width: "140px",
   backgroundColor:
     theme.palette.mode === "light" ? "transparent" : "transparent",
-  color: theme.palette.mode === "light" ? "#000" : "#fff",
+  color: theme.palette.mode === "light" ? "#fff" : "#000",
   fontSize: "14px",
   border: "1px solid #D9D9D9DD",
   "border-style": "dashed",
   outline: "none",
-  padding: "1px",
+  padding: "5px",
   "&:focus": {
     outline: "none",
     transform: "scale(1.05)",
@@ -42,7 +42,7 @@ const Input = styled("input")(({ theme }) => ({
 
 const Listbox = styled("ul")(({ theme }) => ({
   width: 200,
-  margin: 0,
+  marginLeft: 20,
   padding: 0,
   zIndex: 1,
   position: "absolute",
@@ -50,15 +50,16 @@ const Listbox = styled("ul")(({ theme }) => ({
   backgroundColor: theme.palette.mode === "light" ? "#fff" : "#000",
   overflow: "auto",
   maxHeight: 200,
+  color: theme.palette.mode === "light" ? "black" : "black",
   border: "1px solid rgba(0,0,0,.25)",
   "& li.Mui-focused": {
     backgroundColor: "#4a8df6",
-    color: "white",
+    color: "black",
     cursor: "pointer",
   },
   "& li:active": {
     backgroundColor: "#2977f5",
-    color: "white",
+    color: "black",
   },
 }));
 
@@ -146,7 +147,10 @@ export default function AttributeBox(props: MyComponentProps) {
   const [partII, setPartII] = useState(false);
   // const [SAME, setSAME] = useState(false);
   // const [partIII, setPartIII] = useState(false);
-  const [isSuggest, setIsSuggest] = useState("");
+  const [, setIsSuggest] = useState("");
+  const [isValue, setIsValue] = useState("");
+  const [isShowValue, setIsShowValue] = useState(false);
+  const [optionsArray, setOptionsArray] = useState<string[]>([]);
 
   const Delete = styled(ClearIcon)({
     borderRadius: "16px",
@@ -205,6 +209,11 @@ export default function AttributeBox(props: MyComponentProps) {
     setIsSuggest(result);
     const resultArray = [result];
     setOptionsArray(resultArray);
+    if(!str){
+        setIsShowValue(false);
+        return;
+    }
+    setIsShowValue(true);
   };
 
   // const handleChangetrait_type = (e, path) => {
@@ -651,7 +660,15 @@ export default function AttributeBox(props: MyComponentProps) {
   };
 
   // const optionsArray = ["Option 1", "Option 2", "Option 3"];
-  const [optionsArray, setOptionsArray] = useState<string[]>([]);
+  const handdleNameII = (e) => {
+    setIsValue(e);
+    if (!e) {
+      setIsShowValue(false);
+      return;
+    }
+    setIsShowValue(true);
+  };
+
 
   const {
     getRootProps,
@@ -663,19 +680,22 @@ export default function AttributeBox(props: MyComponentProps) {
   } = useAutocomplete({
     id: "use-autocomplete-demo",
     options: optionsArray,
+    disableClearable: true,
+    value: isValue,
     getOptionLabel: (option) => option,
     onInputChange: (event, newValue) => {
       const inputValue = newValue;
-      handleSuggest(inputValue);
+      // handleSuggest(inputValue);
       handleChange(event, "display_option.opensea.trait_type");
       setIsSuggest(inputValue);
+      // handleSuggestTraitType(inputValue);
       SavecheckErrorII();
     },
   });
 
-  const handleSuggest = (e) => {
-    console.log("ddddddd", e);
-  };
+  // const handleSuggest = (e) => {
+  //   console.log("ddddddd", e);
+  // };
 
   return (
     <div
@@ -791,10 +811,14 @@ export default function AttributeBox(props: MyComponentProps) {
           >
             <Label {...getInputLabelProps()}>Trait type : </Label>
             <Input
+              style={{ marginLeft: "8px" }}
               {...getInputProps()}
+              onInput={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handdleNameII(e.target.value)
+              }
             />
           </div>
-          {groupedOptions.length > 0 ? (
+          {groupedOptions.length > 0 && isShowValue ? (
             <Listbox {...getListboxProps()}>
               {(groupedOptions as typeof optionsArray).map((option, index) => (
                 <li {...getOptionProps({ option, index })}>{option}</li>
