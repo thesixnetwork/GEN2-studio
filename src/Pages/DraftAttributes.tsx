@@ -124,7 +124,6 @@ const DraftAttributes = () => {
                 next={true}
               ></DraftMenu>
             </div>
-            <button onClick={()=>console.log(data.onchain_data.nft_attributes)}>here</button>
             <div className="h-[83%] overflow-scroll">
               <div className=" flex flex-col gap-8 m-6 justify-center items-center ">
                 {loading === false &&
