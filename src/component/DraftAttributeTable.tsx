@@ -151,6 +151,22 @@ const DraftAttributeTable = ({
   //     // บันทึกข้อมูลเมื่อค่าถูกต้อง
   //   }
   // };
+
+  const findDuplicateName = (arr) => {
+    const indices = {};
+    const result = [];
+
+    arr.forEach((element, index) => {
+      if (indices[element] === undefined) {
+        indices[element] = index;
+      } else {
+        result.push(indices[element]);
+        result.push(index);
+      }
+    });
+
+    return result.filter((value, index, self) => self.indexOf(value) === index);
+  };
   const handdleErrorRow = (
     e: React.FormEvent<HTMLTableCellElement>,
     value: string
@@ -161,7 +177,7 @@ const DraftAttributeTable = ({
       // );
       // const hasDuplicates = duplicates.length > 0;
       const seenValues = new Set();
-
+      const tempArr = [];
       for (let i = 0; i < isData.length; i++) {
         let element;
         if (type === "originAttributes") {
@@ -176,8 +192,31 @@ const DraftAttributeTable = ({
         if (element instanceof HTMLElement) {
           const elementInnerText = element.innerText.trim();
           // const currentTargetInnerText = e.currentTarget.innerText.trim();
+          tempArr.push(elementInnerText);
           if (seenValues.has(elementInnerText)) {
             element.classList.add("bg-red-500");
+            const duplicateNameIndexArr = findDuplicateName(tempArr);
+            let elementDuplicate;
+            for (let i = 0; i < duplicateNameIndexArr.length; i++) {
+              if (type === "originAttributes") {
+                elementDuplicate = document.getElementById(
+                  `name ori ${String(duplicateNameIndexArr[i])}`
+                );
+              }
+              if (type === "collectionAttributes") {
+                elementDuplicate = document.getElementById(
+                  `name col ${String(duplicateNameIndexArr[i])}`
+                );
+              }
+              if (type === "tokenAttributes") {
+                elementDuplicate = document.getElementById(
+                  `name token ${String(duplicateNameIndexArr[i])}`
+                );
+              }
+              if (elementDuplicate instanceof HTMLElement) {
+                elementDuplicate.classList.add("bg-red-500");
+              }
+            }
           } else if (
             containsSpecialChars(elementInnerText) ||
             containsSpace(elementInnerText) ||
@@ -334,8 +373,10 @@ const DraftAttributeTable = ({
   };
 
   const handelDel = (index: number) => {
-    data.splice(index, 1);
-    setIsData(data);
+    const newData = [...isData];
+    newData.splice(index, 1);
+    setIsData(newData);
+    data = newData;
   };
 
   // const handelErrValue = (e) => {
@@ -433,8 +474,8 @@ const DraftAttributeTable = ({
               )}
             </thead>
             <tbody>
-              {data !== undefined &&
-                data.map((item: ItokenAttributes, index: number) => (
+              {isData !== undefined &&
+                isData.map((item: ItokenAttributes, index: number) => (
                   <tr
                     key={index}
                     //   className={`border border-white bg-[#B9BAC2]
